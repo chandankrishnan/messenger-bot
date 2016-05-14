@@ -3,12 +3,16 @@ var express=require('express')
     ,router=express.Router()
     ,jwt=require('jsonwebtoken')
 
-router.use('/webapp',require('./webapp'))
-router.use('/users',require('./users'));
+// router.use('/webapp',require('./webapp'))
+// router.use('/users',require('./users'));
 
 
 // Server frontpage
 router.get('/', function (req, res) {
+    res.send('Thidds is TestBot Server');
+});
+
+router.get('/test', function (req, res) {
     res.send('Thidds is TestBot Server');
 });
 
