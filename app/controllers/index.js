@@ -9,7 +9,7 @@ router.use('/users',require('./users'));
 
 // Server frontpage
 router.get('/', function (req, res) {
-    res.send('This is TestBot Server');
+    res.send('Thidds is TestBot Server');
 });
 
 // Facebook Webhook
