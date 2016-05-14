@@ -19,20 +19,21 @@ app.use(bodyParser.urlencoded({extended: true}))
 //middelware to load controllers
 app.use(require('./app/controllers'))
 
-db.connect(function () {
-    //callback when connect success
-    http.createServer(app).listen(3000);
-});
-
-db.get().connection.on('connected', function () {
-    logger.info('Mongoose connected' + app.port);
-
-});
+http.createServer(app).listen(3000);
+// db.connect(function () {
+//     //callback when connect success
+//     http.createServer(app).listen(3000);
+// });
+//
+// db.get().connection.on('connected', function () {
+//     logger.info('Mongoose connected' + app.port);
+//
+// });
 
 // If the Node process ends, close the Mongoose connection
-process.on('SIGINT', function () {
-    db.get().connection.close(function () {
-        logger.info('Mongoose connection disconnected through app termination');
-        process.exit(0);
-    });
-});
+// process.on('SIGINT', function () {
+//     db.get().connection.close(function () {
+//         logger.info('Mongoose connection disconnected through app termination');
+//         process.exit(0);
+//     });
+// });
