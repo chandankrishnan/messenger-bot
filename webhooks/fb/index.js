@@ -50,3 +50,4 @@ function sendMessage(recipientId, text) {
         }
     });
 };
+module.exports=router;
