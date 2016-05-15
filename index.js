@@ -3,7 +3,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var request = require('request'),
     db=require('./app/models/db'),
-    logger=require('./app/helpers/logger')
+    logger=require('./app/helpers/logger'),
+    temp=require('./webhooks/fb/template.js')
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());

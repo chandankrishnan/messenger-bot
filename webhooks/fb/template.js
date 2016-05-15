@@ -1,8 +1,6 @@
 var template={};
 
-template.greeting=function(name)
+module.exports.greeting=function(name)
 {
   return 'Hi, ' + name ;
 }
-
-module.export=template;
