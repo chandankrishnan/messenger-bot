@@ -16,11 +16,14 @@ router.get('/webhook', function (req, res) {
 
 router.post('/webhook', function (req, res)
 {
-    console.log(JSON.stringify(req.body));
+
     var events = req.body.entry[0].messaging;
     for (i = 0; i < events.length; i++) {
         var event = events[i];
-        var name=getName(event.sender.id);
+        graph.get(event.sender.id, function(err, res)
+        {
+          console.log('name fetched ' + JSON.stringify(res))
+        });
         if (event.message && event.message.text)
         {
           switch(event.message.text.toLowerCase())
