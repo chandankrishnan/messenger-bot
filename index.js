@@ -58,7 +58,7 @@ function sendMessage(recipientId, text) {
         method: 'POST',
         json: {
             recipient: {id: recipientId},
-            message: text.substring(0, 200),
+            message: text,
         }
     }, function(error, response, body) {
         if (error) {
