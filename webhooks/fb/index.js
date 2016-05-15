@@ -1,6 +1,5 @@
 
 var express=require('express')
-    ,router=express()
     ,router=express.Router()
 
 // Facebook Webhook
