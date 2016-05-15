@@ -2,6 +2,8 @@
 var express=require('express')
     ,router=express.Router(),
     request = require('request');
+    template=require('./template');
+
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
   console.warn('authentication called');
@@ -12,15 +14,20 @@ router.get('/webhook', function (req, res) {
     }
 });
 
-router.post('/webhook', function (req, res) {
+router.post('/webhook', function (req, res)
+{
     console.log(JSON.stringify(req.body));
     var events = req.body.entry[0].messaging;
     for (i = 0; i < events.length; i++) {
         var event = events[i];
         if (event.message && event.message.text)
         {
-          console.log('sender id:' + event.sender.id + ' message: ' + event.message.text);
-            sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
+          switch(event.message.text)
+          {
+            case 'hi':
+              sendMessage(event.sender.id, {text: template.greeting()});
+          }
+
         }
     }
     res.sendStatus(200);
