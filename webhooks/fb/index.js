@@ -22,14 +22,12 @@ router.post('/webhook', function (req, res)
         var event = events[i];
         if (event.message && event.message.text)
         {
-          switch(event.message.text)
+          switch(event.message.text.toLowerCase())
           {
             case 'hi':
-              console.log('sending hi');
               sendMessage(event.sender.id, {text: template.greeting()});
               break;
               default:
-              console.log('sending default');
               sendMessage(event.sender.id, {text: 'this is default message'});
               break;
           }
