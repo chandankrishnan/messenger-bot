@@ -28,7 +28,8 @@ app.get('/webhook', function (req, res) {
 });
 
 app.post('/webhook', function (req, res) {
-    console.log(req);
+    console.log(JSON.stringify(req.body));
+    res.send("aa");
     // var events = req.body.entry[0].messaging;
     // for (i = 0; i < events.length; i++) {
     //     var event = events[i];
