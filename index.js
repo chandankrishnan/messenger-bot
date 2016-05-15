@@ -24,6 +24,7 @@ app.get('/test', function (req, res) {
 
 // Facebook Webhook
 app.get('/webhook', function (req, res) {
+  console.warn('authentication called');
     if (req.query['hub.verify_token'] === 'testbot_verify_token') {
         res.send(req.query['hub.challenge']);
     } else {
