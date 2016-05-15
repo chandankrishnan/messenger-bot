@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 
 
 //middelware to load api backend
-app.use('/api',require('./app'))
+// app.use('/api',require('./app'))
 app.use('/hooks',require('./webhooks'))
 
 // Server frontpage
