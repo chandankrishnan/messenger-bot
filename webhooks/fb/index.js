@@ -64,6 +64,7 @@ function sendMessage(recipientId, text) {
 
 function getName(_id){
   return graph.get(_id, function(err, res) {
+    console.log('name fetched ' + res.first_name + ' ' + res.last_name)
     return res;
   });
 }
