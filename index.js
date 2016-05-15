@@ -46,17 +46,19 @@ app.post('/webhook', function (req, res) {
     res.sendStatus(200);
 });
 
-var token='EAAYd3OAuhsMBACtZAxMssPrZCRqJFdgfLRefZCYM7FoYSvGVFWzxxRZCEOLrpxoMedcgpZAE6c0v8XeZBL7iX0x3ungZAwazDjf4uzdURPIdAyG3aeyFFkYdzVgcf6Cgi4vniZCsWZC0jbZCbjS6p07qfPLemGOmgruUJEX1UR4WxcTAZDZD';
+var token='EAADV5cR0X3cBAECs9jcSIWBoqYb7OGLKM3F7vZBtZCN69DO55LOSJXNZCKIZBBqxepD0hiv4EHmXZBPUmqBIlr5s2fLbnl8jVTxHVBA1JpL3XNetMt48Et7sHLr0BWopj2xEPNJseN2Ru3TXOPVsw191gZAP85rNeZAhIgg2o64ogZDZD';
 // generic function sending messages
-function sendMessage(recipientId, message) {
-
+function sendMessage(recipientId, text) {
+  messageData = {
+      text:"Text received, echo: "+ text.substring(0, 200)
+    }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: token},
         method: 'POST',
         json: {
             recipient: {id: recipientId},
-            message: message,
+            message: text.substring(0, 200),
         }
     }, function(error, response, body) {
         if (error) {
