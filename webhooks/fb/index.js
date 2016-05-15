@@ -1,8 +1,8 @@
-
 var express=require('express')
     ,router=express.Router(),
-    request = require('request');
-    template=require('./template');
+    request = require('request'),
+    template=require('./template'),
+    graph = require('fbgraph')
 
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
@@ -20,14 +20,15 @@ router.post('/webhook', function (req, res)
     var events = req.body.entry[0].messaging;
     for (i = 0; i < events.length; i++) {
         var event = events[i];
+        var name=getName(event.sender.id);
         if (event.message && event.message.text)
         {
           switch(event.message.text.toLowerCase())
           {
             case 'hi':
-              sendMessage(event.sender.id, {text: template.greeting()});
+              sendMessage(event.sender.id, {text: template.greeting(name)});
               break;
-              default:
+            default:
               sendMessage(event.sender.id, {text: 'this is default message'});
               break;
           }
@@ -60,4 +61,10 @@ function sendMessage(recipientId, text) {
         }
     });
 };
+
+function getName(_id){
+  return graph.get(_id, function(err, res) {
+    return res;
+  });
+}
 module.exports=router;
