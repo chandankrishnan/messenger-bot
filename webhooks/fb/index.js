@@ -42,7 +42,7 @@ var token='EAAJiekb5XukBAB68NX591UdYJzTBS0NU6rpOCiYKjyKdaD7jmvObBIZBwduUgOyEzfLf
 // generic function sending messages
 function sendMessage(recipientId, text) {
   messageData = {
-      text:"Text received, echo: " + text
+      text: text
     }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -50,7 +50,7 @@ function sendMessage(recipientId, text) {
         method: 'POST',
         json: {
             recipient: {id: recipientId},
-            message: messageData,
+            message: messageData.text,
         }
     }, function(error, response, body) {
         if (error) {
