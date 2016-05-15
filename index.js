@@ -5,6 +5,8 @@ var request = require('request');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.set('port', (process.env.PORT || 5000));
+
 app.use(express.static(__dirname + '/public'));
 
 // views is directory for all template files
@@ -31,15 +33,14 @@ app.get('/webhook', function (req, res) {
 
 app.post('/webhook', function (req, res) {
     console.log(JSON.stringify(req.body));
-    res.send("aa");
-    // var events = req.body.entry[0].messaging;
-    // for (i = 0; i < events.length; i++) {
-    //     var event = events[i];
-    //     if (event.message && event.message.text) {
-    //         sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
-    //     }
-    // }
-    // res.sendStatus(200);
+    var events = req.body.entry[0].messaging;
+    for (i = 0; i < events.length; i++) {
+        var event = events[i];
+        if (event.message && event.message.text) {
+            sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
+        }
+    }
+    res.sendStatus(200);
 });
 
 
