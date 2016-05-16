@@ -28,6 +28,11 @@ router.post('/webhook', function (req, res)
           switch(event.message.text.toLowerCase())
           {
             case 'hi':
+            graph.get(event.sender.id.toString(), function(err, res)
+            {
+              console.log('name fetched ' + JSON.stringify(res))
+            
+            });
               sendMessage(event.sender.id, {text: template.greeting('Dear')});
               break;
             default:
