@@ -4,6 +4,9 @@ var express=require('express')
     template=require('./template'),
     graph = require('fbgraph')
 
+var token='EAAJiekb5XukBAB68NX591UdYJzTBS0NU6rpOCiYKjyKdaD7jmvObBIZBwduUgOyEzfLf3sCWF2E3qbGZA1skWRQh0z00BtoTbsjiQkpi5QzTHI8ppLdgEprZBZB7sUU1tExzQlTCZBwUM3xEMxA97WMJZB8pa5zbnG78ytbhYbrwZDZD';
+
+graph.setAccessToken(token);
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
   console.warn('authentication called');
@@ -41,7 +44,6 @@ router.post('/webhook', function (req, res)
     res.sendStatus(200);
 });
 
-var token='EAAJiekb5XukBAB68NX591UdYJzTBS0NU6rpOCiYKjyKdaD7jmvObBIZBwduUgOyEzfLf3sCWF2E3qbGZA1skWRQh0z00BtoTbsjiQkpi5QzTHI8ppLdgEprZBZB7sUU1tExzQlTCZBwUM3xEMxA97WMJZB8pa5zbnG78ytbhYbrwZDZD';
 
 // generic function sending messages
 function sendMessage(recipientId, text) {
