@@ -3,15 +3,17 @@ var mongoose = require('mongoose');
 var state = {
         db: null,
     }
-    , url = 'mongodb://locuraadmin:locuraadmin@ds013991.mlab.com:13991/locuranodetest';
+    , url = process.env.MONGODB_URI.toString();
 
 exports.connect = function (cb) {
     if (state.db) {
         cb();
     }
     else {
-        state.db = mongoose.connect(url);
-        cb();
+        state.db = mongoose.connect(url,function(){
+          cb();
+        });
+
     }
 }
 exports.lib = function () {

@@ -2,7 +2,7 @@ var express=require('express')
     ,app=express()
     ,router=express.Router()
 
-router.use('/fb',require('./fb'))
+router.use('/hooks/fb',require('./fbctrl'))
 
 //home page
 router.get('/',function(req,res) {
