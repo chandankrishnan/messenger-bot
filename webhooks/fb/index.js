@@ -6,7 +6,7 @@ var express=require('express')
 
 var token='EAAJiekb5XukBAB68NX591UdYJzTBS0NU6rpOCiYKjyKdaD7jmvObBIZBwduUgOyEzfLf3sCWF2E3qbGZA1skWRQh0z00BtoTbsjiQkpi5QzTHI8ppLdgEprZBZB7sUU1tExzQlTCZBwUM3xEMxA97WMJZB8pa5zbnG78ytbhYbrwZDZD';
 
-graph.setAccessToken(token);
+graph.setAccessToken(process.env.PAGE_ACCESS_TOKEN);
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
   console.warn('authentication called');
@@ -23,10 +23,6 @@ router.post('/webhook', function (req, res)
     var events = req.body.entry[0].messaging;
     for (i = 0; i < events.length; i++) {
         var event = events[i];
-        graph.get(event.sender.id.toString(), function(err, res)
-        {
-          console.log('name fetched ' + JSON.stringify(res))
-        });
         if (event.message && event.message.text)
         {
           switch(event.message.text.toLowerCase())
