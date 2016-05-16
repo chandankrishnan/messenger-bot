@@ -2,9 +2,10 @@ var express=require('express')
     ,router=express.Router(),
     request = require('request'),
     template=require('./../helpers/template'),
-    graph = require('fbgraph')
+    graph = require('fbgraph'),
+    token=process.env.PAGE_ACCESS_TOKEN
 
-graph.setAccessToken(process.env.PAGE_ACCESS_TOKEN);
+graph.setAccessToken(token);
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
   console.warn('authentication called');
