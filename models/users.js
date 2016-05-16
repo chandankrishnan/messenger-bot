@@ -42,8 +42,8 @@ UserList.prototype.save = function (userData, cb) {
         self.emit('user-saved', userData);
         return cb(null, data);
     })
-
 }
+
 UserList.prototype.getUser=function(_id,cb){
   var self=this
     return User.find({_id:_id},function(err,data){

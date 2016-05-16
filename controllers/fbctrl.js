@@ -1,11 +1,11 @@
 var express=require('express')
-    ,router=express.Router(),
-    request = require('request'),
-    template=require('./../helpers/template'),
-    user=require('./../models.users'),
-    graph = require('fbgraph'),
+    ,router=express.Router()
+    ,request = require('request')
+    ,template=require('./../helpers/template')
+    ,user=require('./../models/users.js')
+    ,graph = require('fbgraph')
     // token='EAAJiekb5XukBAI6xUJozjqSN2M4ZBct5BU5zj4PLCkzdcMZCXbSFF9lreWdsa3ZBt0dzfwU9RLtlh7VH9lnlsI3R1ZAQg9x96KTXtUf6lSoC5obOg2AnAjQsmVbD19MrLIul80E7IwgTNA8CQZBizBUf8Fx7ZBRKF1jZAliYakf0QZDZD'
-    token=process.env.PAGE_ACCESS_TOKEN.toString()
+    ,token=process.env.PAGE_ACCESS_TOKEN.toString()
 
 
 graph.setAccessToken(token);
@@ -27,7 +27,7 @@ user.on('user-exist', function () {
 user.on('user-notexist', function () {
     console.log('User not exist');
 })
-
+//find user exist in database or not
 router.post('/getuser',function(req,res){
   var events=req.body.entry[0].id
   console.log(events);
