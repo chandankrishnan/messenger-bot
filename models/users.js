@@ -5,7 +5,8 @@ var mongo = require('mongoose')
     , EventEmitter = require("events").EventEmitter
 
 var userSchema = mongo.Schema({
-     first: {type: String, lowercase: true, trim: true, required: true}
+    _id:{type:String,required:true,unique:true}
+    ,first: {type: String, lowercase: true, trim: true, required: true}
     , last: {type: String, lowercase: true, trim: true, required: true}
     , avtar: String
     , gender: {type: String, required: true}
@@ -13,7 +14,7 @@ var userSchema = mongo.Schema({
     , isActive: {type: Boolean, default: 0}
 });
 
-var User = mongo.model('User', userSchema);
+var User = mongo.model('User', userSchema,'userSchema');
 
 //constructor
 function UserList() {
@@ -43,5 +44,18 @@ UserList.prototype.save = function (userData, cb) {
     })
 
 }
-
+UserList.prototype.getUser=function(_id,cb){
+  var self=this
+    return User.find({_id:_id},function(err,data){
+      if(err){
+        return cb(err,null);
+      }else if(data){
+        self.emit('user-exist',_id);
+        return cb(data,null)
+      }else{
+        self.emit('user-notexist',_id);
+        return cb('data not exist',null)
+      }
+    })
+}
 module.exports = new UserList;

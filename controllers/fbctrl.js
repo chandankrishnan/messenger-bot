@@ -2,6 +2,7 @@ var express=require('express')
     ,router=express.Router(),
     request = require('request'),
     template=require('./../helpers/template'),
+    user=require('./../models.users'),
     graph = require('fbgraph'),
     // token='EAAJiekb5XukBAI6xUJozjqSN2M4ZBct5BU5zj4PLCkzdcMZCXbSFF9lreWdsa3ZBt0dzfwU9RLtlh7VH9lnlsI3R1ZAQg9x96KTXtUf6lSoC5obOg2AnAjQsmVbD19MrLIul80E7IwgTNA8CQZBizBUf8Fx7ZBRKF1jZAliYakf0QZDZD'
     token=process.env.PAGE_ACCESS_TOKEN.toString()
@@ -16,6 +17,27 @@ router.get('/webhook', function (req, res) {
     } else {
         res.send('Invalid verify token');
     }
+});
+//user exist in database
+user.on('user-exist', function () {
+    console.log('user exist');
+})
+
+//user not exist in database
+user.on('user-notexist', function () {
+    console.log('User not exist');
+})
+
+router.post('/getuser',function(req,res){
+  var events=req.body.entry[0].id
+  console.log(events);
+  user.getUser(events,function(err,data){
+    if(err){
+      res.send(err);
+    }else{
+      res.send(data);
+    }
+  })
 });
 
 router.post('/webhook', function (req, res)
