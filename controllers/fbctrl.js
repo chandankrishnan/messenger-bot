@@ -3,7 +3,9 @@ var express=require('express')
     request = require('request'),
     template=require('./../helpers/template'),
     graph = require('fbgraph'),
-    token='EAAJiekb5XukBAI6xUJozjqSN2M4ZBct5BU5zj4PLCkzdcMZCXbSFF9lreWdsa3ZBt0dzfwU9RLtlh7VH9lnlsI3R1ZAQg9x96KTXtUf6lSoC5obOg2AnAjQsmVbD19MrLIul80E7IwgTNA8CQZBizBUf8Fx7ZBRKF1jZAliYakf0QZDZD'
+    // token='EAAJiekb5XukBAI6xUJozjqSN2M4ZBct5BU5zj4PLCkzdcMZCXbSFF9lreWdsa3ZBt0dzfwU9RLtlh7VH9lnlsI3R1ZAQg9x96KTXtUf6lSoC5obOg2AnAjQsmVbD19MrLIul80E7IwgTNA8CQZBizBUf8Fx7ZBRKF1jZAliYakf0QZDZD'
+    token=process.env.PAGE_ACCESS_TOKEN.toString()
+
 
 graph.setAccessToken(token);
 // Facebook Webhook
