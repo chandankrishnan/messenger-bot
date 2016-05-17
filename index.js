@@ -3,7 +3,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var request = require('request'),
     db=require('./models/db'),
-    logger=require('./helpers/logger')
+    logger=require('./helpers/logger'),
+    user=require('./models/users.js');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -22,11 +23,10 @@ app.use(require('./controllers'))
 
 db.connect(function () {
     //callback when connect success
-    app.listen(app.get('port'), function()
-    {
-        console.log('Node app is running on port', app.get('port'));
+    app.listen(app.get('port'), function(){
+      console.log(' App and Mongo started');
     });
-});
+})
 
 db.get().connection.on('connected', function () {
     logger.info('Mongoose connected' + app.port);
