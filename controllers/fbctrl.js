@@ -10,41 +10,19 @@ var express=require('express')
 
 graph.setAccessToken(token);
 
-// Facebook Webhook
-router.get('/webhook', function (req, res) {
-  console.warn('authentication called');
-    if (req.query['hub.verify_token'] === 'testbot_verify_token') {
-        res.send(req.query['hub.challenge']);
-    } else {
-        res.send('Invalid verify token');
-    }
-});
-
-router.post('/webhook', function (req, res)
+function postback(data,sender_id)
 {
+  switch(data.payload)
+  {
+    case 'accept-friend-request':
+          sendMessage(sender_id,template.accept_friend_request());
+          break;
+    case 'decline-friend-request':
+          sendMessage(sender_id,template.decline_frined_request())
+          break;
+  }
+}
 
-    var events = req.body.entry[0].messaging;
-
-    for (i = 0; i < events.length; i++)
-    {
-        var event = events[i];
-        console.log(event);
-        if (event.message && event.message.text)
-        {
-          user.check(event.sender.id.toString());
-          switch(event.message.text.toLowerCase())
-          {
-            case 'hi':
-              user.check(event.sender.id.toString());
-              break;
-            default:
-              user.check(event.sender.id.toString());
-              break;
-          }
-        }
-    }
-    res.sendStatus(200);
-});
 
 function deafult_message()
 {
@@ -71,6 +49,51 @@ function sendMessage(recipientId, text) {
         }
     });
 };
+
+// Facebook Webhook
+router.get('/webhook', function (req, res) {
+  console.warn('authentication called');
+    if (req.query['hub.verify_token'] === 'testbot_verify_token') {
+        res.send(req.query['hub.challenge']);
+    } else {
+        res.send('Invalid verify token');
+    }
+});
+
+router.post('/webhook', function (req, res)
+{
+
+    var events = req.body.entry[0].messaging;
+
+    for (i = 0; i < events.length; i++)
+    {
+        var event = events[i];
+        console.log(event);
+        user.check(event.sender.id.toString());
+      if(event.postback && (typeof event.postback.payload != 'undefined') && (event.postback.payload !=''))
+      {
+          postback(event.postback,event.sender_id);
+      }
+      else {
+        if (event.message && event.message.text)
+        {
+
+          switch(event.message.text.toLowerCase())
+          {
+            case 'hi':
+              user.check(event.sender.id.toString());
+              break;
+            default:
+              defaultMessage();
+            break;
+          }
+        }
+      }
+    }
+    res.sendStatus(200);
+});
+
+
 
 //user exist in database
 user.once('user-exist', function () {

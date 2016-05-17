@@ -13,13 +13,13 @@ module.exports.welcome=function(name)
       "buttons":[
         {
           "type":"postback",
-          "payload":"accept-request",
+          "payload":"accept-friend-request",
           "title":"Accept"
         },
         {
           "type":"postback",
           "title":"Maybe, Later",
-          "payload":"decline-request"
+          "payload":"decline-friend-request"
         }
       ]
     }
@@ -35,4 +35,14 @@ module.exports.greeting=function()
 module.exports.defaultMessage=function()
 {
   return ' I did not get you ! ';
+}
+
+module.exports.accept_friend_request=function()
+{
+    return 'I can assist you on <br/> 1.Weather . <br/> for help say help ?';
+}
+
+module.exports.decline_friend_request=function()
+{
+    return 'Come back soon !';
 }
