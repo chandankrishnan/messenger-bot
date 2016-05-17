@@ -44,18 +44,12 @@ UserList.prototype.save = function (userData, cb) {
     })
 }
 
-UserList.prototype.getUser=function(_id,cb){
+UserList.prototype.check=function(_id,cb){
   var self=this
-    return User.find({_id:_id},function(err,data){
-      if(err){
-        return cb(err,null);
-      }else if(data){
-        self.emit('user-exist',_id);
-        return cb(data,null)
-      }else{
-        self.emit('user-notexist',_id);
-        return cb('data not exist',null)
-      }
-    })
+  User.findOne({"_id":_id},function(error,data){
+    if(data) self.emit('user-exist',_id);
+    else self.emit('user-not-exist',_id);
+  });
+
 }
 module.exports = new UserList;

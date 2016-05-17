@@ -7,6 +7,7 @@ var express=require('express')
 
 
 graph.setAccessToken(token);
+
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
   console.warn('authentication called');
@@ -16,52 +17,27 @@ router.get('/webhook', function (req, res) {
         res.send('Invalid verify token');
     }
 });
-//user exist in database
-user.on('user-exist', function () {
-    console.log('user exist');
-})
-
-//user not exist in database
-user.on('user-notexist', function () {
-    console.log('User not exist');
-})
-//find user exist in database or not
-router.post('/getuser',function(req,res){
-  var events=req.body.entry[0].id
-  console.log(events);
-  user.getUser(events,function(err,data){
-    if(err){
-      res.send(err);
-    }else{
-      res.send(data);
-    }
-  })
-});
 
 router.post('/webhook', function (req, res)
 {
 
     var events = req.body.entry[0].messaging;
 
-    for (i = 0; i < events.length; i++) {
+    for (i = 0; i < events.length; i++)
+    {
         var event = events[i];
         if (event.message && event.message.text)
         {
+          user.check(event.sender.id.toString());
           switch(event.message.text.toLowerCase())
           {
             case 'hi':
-            graph.get(event.sender.id.toString(), function(err, res)
-            {
-              console.log('name fetched ' + JSON.stringify(res))
-
-            });
-              sendMessage(event.sender.id, {text: template.greeting('Dear')});
+              user.check(event.sender.id.toString());
               break;
             default:
-              sendMessage(event.sender.id, {text: 'this is default message'});
+              user.check(event.sender.id.toString());
               break;
           }
-
         }
     }
     res.sendStatus(200);
@@ -90,11 +66,19 @@ function sendMessage(recipientId, text) {
     });
 };
 
-function getName(_id){
-  graph.get(_id, function(err, res)
-  {
-    console.log('name fetched ' + JSON.stringify(res))
-    return res;
+//user exist in database
+user.on('user-exist', function () {
+    console.log('user exist fired');
+      sendMessage(_id, template.welcome());
+})
+
+//user not exist in database
+user.once('user-not-exist', function (_id) {
+  console.log('user not found event fired');
+
+  graph.get(_id, function(err, res){
+      sendMessage(_id, template.welcome(res.first_name + ' ' +res.last_name));
   });
-}
+});
+
 module.exports=router;
