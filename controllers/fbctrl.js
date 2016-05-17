@@ -41,7 +41,6 @@ router.post('/webhook', function (req, res)
               sendMessage(event.sender.id, {text: 'this is default message'});
               break;
           }
-
         }
     }
     res.sendStatus(200);
