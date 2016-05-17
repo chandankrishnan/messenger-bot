@@ -72,13 +72,15 @@ function sendMessage(recipientId, text) {
 //user exist in database
 user.on('user-exist', function () {
     console.log('user exist fired');
+      sendMessage(_id, template.welcome());
 })
 
 //user not exist in database
 user.on('user-not-exist', function (_id) {
+  console.log('user not found event fired');
 
   graph.get(_id, function(err, res){
-      sendMessage(_id, template.greeting(res.first_name + ' ' +res.last_name));
+      sendMessage(_id, template.welcome(res.first_name + ' ' +res.last_name));
   });
 });
 

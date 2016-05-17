@@ -28,7 +28,7 @@ module.exports.welome=function(name)
     };
 }
 
-module.exports.greeting=function(name)
+module.exports.greeting=function()
 {
   return 'Hi... I am your personal assistant';
 }
