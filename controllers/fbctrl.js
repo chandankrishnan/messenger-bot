@@ -12,7 +12,8 @@ graph.setAccessToken(token);
 
 function postback(data,sender_id)
 {
-  switch(data.payload)
+  console.log('outside postback');
+  switch(data.payload.toString().trim().toLowerCase())
   {
     case 'accept-friend-request':
           console.log('accept-friend-request payload fired ' + template.accept_friend_request());
