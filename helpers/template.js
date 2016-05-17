@@ -19,7 +19,7 @@ module.exports.greeting=function(name)
               "title": "Friends"
             }, {
               "type": "web_url",
-              "url":"www.google.com"
+              "url":"www.google.com",
               "title": "T&C",
             }],
           }]
