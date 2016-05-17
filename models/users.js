@@ -48,9 +48,7 @@ UserList.prototype.check=function(_id,cb){
   console.log('checking user ' + _id);
   var self=this
     return User.find({_id:_id},function(err,data){
-      if(err){
-        return cb(err,null);
-      }else if(data){
+      if(data){
         console.log('user doesnt exist');
         self.emit('user-exist',_id);
         return cb(data,null)
