@@ -1,6 +1,6 @@
 var template={};
 
-module.exports.welome=function(name)
+module.exports.welcome=function(name)
 {
   var msg= 'I didnt find you in my contact,Will you be my frined ? Say yes so that i can assist you.' ;
 

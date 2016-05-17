@@ -23,12 +23,9 @@ app.use(require('./controllers'))
 
 db.connect(function () {
     //callback when connect success
-    app.listen(app.get('port'), function()
-    {
-
-      var a=user.check('234234',function(){});
-      console.log(a);
-});
+    app.listen(app.get('port'), function(){
+      console.log(' App and Mongo started');
+    });
 })
 
 db.get().connection.on('connected', function () {
