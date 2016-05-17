@@ -10,8 +10,8 @@ module.exports.greeting=function(name)
         "payload": {
           "template_type": "generic",
           "elements": [{
-            "title": "Hi " + name
-            "subtitle":msg
+            "title": "Hi " + name,
+            "subtitle":msg,
             "image_url": "https://scontent-sin1-1.xx.fbcdn.net/v/t1.0-9/13254203_1620195691639070_1642249843527728635_n.png?oh=54033446313d56417bd76a055184922c&oe=57E2EC7D",
             "buttons": [{
               "type": "postback",
