@@ -34,10 +34,10 @@ router.post('/webhook', function (req, res)
           switch(event.message.text.toLowerCase())
           {
             case 'hi':
-              sendMessage(event.sender.id, {text: 'Hi , there'});
+              user.check(event.sender.id.toString());
               break;
             default:
-              sendMessage(event.sender.id, {text: 'this is default message'});
+              user.check(event.sender.id.toString());
               break;
           }
 
