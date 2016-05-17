@@ -25,7 +25,7 @@ function postback(data,sender_id)
 }
 
 
-function deafult_message()
+function defaultMessage()
 {
   sendMessage(_id, template.defaultMessage());
 }
