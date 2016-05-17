@@ -87,5 +87,4 @@ user.once('user-not-exist', function (_id) {
   });
 });
 
-user.once('')
 module.exports=router;
