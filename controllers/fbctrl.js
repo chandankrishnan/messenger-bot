@@ -46,22 +46,20 @@ router.post('/webhook', function (req, res)
 {
 
     var events = req.body.entry[0].messaging;
-    console.log(req.body.entry[0].messaging);
 
-    for (i = 0; i < events.length; i++) {
+    for (i = 0; i < events.length; i++)
+    {
         var event = events[i];
         if (event.message && event.message.text)
         {
           switch(event.message.text.toLowerCase())
           {
             case 'hi':
-            console.log('sender id:' + event.sender.id )
-            graph.get(event.sender.id.toString(), function(err, res)
-            {
-              console.log('name fetched ' + JSON.stringify(res))
 
+            graph.get(event.sender.id.toString(), function(err, res){
+              sendMessage(event.sender.id, {text: template.greeting(res.first_name + ' ' + res.last_name)});
             });
-              sendMessage(event.sender.id, {text: template.greeting('Dear')});
+
               break;
             default:
               sendMessage(event.sender.id, {text: 'this is default message'});
@@ -73,6 +71,16 @@ router.post('/webhook', function (req, res)
     res.sendStatus(200);
 });
 
+router.get('/testhook',function(req,res){
+  graph.get(process.env.sender_id, function(err, res){
+    sendMessage(process.env.sender_id, {text: template.greeting(res.first_name + ' ' + res.last_name)});
+  });
+});
+
+function newUser()
+{
+
+}
 
 // generic function sending messages
 function sendMessage(recipientId, text) {
