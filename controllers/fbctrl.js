@@ -3,7 +3,9 @@ var express=require('express')
     request = require('request'),
     template=require('./../helpers/template'),
     graph = require('fbgraph'),
-    token=process.env.PAGE_ACCESS_TOKEN.toString()
+    token=process.env.PAGE_ACCESS_TOKEN.toString(),
+    userList=require('./../models/users'),
+    user=new userList(),
 
 
 graph.setAccessToken(token);
@@ -26,6 +28,7 @@ router.post('/webhook', function (req, res)
     for (i = 0; i < events.length; i++)
     {
         var event = events[i];
+        console.log(event);
         if (event.message && event.message.text)
         {
           user.check(event.sender.id.toString());
@@ -43,7 +46,10 @@ router.post('/webhook', function (req, res)
     res.sendStatus(200);
 });
 
-
+function deafult_message()
+{
+  sendMessage(_id, template.defaultMessage());
+}
 // generic function sending messages
 function sendMessage(recipientId, text) {
   messageData = {
@@ -67,7 +73,7 @@ function sendMessage(recipientId, text) {
 };
 
 //user exist in database
-user.on('user-exist', function () {
+user.once('user-exist', function () {
     console.log('user exist fired');
       sendMessage(_id, template.welcome());
 })
@@ -81,4 +87,5 @@ user.once('user-not-exist', function (_id) {
   });
 });
 
+user.once('')
 module.exports=router;

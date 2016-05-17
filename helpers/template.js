@@ -31,3 +31,8 @@ module.exports.greeting=function()
 {
   return 'Hi... I am your personal assistant';
 }
+
+module.exports.defaultMessage=function()
+{
+  return ' I did not get you ! ';
+}
