@@ -15,6 +15,7 @@ function postback(data,sender_id)
   switch(data.payload)
   {
     case 'accept-friend-request':
+          console.log('accept-friend-request payload fired ' + template.accept_friend_request());
           sendMessage(sender_id,template.accept_friend_request());
           break;
     case 'decline-friend-request':
@@ -76,6 +77,7 @@ router.post('/webhook', function (req, res)
 
       if(event.postback && (typeof event.postback.payload != 'undefined') && (event.postback.payload !=''))
       {
+        console.log('in postback');
           postback(event.postback,event.sender_id);
       }
       if(! event.postback) {
