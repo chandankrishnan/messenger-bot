@@ -5,7 +5,7 @@ var express=require('express')
     graph = require('fbgraph'),
     token=process.env.PAGE_ACCESS_TOKEN.toString(),
     userList=require('./../models/users'),
-    user=new userList(),
+    user=new userList();
 
 
 graph.setAccessToken(token);
