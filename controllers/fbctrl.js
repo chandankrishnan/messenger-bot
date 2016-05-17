@@ -19,7 +19,7 @@ function postback(data,sender_id)
           sendMessage(sender_id,template.accept_friend_request());
           break;
     case 'decline-friend-request':
-          sendMessage(sender_id,template.decline_frined_request())
+          sendMessage(sender_id,template.decline_friend_request())
           break;
   }
 }
