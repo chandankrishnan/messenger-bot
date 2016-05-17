@@ -30,12 +30,11 @@ router.post('/webhook', function (req, res)
         var event = events[i];
         if (event.message && event.message.text)
         {
+          user.check(event.sender.id.toString());
           switch(event.message.text.toLowerCase())
           {
             case 'hi':
-            user.check(event.sender.id.toString(),function(){
-              console.log('checking......');
-            })
+              sendMessage(event.sender.id, {text: 'Hi , there'});
               break;
             default:
               sendMessage(event.sender.id, {text: 'this is default message'});
@@ -72,15 +71,14 @@ function sendMessage(recipientId, text) {
 
 //user exist in database
 user.on('user-exist', function () {
-    console.log('user exist');
+    console.log('user exist fired');
 })
 
 //user not exist in database
-user.on('user-not-exist', function () {
-  console.log('User not exist event fired');
+user.on('user-not-exist', function (_id) {
 
-  graph.get(event.sender.id.toString(), function(err, res){
-      sendMessage(event.sender.id, template.greeting(res.first_name + ' ' +res.last_name));
+  graph.get(_id, function(err, res){
+      sendMessage(_id, template.greeting(res.first_name + ' ' +res.last_name));
   });
 });
 

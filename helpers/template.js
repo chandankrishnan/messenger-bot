@@ -1,6 +1,6 @@
 var template={};
 
-module.exports.greeting=function(name)
+module.exports.welome=function(name)
 {
   var msg= 'I didnt find you in my contact,Will you be my frined ? Say yes so that i can assist you.' ;
 
@@ -26,4 +26,9 @@ module.exports.greeting=function(name)
         }
       }
     };
+}
+
+module.exports.greeting=function(name)
+{
+  return 'Hi... I am your personal assistant';
 }
