@@ -9,6 +9,7 @@ var express=require('express')
 
 
 graph.setAccessToken(token);
+
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
   console.warn('authentication called');
@@ -26,7 +27,8 @@ user.on('user-exist', function () {
 //user not exist in database
 user.on('user-notexist', function () {
     console.log('User not exist');
-})
+});
+
 //find user exist in database or not
 router.post('/getuser',function(req,res){
   var events=req.body.entry[0].id
@@ -44,7 +46,7 @@ router.post('/webhook', function (req, res)
 {
 
     var events = req.body.entry[0].messaging;
-    console.log(req.body.entry[0]);
+    console.log(req.body.entry[0].messaging);
 
     for (i = 0; i < events.length; i++) {
         var event = events[i];
@@ -53,6 +55,7 @@ router.post('/webhook', function (req, res)
           switch(event.message.text.toLowerCase())
           {
             case 'hi':
+            console.log('sender id:' + event.sender.id )
             graph.get(event.sender.id.toString(), function(err, res)
             {
               console.log('name fetched ' + JSON.stringify(res))
@@ -93,11 +96,5 @@ function sendMessage(recipientId, text) {
     });
 };
 
-function getName(_id){
-  graph.get(_id, function(err, res)
-  {
-    console.log('name fetched ' + JSON.stringify(res))
-    return res;
-  });
-}
+
 module.exports=router;
