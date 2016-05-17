@@ -49,7 +49,7 @@ UserList.prototype.check=function(_id,cb){
   var self=this
     return User.find({_id:_id},function(err,data){
       if(data){
-        console.log('user doesnt exist');
+        console.log('user exist form db ' + data);
         self.emit('user-exist',_id);
         return cb(data,null)
       }else{
