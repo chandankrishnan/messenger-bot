@@ -76,7 +76,7 @@ user.on('user-exist', function () {
 })
 
 //user not exist in database
-user.on('user-not-exist', function (_id) {
+user.once('user-not-exist', function (_id) {
   console.log('user not found event fired');
 
   graph.get(_id, function(err, res){
