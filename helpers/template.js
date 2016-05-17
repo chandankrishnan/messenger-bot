@@ -39,7 +39,7 @@ module.exports.defaultMessage=function()
 
 module.exports.accept_friend_request=function()
 {
-    return 'I can assist you on <br/> 1.Weather . <br/> for help say help ?';
+    return 'I can assist you on 1.Weather .for help say help ?';
 }
 
 module.exports.decline_friend_request=function()

@@ -73,7 +73,10 @@ router.post('/webhook', function (req, res)
       //skip user registration check on accepting and rejecting friend request
       if(event.postback && (typeof event.postback.payload != 'undefined')
          && event.postback.payload != 'accept-friend-request' &&
-            event.postback.payload != 'decline-friend-request')  user.check(event.sender.id.toString());
+            event.postback.payload != 'decline-friend-request')  {
+              console.log('inside postback failed');
+              user.check(event.sender.id.toString());
+            }
 
       if(event.postback && (typeof event.postback.payload != 'undefined') && (event.postback.payload !=''))
       {
