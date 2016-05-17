@@ -19,28 +19,6 @@ router.get('/webhook', function (req, res) {
         res.send('Invalid verify token');
     }
 });
-//user exist in database
-user.on('user-exist', function () {
-    console.log('user exist');
-})
-
-//user not exist in database
-user.on('user-notexist', function () {
-    console.log('User not exist');
-});
-
-//find user exist in database or not
-router.post('/getuser',function(req,res){
-  var events=req.body.entry[0].id
-  console.log(events);
-  user.getUser(events,function(err,data){
-    if(err){
-      res.send(err);
-    }else{
-      res.send(data);
-    }
-  })
-});
 
 router.post('/webhook', function (req, res)
 {
@@ -55,11 +33,7 @@ router.post('/webhook', function (req, res)
           switch(event.message.text.toLowerCase())
           {
             case 'hi':
-
-            graph.get(event.sender.id.toString(), function(err, res){
-              sendMessage(event.sender.id, {text: template.greeting(res.first_name + ' ' + res.last_name)});
-            });
-
+            user.check(event.sender.id.toString())
               break;
             default:
               sendMessage(event.sender.id, {text: 'this is default message'});
@@ -71,16 +45,6 @@ router.post('/webhook', function (req, res)
     res.sendStatus(200);
 });
 
-router.get('/testhook',function(req,res){
-  graph.get(process.env.sender_id, function(err, res){
-    sendMessage(process.env.sender_id, {text: template.greeting(res.first_name + ' ' + res.last_name)});
-  });
-});
-
-function newUser()
-{
-
-}
 
 // generic function sending messages
 function sendMessage(recipientId, text) {
@@ -104,5 +68,18 @@ function sendMessage(recipientId, text) {
     });
 };
 
+//user exist in database
+user.on('user-exist', function () {
+    console.log('user exist');
+})
+
+//user not exist in database
+user.on('user-not-exist', function () {
+  console.log('User not exist event fired');
+
+  graph.get(event.sender.id.toString(), function(err, res){
+      sendMessage(event.sender.id, template.greeting(res.first_name + ' ' +res.last_name));
+  });
+});
 
 module.exports=router;
