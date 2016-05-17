@@ -25,7 +25,7 @@ function postback(data,sender_id)
 }
 
 
-function defaultMessage()
+function defaultMessage(_id)
 {
   sendMessage(_id, template.defaultMessage());
 }
@@ -93,7 +93,7 @@ router.post('/webhook', function (req, res)
               user.check(event.sender.id.toString());
               break;
             default:
-              defaultMessage();
+              defaultMessage(event.sender.id.toString());
             break;
           }
         }
