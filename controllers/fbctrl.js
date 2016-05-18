@@ -1,51 +1,35 @@
 var express=require('express')
-    ,router=express.Router()
-    ,request = require('request')
-    ,template=require('./../helpers/template')
-    ,user=require('./../models/users.js')
-    ,graph = require('fbgraph')
-    // token='EAAJiekb5XukBAI6xUJozjqSN2M4ZBct5BU5zj4PLCkzdcMZCXbSFF9lreWdsa3ZBt0dzfwU9RLtlh7VH9lnlsI3R1ZAQg9x96KTXtUf6lSoC5obOg2AnAjQsmVbD19MrLIul80E7IwgTNA8CQZBizBUf8Fx7ZBRKF1jZAliYakf0QZDZD'
-    ,token=process.env.PAGE_ACCESS_TOKEN.toString()
+    ,router=express.Router(),
+    request = require('request'),
+    template=require('./../helpers/template'),
+    graph = require('fbgraph'),
+    token=process.env.PAGE_ACCESS_TOKEN.toString(),
+    userList=require('./../models/users'),
+    user=new userList();
 
 
 graph.setAccessToken(token);
 
-// Facebook Webhook
-router.get('/webhook', function (req, res) {
-  console.warn('authentication called');
-    if (req.query['hub.verify_token'] === 'testbot_verify_token') {
-        res.send(req.query['hub.challenge']);
-    } else {
-        res.send('Invalid verify token');
-    }
-});
-
-router.post('/webhook', function (req, res)
+function postback(data,sender_id)
 {
-
-    var events = req.body.entry[0].messaging;
-
-    for (i = 0; i < events.length; i++)
-    {
-        var event = events[i];
-        if (event.message && event.message.text)
-        {
-          user.check(event.sender.id.toString());
-          switch(event.message.text.toLowerCase())
-          {
-            case 'hi':
-              user.check('12345');
-              break;
-            default:
-              user.check(event.sender.id.toString());
-              break;
-          }
-        }
-    }
-    res.sendStatus(200);
-});
+  console.log('outside postback');
+  switch(data.payload.toString().trim().toLowerCase())
+  {
+    case 'accept-friend-request':
+          console.log('accept-friend-request payload fired ' + template.accept_friend_request());
+          sendMessage(sender_id,template.accept_friend_request());
+          break;
+    case 'decline-friend-request':
+          sendMessage(sender_id,template.decline_friend_request())
+          break;
+  }
+}
 
 
+function defaultMessage(_id)
+{
+  sendMessage(_id, template.defaultMessage());
+}
 // generic function sending messages
 function sendMessage(recipientId, text) {
   messageData = {
@@ -68,8 +52,61 @@ function sendMessage(recipientId, text) {
     });
 };
 
+// Facebook Webhook
+router.get('/webhook', function (req, res) {
+  console.warn('authentication called');
+    if (req.query['hub.verify_token'] === 'testbot_verify_token') {
+        res.send(req.query['hub.challenge']);
+    } else {
+        res.send('Invalid verify token');
+    }
+});
+
+router.post('/webhook', function (req, res)
+{
+
+    var events = req.body.entry[0].messaging;
+
+    for (i = 0; i < events.length; i++)
+    {
+        var event = events[i];
+        console.log(event);
+      //skip user registration check on accepting and rejecting friend request
+      if(event.postback && (typeof event.postback.payload != 'undefined')
+         && event.postback.payload != 'accept-friend-request' &&
+            event.postback.payload != 'decline-friend-request')  {
+              console.log('inside postback failed');
+              user.check(event.sender.id.toString());
+            }
+
+      if(event.postback && (typeof event.postback.payload != 'undefined') && (event.postback.payload !=''))
+      {
+        console.log('in postback');
+          postback(event.postback,event.sender_id);
+      }
+      if(! event.postback) {
+        if (event.message && event.message.text)
+        {
+
+          switch(event.message.text.toLowerCase())
+          {
+            case 'hi':
+              user.check('12345');
+              break;
+            default:
+              defaultMessage(event.sender.id.toString());
+            break;
+          }
+        }
+      }
+    }
+    res.sendStatus(200);
+});
+
+
+
 //user exist in database
-user.on('user-exist', function () {
+user.once('user-exist', function () {
     console.log('user exist fired');
       sendMessage(_id, template.welcome());
 })

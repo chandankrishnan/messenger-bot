@@ -59,4 +59,4 @@ UserList.prototype.check=function(_id,cb){
       }
     })
 }
-module.exports = new UserList;
+module.exports = UserList;
