@@ -22,11 +22,11 @@ function postback(data,_sender_id) {
     switch (response) {
         case 'accept-friend-request':
             console.log('accept-friend-request payload fired  ' + sender_id);
-            sendMessage(sender_id, template.welcome());
+            sendMessage(sender_id, 'Thanks for accepting frined request.',true);
             break;
         case 'decline-friend-request':
             console.log('decline friend request');
-            sendMessage(sender_id, template.welcome());
+            sendMessage(sender_id,'See you soon !',true);
             break;
     }
 }
@@ -69,11 +69,15 @@ function isDeliveryReport(event) {
 }
 
 // generic function to send message
-function sendMessage(recipientId, text) {
-    console.log('meesage sent request fired');
+function sendMessage(recipientId, data,isText) {
+    var payload = {};
+    payload = data;
 
-    console.log(text);
-
+    if(isText) {
+        payload = {
+            text: data
+        }
+    }
     messageData = {
         text: text
     };
@@ -84,7 +88,7 @@ function sendMessage(recipientId, text) {
         method: 'POST',
         json: {
             recipient: {id: recipientId},
-            message: messageData.text,
+            message: payload,
         }
     }, function (error, response, body) {
         console.log('message body' + JSON.stringify(body));
