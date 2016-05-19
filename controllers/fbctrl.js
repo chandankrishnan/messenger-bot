@@ -19,11 +19,11 @@ function postback(data,sender_id)
   {
     case 'accept-friend-request':
           console.log('accept-friend-request payload fired ');
-          sendMessage(sender_id,template.accept_friend_request());
+          sendMessage(sender_id,'Thanks for registering with us.');
           break;
     case 'decline-friend-request':
         console.log('decline friend request');
-          sendMessage(sender_id,template.decline_friend_request())
+          sendMessage(sender_id,'See you soon');
           break;
   }
 }
