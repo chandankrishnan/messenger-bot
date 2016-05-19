@@ -60,7 +60,7 @@ function isPostback(event)
 
 function isMessage(event)
 {
-    if(!event.postback && event.message && event.message.text){
+    if( event.message && event.message.text){
         console.log('this is message request');
         console.log(event);
         return true;
@@ -104,14 +104,14 @@ router.post('/webhook', function (req, res)
 {
 
     var events = req.body.entry[0].messaging;
-
+    console.log('event recived ' + event);
     for (i = 0; i < events.length; i++)
     {
         var event = events[i];
         console.log(event);
         if(isPostback(event))
         {
-            postback(event,event.sender.id)
+            postback(event,event.sender.id);
         }
         else if(isMessage())
         {
