@@ -22,11 +22,11 @@ function postback(data,_sender_id) {
     switch (response) {
         case 'accept-friend-request':
             console.log('accept-friend-request payload fired  ' + sender_id);
-            sendMessage(sender_id, template.greeting());
+            sendMessage(sender_id, template.welcome());
             break;
         case 'decline-friend-request':
             console.log('decline friend request');
-            sendMessage(sender_id, 'See you soon');
+            sendMessage(sender_id, template.welcome());
             break;
     }
 }
