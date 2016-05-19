@@ -21,7 +21,7 @@ function postback(data,_sender_id) {
     switch (response) {
         case 'accept-friend-request':
             console.log('accept-friend-request payload fired ');
-            sendMessage(sender_id, 'Thanks for registering with us.');
+            sendMessage(sender_id, template.greeting());
             break;
         case 'decline-friend-request':
             console.log('decline friend request');
@@ -85,6 +85,7 @@ function sendMessage(recipientId, text) {
             message: messageData.text,
         }
     }, function (error, response, body) {
+        console.log('message body' + JSON.stringify(body));
         if (error) {
             console.log('Error sending message: ', error);
         } else if (response.body.error) {
@@ -133,7 +134,7 @@ router.post('/webhook', function (req, res) {
 user.once('user-exist', function () {
     console.log('user exist fired');
     sendMessage(_id, template.welcome());
-})
+});
 
 //user not exist in database
 user.once('user-not-exist', function (_id) {
