@@ -20,7 +20,7 @@ function postback(data,_sender_id) {
     console.log('inside postback ' + response);
     switch (response) {
         case 'accept-friend-request':
-            console.log('accept-friend-request payload fired ');
+            console.log('accept-friend-request payload fired  ' + sender_id);
             sendMessage(sender_id, template.greeting());
             break;
         case 'decline-friend-request':
