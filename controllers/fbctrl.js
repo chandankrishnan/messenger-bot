@@ -75,13 +75,14 @@ function sendMessage(recipientId, text) {
 
     messageData = {
         text: text
-    }
+    };
+
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: token},
         method: 'POST',
         json: {
-            recipient: {id: recipientId},
+            recipient: {id: "112366602513024"},
             message: messageData.text,
         }
     }, function (error, response, body) {
