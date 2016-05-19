@@ -13,7 +13,7 @@ graph.setAccessToken(token);
 function postback(data,sender_id)
 {
 
-    var response=data.payload.toString().trim().toLowerCase();
+    var response=data.postback.payload.toString().trim().toLowerCase();
     console.log('inside postback ' + response);
   switch(response)
   {
@@ -108,7 +108,7 @@ router.post('/webhook', function (req, res)
     for (i = 0; i < events.length; i++)
     {
         var event = events[i];
-        console.log('event recived ' + event);
+        console.log( event);
         if(isPostback(event))
         {
             postback(event,event.sender.id);
