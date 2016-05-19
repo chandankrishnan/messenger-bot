@@ -11,24 +11,27 @@ var express = require('express')
 graph.setAccessToken(token);
 
 // handle postback request form messenger
-function postback(data, sender_id) {
+function postback(data,_sender_id) {
 
-    var response = data.postback.payload.toString().trim().toLowerCase();
+
+    var response = data.postback.payload.toString().trim().toLowerCase()
+        sender_id=_sender_id.toString();
+
     console.log('inside postback ' + response);
     switch (response) {
         case 'accept-friend-request':
             console.log('accept-friend-request payload fired ');
-            sendMessage(data.sender.id, 'Thanks for registering with us.');
+            sendMessage(sender_id, 'Thanks for registering with us.');
             break;
         case 'decline-friend-request':
             console.log('decline friend request');
-            sendMessage(data.sender.id, 'See you soon');
+            sendMessage(sender_id, 'See you soon');
             break;
     }
 }
 
 //handle message received event.
-function messageReceive(data, sender_id) {
+function messageReceive(data,sender_id) {
     console.log('inside message received')
     var text = data.message.text.toLowerCase();
 
@@ -37,17 +40,17 @@ function messageReceive(data, sender_id) {
             sendMessage(sender_id, template.welcome());
             break;
         case 'testpostback':
-            sendMessage(sender_id, 'your answer recived');
+            sendMessage(sender_id, "your answer recived");
             break;
 
     }
 }
 
 //handle delivery report event.
-function deliveryReport(event, sender_id) {
+function deliveryReport(data,sender_id) {
     console.log('ibside delivery report');
     console.log('delivery report recived');
-    console.log(event);
+    console.log(data);
 }
 
 
@@ -69,7 +72,7 @@ function sendMessage(recipientId, text) {
     console.log('meesage sent request fired');
 
     console.log(text);
-    
+
     messageData = {
         text: text
     }
@@ -85,7 +88,7 @@ function sendMessage(recipientId, text) {
         if (error) {
             console.log('Error sending message: ', error);
         } else if (response.body.error) {
-            console.log('Error: ', response.body.error);
+            console.log('Error: ', response.body);
         }
     });
 };
@@ -111,15 +114,15 @@ router.post('/webhook', function (req, res) {
         console.log(event);
         if (isDeliveryReport(event)) {
             console.log('delivery detected');
-            deliveryReport(event, event.sender.id);
+            deliveryReport(event, event.sender.id.toString());
         }
         else if (isPostback(event)) {
             console.log('postback detected');
-            postback(event, event.sender.id);
+            postback(event, event.sender.id.toString());
         }
         else if (isMessageReceive(event)) {
             console.log('message recived detected');
-            messageReceive(event, event.sender.id);
+            messageReceive(event, event.sender.id.toString());
         }
     }
     res.sendStatus(200);
