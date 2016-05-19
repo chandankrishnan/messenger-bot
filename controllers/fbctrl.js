@@ -66,6 +66,10 @@ function isDeliveryReport(event) {
 
 // generic function to send message
 function sendMessage(recipientId, text) {
+    console.log('meesage sent request fired');
+
+    console.log(text);
+    
     messageData = {
         text: text
     }
