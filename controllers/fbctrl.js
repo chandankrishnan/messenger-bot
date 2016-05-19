@@ -58,7 +58,7 @@ function isMessageReceive(event) {
     return event.message && event.message.text;
 }
 //check weather request is  delivery report
-function isDeliveryReport() {
+function isDeliveryReport(event) {
     return event.delivery ? true : false;
 }
 
