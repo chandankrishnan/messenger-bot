@@ -18,17 +18,18 @@ function postback(data, sender_id) {
     switch (response) {
         case 'accept-friend-request':
             console.log('accept-friend-request payload fired ');
-            sendMessage(sender_id, 'Thanks for registering with us.');
+            sendMessage(data.sender.id, 'Thanks for registering with us.');
             break;
         case 'decline-friend-request':
             console.log('decline friend request');
-            sendMessage(sender_id, 'See you soon');
+            sendMessage(data.sender.id, 'See you soon');
             break;
     }
 }
 
 //handle message received event.
 function messageReceive(data, sender_id) {
+    console.log('inside message received')
     var text = data.message.text.toLowerCase();
 
     switch (text) {
@@ -44,6 +45,7 @@ function messageReceive(data, sender_id) {
 
 //handle delivery report event.
 function deliveryReport(event, sender_id) {
+    console.log('ibside delivery report');
     console.log('delivery report recived');
     console.log(event);
 }
@@ -51,11 +53,11 @@ function deliveryReport(event, sender_id) {
 
 //check weather request is postback request or not
 function isPostback(event) {
-    return event.postback && event.postback.payload != "";
+    return event.postback && event.postback.payload != "" && !event.message;
 }
 //check weather request is message recived or not
 function isMessageReceive(event) {
-    return event.message && event.message.text;
+    return event.message && event.message.text && !event.postback;
 }
 //check weather request is  delivery report
 function isDeliveryReport(event) {
@@ -104,12 +106,15 @@ router.post('/webhook', function (req, res) {
         var event = events[i];
         console.log(event);
         if (isDeliveryReport(event)) {
+            console.log('delivery detected');
             deliveryReport(event, event.sender.id);
         }
         else if (isPostback(event)) {
+            conosle.log('postback detected');
             postback(event, event.sender.id);
         }
         else if (isMessageReceive(event)) {
+            console.log('message recived detected');
             messageReceive(event, event.sender.id);
         }
     }
