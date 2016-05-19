@@ -83,7 +83,7 @@ function sendMessage(recipientId, text) {
         method: 'POST',
         json: {
             recipient: {id: "112366602513024"},
-            message: messageData.text,
+            message: "sdsds",
         }
     }, function (error, response, body) {
         console.log('message body' + JSON.stringify(body));
