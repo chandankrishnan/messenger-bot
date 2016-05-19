@@ -113,7 +113,7 @@ router.post('/webhook', function (req, res)
         {
             postback(event,event.sender.id)
         }
-        elseif(isMessage())
+        else if(isMessage())
         {
             message(event,event.sender.id);
         }
