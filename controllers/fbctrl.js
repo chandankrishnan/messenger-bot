@@ -35,9 +35,10 @@ function message(data,sender_id)
     switch(text)
     {
         case 'hi':
-            sendMessage(sender_id,template.welcome)
+            sendMessage(sender_id,template.welcome());
             break;
         case 'testpostback':
+            sendMessage(sender_id,'your answer recived');
             break;
 
     }
