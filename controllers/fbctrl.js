@@ -110,7 +110,7 @@ router.post('/webhook', function (req, res) {
             deliveryReport(event, event.sender.id);
         }
         else if (isPostback(event)) {
-            conosle.log('postback detected');
+            console.log('postback detected');
             postback(event, event.sender.id);
         }
         else if (isMessageReceive(event)) {
