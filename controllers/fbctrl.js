@@ -40,7 +40,7 @@ function messageReceive(data,sender_id) {
             sendMessage(sender_id, template.welcome());
             break;
         case 'testpostback':
-            sendMessage(sender_id, "your answer recived");
+            sendMessage(sender_id, "your answer rddecived");
             break;
 
     }
