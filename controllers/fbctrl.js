@@ -12,23 +12,61 @@ graph.setAccessToken(token);
 
 function postback(data,sender_id)
 {
-  console.log('outside postback');
-  switch(data.payload.toString().trim().toLowerCase())
+
+    var response=data.payload.toString().trim().toLowerCase();
+    console.log('inside postback ' + response);
+  switch(response)
   {
     case 'accept-friend-request':
-          console.log('accept-friend-request payload fired ' + template.accept_friend_request());
+          console.log('accept-friend-request payload fired ');
           sendMessage(sender_id,template.accept_friend_request());
           break;
     case 'decline-friend-request':
+        console.log('decline friend request');
           sendMessage(sender_id,template.decline_friend_request())
           break;
   }
 }
 
+function message(data,sender_id)
+{
+    var text=data.message.text.toLowerCase();
+
+    switch(text)
+    {
+        case 'hi':
+            sendMessage(sender_id,template.welcome)
+            break;
+        case 'testpostback':
+            break;
+
+    }
+}
 
 function defaultMessage(_id)
 {
   sendMessage(_id, template.defaultMessage());
+}
+
+function isPostback(event)
+{
+//skip user registration check on accepting and rejecting friend request
+    if(event.postback && event.postback.payload != ""){
+        console.log('this is postback request');
+       return true;
+    }
+    return false;
+}
+
+function isMessage(event)
+{
+    if(!event.postback && event.message && event.message.text){
+        console.log('this is message request');
+        console.log(event);
+        return true;
+    }
+    return false;
+
 }
 // generic function sending messages
 function sendMessage(recipientId, text) {
@@ -71,34 +109,14 @@ router.post('/webhook', function (req, res)
     {
         var event = events[i];
         console.log(event);
-      //skip user registration check on accepting and rejecting friend request
-      if(event.postback && (typeof event.postback.payload != 'undefined')
-         && event.postback.payload != 'accept-friend-request' &&
-            event.postback.payload != 'decline-friend-request')  {
-              console.log('inside postback failed');
-              user.check(event.sender.id.toString());
-            }
-
-      if(event.postback && (typeof event.postback.payload != 'undefined') && (event.postback.payload !=''))
-      {
-        console.log('in postback');
-          postback(event.postback,event.sender_id);
-      }
-      if(! event.postback) {
-        if (event.message && event.message.text)
+        if(isPostback(event))
         {
-
-          switch(event.message.text.toLowerCase())
-          {
-            case 'hi':
-              user.check(event.sender.id.toString());
-              break;
-            default:
-              defaultMessage(event.sender.id.toString());
-            break;
-          }
+            postback(event,event.sender.id)
         }
-      }
+        elseif(isMessage())
+        {
+            message(event,event.sender.id);
+        }
     }
     res.sendStatus(200);
 });
