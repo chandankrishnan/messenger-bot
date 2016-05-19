@@ -3,7 +3,8 @@ var express = require('express')
     request = require('request'),
     template = require('./../helpers/template'),
     graph = require('fbgraph'),
-    token = process.env.PAGE_ACCESS_TOKEN.toString(),
+    //token = process.env.PAGE_ACCESS_TOKEN.toString(),
+    token='EAAJiekb5XukBAFDZA01x8HkufiGQIiF5vZAdMi8QuwXIhaw3JuwTA6IoeMIKvZAZBvSlEeb66UBrtBd9sKTsIBfxGllEOVGPB3N3eiY0OC4Xnnvw4W1z5z6Hx3I4OcVvBu6ZB8bFZBHcr5TZBCfDZCzggmCPV56n6knEBBEuSfdl4wZDZD',
     userList = require('./../models/users'),
     user = new userList();
 
@@ -82,8 +83,8 @@ function sendMessage(recipientId, text) {
         qs: {access_token: token},
         method: 'POST',
         json: {
-            recipient: {id: "112366602513024"},
-            message: "sdsds",
+            recipient: {id: recipientId},
+            message: messageData.text,
         }
     }, function (error, response, body) {
         console.log('message body' + JSON.stringify(body));
