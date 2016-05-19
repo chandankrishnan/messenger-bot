@@ -78,10 +78,7 @@ function sendMessage(recipientId, data,isText) {
             text: data
         }
     }
-    messageData = {
-        text: text
-    };
-
+    
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: token},
