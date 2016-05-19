@@ -14,7 +14,7 @@ graph.setAccessToken(token);
 function postback(data,_sender_id) {
 
 
-    var response = data.postback.payload.toString().trim().toLowerCase()
+    var response = data.postback.payload.toString().trim().toLowerCase(),
         sender_id=_sender_id.toString();
 
     console.log('inside postback ' + response);
@@ -119,6 +119,7 @@ router.post('/webhook', function (req, res) {
         }
         else if (isPostback(event)) {
             console.log('postback detected');
+            sendMessage(event.sender.id.toString(), 'get well soon!');
             postback(event, event.sender.id.toString());
         }
         else if (isMessageReceive(event)) {
