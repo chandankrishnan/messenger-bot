@@ -4,7 +4,7 @@ var require=require('require'),
     SERVER_TOKEN=process.env.WIT_SERVER_TOKEN || "JWT2GIFMQ5FBC6Q2F6V2IZ5NHBYFZYJY";
 
 
-module.exports.message=function(query,cb,error)
+module.exports.message=function(query,cb)
 {
     request({
         url: URL,
@@ -16,12 +16,12 @@ module.exports.message=function(query,cb,error)
         }
     }, function (error, response, body) {
 
-        if(typeof cb == 'function') cb(response);
+        if(typeof cb == 'function') cb(response,null);
 
         if (err) {
-            if(typeof error == 'function') error(err);
+            if(typeof error == 'function') error(null,err);
         } else if (response.body.error) {
-            if(typeof error == 'function') error(err);
+            if(typeof error == 'function') error(null,err);
         }
     });
 }

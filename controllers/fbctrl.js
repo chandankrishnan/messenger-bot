@@ -6,7 +6,8 @@ var express = require('express')
     token = process.env.PAGE_ACCESS_TOKEN.toString(),
     //token='EAAJiekb5XukBAFDZA01x8HkufiGQIiF5vZAdMi8QuwXIhaw3JuwTA6IoeMIKvZAZBvSlEeb66UBrtBd9sKTsIBfxGllEOVGPB3N3eiY0OC4Xnnvw4W1z5z6Hx3I4OcVvBu6ZB8bFZBHcr5TZBCfDZCzggmCPV56n6knEBBEuSfdl4wZDZD',
     userList = require('./../models/users'),
-    user = new userList();
+    user = new userList(),
+    wit=require('./../api/wit')
 
 
 graph.setAccessToken(token);
@@ -44,6 +45,18 @@ function messageReceive(data,sender_id,cb) {
             break;
         case 'testpostback':
             sendMessage(sender_id, "your answer rddecived");
+            break;
+
+        default:
+            wit.message(text,function(data,err) {
+                var msg="";
+                if(data.entities.reminder) msg  = msg + " TASK IS :" + data.entities.reminder.value;
+                if(data.entities.duration) msg  = msg + " DURATION IS :" + data.entities.duration.normalized.value + data.entities.duration.unit ;
+
+                sendMessage(sender_id,msg,true,function(){
+                    console.log('message sent with WIT.AI ' + msg);
+                })
+            });
             break;
 
     }
