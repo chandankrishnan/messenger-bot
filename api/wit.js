@@ -1,4 +1,4 @@
-var require=require('require'),
+var request=require('request'),
     URL="https://api.wit.ai/message",
     VERSION="20160520",
     SERVER_TOKEN=process.env.WIT_SERVER_TOKEN || "JWT2GIFMQ5FBC6Q2F6V2IZ5NHBYFZYJY";
