@@ -25,8 +25,10 @@ function test()
         }
     }, function (error, response, body)
     {
-        var dog=JSON.parse(response.body);
-        console.log(dog.entities.reminder);
+        var a=JSON.parse(response.body)
+            //b= a.duration;
+        console.dir(a.entities.location[0].value);
+
         if (error) {
             console.log('Error sending message: ', error);
         } else if (response.body.error) {
