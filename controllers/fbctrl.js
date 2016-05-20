@@ -40,7 +40,7 @@ function messageReceive(data,sender_id,cb) {
 
     switch (text) {
         case 'hi':
-            sendMessage(sender_id, template.welcome(),function(data,error){
+            sendMessage(sender_id, 'hi ',true,function(data,error){
                 if(typeof cb=='function') cb();
             });
             break;
@@ -92,7 +92,7 @@ function isDeliveryReport(event) {
 
 // generic function to send message
 function sendMessage(recipientId, data,isText,cb) {
-   
+
     var payload = {};
     payload = data;
 
