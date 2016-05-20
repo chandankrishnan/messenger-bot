@@ -52,8 +52,8 @@ function messageReceive(data,sender_id,cb) {
             wit.message(text,function(data,err) {
                 var msg="";
 
-                if(data.entities.hasOwnProperty('reminder')) msg  = msg + " TASK IS :" + data.entities.reminder.value;
-                if(data.entities.hasOwnProperty('duration')) msg  = msg + " DURATION IS :" + data.entities.duration.normalized.value + data.entities.duration.unit ;
+                if(typeof data.entities.reminder != 'undefined') msg  = msg + " TASK IS :" + data.entities.reminder.value;
+                if(typeof data.entities.duration != 'undefined') msg  = msg + " DURATION IS :" + data.entities.duration.normalized.value + data.entities.duration.unit ;
 
                 sendMessage(sender_id,msg,true,function(){
                     console.log('message sent with WIT.AI ' + msg);
