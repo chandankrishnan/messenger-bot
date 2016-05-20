@@ -27,7 +27,7 @@ function test()
     {
         var a=JSON.parse(response.body)
             //b= a.duration;
-        console.dir(a.entities.location[0].value);
+        console.dir(a.entities);
 
         if (error) {
             console.log('Error sending message: ', error);

@@ -54,7 +54,9 @@ function messageReceive(data,sender_id,cb) {
                 var msg="";
                 console.log(data);
                 if(typeof data.reminder != 'undefined') msg  = msg + " TASK IS :" + data.reminder[0].value;
-                //if(typeof data.duration != 'undefined') msg  = msg + " DURATION IS :" + data.duration[0].normalized.value + data.entities.duration[0].unit ;
+                if(typeof data.duration != 'undefined') msg  = msg + " DURATION IS :" + data.duration[0].normalized.value + data.duration[0].unit ;
+                if(typeof data.location != 'undefined') msg  = msg + " LOCATION IS :" + data.location[0].value ;
+                if(typeof data.datetime != 'undefined') msg  = msg + " TIME IS :" + data.datetime[0].value ;
                 console.log(msg);
                 sendMessage(sender_id,msg,true,function(){
                     console.log('message sent with WIT.AI ' + msg);
