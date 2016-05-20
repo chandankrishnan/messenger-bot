@@ -3,8 +3,8 @@ var express = require('express')
     request = require('request'),
     template = require('./../helpers/template'),
     graph = require('fbgraph'),
-    //token = process.env.PAGE_ACCESS_TOKEN.toString(),
-    token='EAAJiekb5XukBAFDZA01x8HkufiGQIiF5vZAdMi8QuwXIhaw3JuwTA6IoeMIKvZAZBvSlEeb66UBrtBd9sKTsIBfxGllEOVGPB3N3eiY0OC4Xnnvw4W1z5z6Hx3I4OcVvBu6ZB8bFZBHcr5TZBCfDZCzggmCPV56n6knEBBEuSfdl4wZDZD',
+    token = process.env.PAGE_ACCESS_TOKEN.toString(),
+    //token='EAAJiekb5XukBAFDZA01x8HkufiGQIiF5vZAdMi8QuwXIhaw3JuwTA6IoeMIKvZAZBvSlEeb66UBrtBd9sKTsIBfxGllEOVGPB3N3eiY0OC4Xnnvw4W1z5z6Hx3I4OcVvBu6ZB8bFZBHcr5TZBCfDZCzggmCPV56n6knEBBEuSfdl4wZDZD',
     userList = require('./../models/users'),
     user = new userList();
 
@@ -12,7 +12,7 @@ var express = require('express')
 graph.setAccessToken(token);
 
 // handle postback request form messenger
-function postback(data,_sender_id) {
+function postback(data,_sender_id,cb) {
 
 
     var response = data.postback.payload.toString().trim().toLowerCase(),
@@ -21,24 +21,26 @@ function postback(data,_sender_id) {
     console.log('inside postback ' + response);
     switch (response) {
         case 'accept-friend-request':
-            console.log('accept-friend-request payload fired  ' + sender_id);
-            sendMessage(sender_id, 'Thanks for accepting frined request.',true);
+            sendMessage(sender_id, 'Thanks for accepting frined request.',true,function(data,error){
+                if(typeof cb=='function') cb();
+            });
             break;
         case 'decline-friend-request':
-            console.log('decline friend request');
             sendMessage(sender_id,'See you soon !',true);
             break;
     }
 }
 
 //handle message received event.
-function messageReceive(data,sender_id) {
+function messageReceive(data,sender_id,cb) {
     console.log('inside message received')
     var text = data.message.text.toLowerCase();
 
     switch (text) {
         case 'hi':
-            sendMessage(sender_id, template.welcome());
+            sendMessage(sender_id, template.welcome(),function(data,error){
+                if(typeof cb=='function') cb();
+            }););
             break;
         case 'testpostback':
             sendMessage(sender_id, "your answer rddecived");
@@ -49,9 +51,7 @@ function messageReceive(data,sender_id) {
 
 //handle delivery report event.
 function deliveryReport(data,sender_id) {
-    console.log('ibside delivery report');
-    console.log('delivery report recived');
-    console.log(data);
+
 }
 
 
@@ -69,7 +69,7 @@ function isDeliveryReport(event) {
 }
 
 // generic function to send message
-function sendMessage(recipientId, data,isText) {
+function sendMessage(recipientId, data,isText,cb) {
     var payload = {};
     payload = data;
 
@@ -78,7 +78,6 @@ function sendMessage(recipientId, data,isText) {
             text: data
         }
     }
-
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: token},
@@ -88,9 +87,10 @@ function sendMessage(recipientId, data,isText) {
             message: payload,
         }
     }, function (error, response, body) {
-        console.log('message body' + JSON.stringify(body));
+        if(typeof cb=='function') cb(response);
         if (error) {
             console.log('Error sending message: ', error);
+
         } else if (response.body.error) {
             console.log('Error: ', response.body);
         }
@@ -117,20 +117,22 @@ router.post('/webhook', function (req, res) {
         var event = events[i];
         console.log(event);
         if (isDeliveryReport(event)) {
-            console.log('delivery detected');
-            deliveryReport(event, event.sender.id.toString());
+            deliveryReport(event, event.sender.id.toString(),function(){
+                res.sendStatus(200);
+            });
         }
         else if (isPostback(event)) {
-            console.log('postback detected');
-            sendMessage(event.sender.id.toString(), 'get well soon!');
-            postback(event, event.sender.id.toString());
+            postback(event, event.sender.id.toString(),function(){
+                res.sendStatus(200);
+            });
         }
         else if (isMessageReceive(event)) {
-            console.log('message recived detected');
-            messageReceive(event, event.sender.id.toString());
+            messageReceive(event, event.sender.id.toString(),function(){
+                res.sendStatus(200);
+            });
         }
     }
-    res.sendStatus(200);
+
 });
 
 
