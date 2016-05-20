@@ -33,7 +33,7 @@ function postback(data,_sender_id,cb) {
 }
 
 //handle message received event.
-function messageReceive(data,sender_id,cb) {
+function messageReceive(data,sender_id,cb=0) {
     console.log('inside message received')
     var text = data.message.text.toLowerCase();
 
@@ -93,7 +93,6 @@ function sendMessage(recipientId, data,isText,cb) {
             text: data
         }
     }
-
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: token},
@@ -133,22 +132,17 @@ router.post('/webhook', function (req, res) {
         var event = events[i];
         console.log(event);
         if (isDeliveryReport(event)) {
-            deliveryReport(event, event.sender.id.toString(),function(){
-                res.sendStatus(200);
-            });
+            deliveryReport(event, event.sender.id.toString());
         }
         else if (isPostback(event)) {
-            postback(event, event.sender.id.toString(),function(){
-                res.sendStatus(200);
-            });
+            postback(event, event.sender.id.toString());
         }
         else if (isMessageReceive(event)) {
-            messageReceive(event, event.sender.id.toString(),function(){
-                res.sendStatus(200);
-            });
+            messageReceive(event, event.sender.id.toString());
+
         }
     }
-
+    res.sendStatus(200);
 });
 
 
