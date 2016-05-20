@@ -53,7 +53,7 @@ function messageReceive(data,sender_id,cb) {
                 var msg="";
                 console.log(data);
                 if(typeof data.reminder != 'undefined') msg  = msg + " TASK IS :" + data.reminder[0].value;
-                if(typeof data.duration != 'undefined') msg  = msg + " DURATION IS :" + data.duration[0].normalized.value + data.entities.duration.unit ;
+                if(typeof data.duration != 'undefined') msg  = msg + " DURATION IS :" + data.duration[0].normalized.value + data.entities.duration[0].unit ;
                 console.log(msg);
                 sendMessage(sender_id,msg,true,function(){
                     console.log('message sent with WIT.AI ' + msg);
