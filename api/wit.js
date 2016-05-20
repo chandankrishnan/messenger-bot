@@ -6,6 +6,7 @@ var request=require('request'),
 
 module.exports.message=function(query,cb)
 {
+    console.log('wit called');
     request({
         url: URL,
         qs: {q: query, v:VERSION},
@@ -16,7 +17,10 @@ module.exports.message=function(query,cb)
         }
     }, function (error, response, body) {
 
-        if(typeof cb == 'function') cb(response,null);
+        if(typeof cb == 'function') {
+            console.log(response)
+            cb(response,null);
+        }
 
         if (err) {
             if(typeof error == 'function') error(null,err);

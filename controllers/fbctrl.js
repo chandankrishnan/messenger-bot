@@ -48,6 +48,7 @@ function messageReceive(data,sender_id,cb) {
             break;
 
         default:
+            console.log('calling wit');
             wit.message(text,function(data,err) {
                 var msg="";
                 if(data.entities.reminder) msg  = msg + " TASK IS :" + data.entities.reminder.value;
@@ -91,6 +92,8 @@ function sendMessage(recipientId, data,isText,cb) {
             text: data
         }
     }
+    console.log('payload is ');
+    console.log(payload);
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: token},
