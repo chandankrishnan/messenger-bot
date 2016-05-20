@@ -1,8 +1,8 @@
 var template={};
 
-module.exports.welcome=function(name)
+module.exports.welcome=function()
 {
-  var msg='Hi there,' + name + 'I did not find you in my contact,Will you be my frined ? Say yes so that i can assist you.' ;
+  var msg='Hi there, I did not find you in my contact,Will you be my frined ? Say yes so that i can assist you.' ;
 
   return {
     "attachment":{
