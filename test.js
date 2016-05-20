@@ -20,10 +20,13 @@ function test()
         method: 'GET',
         headers:
         {
-            Authorization: "Bearer JWT2GIFMQ5FBC6Q2F6V2IZ5NHBYFZYJY"
+            Authorization: "Bearer JWT2GIFMQ5FBC6Q2F6V2IZ5NHBYFZYJY",
+            "Content-Type":"application/json"
         }
-    }, function (error, response, body) {
-        console.log('message body' + body);
+    }, function (error, response, body)
+    {
+        var dog=JSON.parse(response.body);
+        console.log(dog.entities.reminder);
         if (error) {
             console.log('Error sending message: ', error);
         } else if (response.body.error) {

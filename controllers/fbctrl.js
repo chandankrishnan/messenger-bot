@@ -51,10 +51,10 @@ function messageReceive(data,sender_id,cb) {
             console.log('calling wit');
             wit.message(text,function(data,err) {
                 var msg="";
-
-                if(typeof data.entities.reminder != 'undefined') msg  = msg + " TASK IS :" + data.entities.reminder.value;
-                if(typeof data.entities.duration != 'undefined') msg  = msg + " DURATION IS :" + data.entities.duration.normalized.value + data.entities.duration.unit ;
-
+                console.log(data);
+                if(typeof data.reminder != 'undefined') msg  = msg + " TASK IS :" + data.reminder.value;
+                if(typeof data.duration != 'undefined') msg  = msg + " DURATION IS :" + data.duration.normalized.value + data.entities.duration.unit ;
+                console.log(msg);
                 sendMessage(sender_id,msg,true,function(){
                     console.log('message sent with WIT.AI ' + msg);
                 })
@@ -93,8 +93,7 @@ function sendMessage(recipientId, data,isText,cb) {
             text: data
         }
     }
-    console.log('payload is ');
-    console.log(payload);
+
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: token},

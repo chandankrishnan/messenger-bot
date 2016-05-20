@@ -6,7 +6,6 @@ var request=require('request'),
 
 module.exports.message=function(query,cb)
 {
-    console.log('wit called');
     request({
         url: URL,
         qs: {q: query, v:VERSION},
@@ -16,10 +15,10 @@ module.exports.message=function(query,cb)
             Authorization: "Bearer " + SERVER_TOKEN
         }
     }, function (error, response, body) {
+        if(typeof response != 'undefined') res=JSON.parse(response.body.entities);
 
         if(typeof cb == 'function') {
-            console.log(response)
-            cb(response,null);
+            cb(res,null);
         }
 
         if (err) {
