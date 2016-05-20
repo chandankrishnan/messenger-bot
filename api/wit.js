@@ -15,10 +15,10 @@ module.exports.message=function(query,cb)
             Authorization: "Bearer " + SERVER_TOKEN
         }
     }, function (error, response, body) {
-        if(typeof response != 'undefined') res=JSON.parse(response.body.entities);
+        if(typeof response != 'undefined') res=JSON.parse(response.body);
 
         if(typeof cb == 'function') {
-            cb(res,null);
+            cb(res.entities,null);
         }
 
         if (err) {
