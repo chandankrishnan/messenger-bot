@@ -33,7 +33,8 @@ function postback(data,_sender_id,cb) {
 }
 
 //handle message received event.
-function messageReceive(data,sender_id,cb=0) {
+function messageReceive(data,sender_id,cb) {
+    cb="a";
     console.log('inside message received')
     var text = data.message.text.toLowerCase();
 
