@@ -92,6 +92,7 @@ function isDeliveryReport(event) {
 
 // generic function to send message
 function sendMessage(recipientId, data,isText,cb) {
+   
     var payload = {};
     payload = data;
 
