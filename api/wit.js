@@ -4,7 +4,7 @@ var request=require('request'),
     SERVER_TOKEN=process.env.WIT_SERVER_TOKEN || "JWT2GIFMQ5FBC6Q2F6V2IZ5NHBYFZYJY";
 
 
-module.exports.message=function(query,cb)
+module.exports.message=function(query,cb,err)
 {
     request({
         url: URL,
