@@ -28,3 +28,12 @@ module.exports.message=function(query,cb,err)
         }
     });
 }
+
+/*
+* @params: array
+*        : wit response data
+* */
+module.exports.expect=function(keys,result)
+{
+
+}

@@ -4,6 +4,14 @@ var mongo = require('mongoose')
     , util = require("util")
     , EventEmitter = require("events").EventEmitter
 
+var Tasks = new Schema({
+    title      : String
+    , datetime : Date
+    , location : String
+    ,
+});
+
+
 var userSchema = mongo.Schema({
     _id:{type:String,required:true,unique:true}
     ,first: {type: String, lowercase: true, trim: true, required: true}
@@ -11,6 +19,7 @@ var userSchema = mongo.Schema({
     , avtar: String
     , gender: {type: String, required: true}
     , age: {type: Number, required: false}
+    , tasks :[Tasks]
     , isActive: {type: Boolean, default: 0}
 });
 

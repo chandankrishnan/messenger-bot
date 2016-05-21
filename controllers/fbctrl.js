@@ -18,8 +18,6 @@ function postback(data,_sender_id,cb) {
 
     var response = data.postback.payload.toString().trim().toLowerCase(),
         sender_id=_sender_id.toString();
-
-    console.log('inside postback ' + response);
     switch (response) {
         case 'accept-friend-request':
             sendMessage(sender_id, 'Thanks for accepting frined request.',true,function(data,error){
