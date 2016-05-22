@@ -4,7 +4,7 @@ var mongo = require('mongoose')
     , util = require("util")
     , EventEmitter = require("events").EventEmitter
 
-var Tasks = new Schema({
+var Tasks = new mongo.Schema({
     title      : String
     , datetime : Date
     , location : String
