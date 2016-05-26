@@ -64,7 +64,7 @@ const PORT = process.env.PORT || 8445;
 const WIT_TOKEN = process.env.WIT_SERVER_KEY;
 
 // Messenger API parameters
-const FB_PAGE_ID = process.env.FB_PAGE_ID;
+const FB_PAGE_ID = process.env.FB_PAGE_ID || '1620191058306200';
 if (!FB_PAGE_ID) {
     throw new Error('missing FB_PAGE_ID');
 }
