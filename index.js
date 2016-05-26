@@ -61,7 +61,7 @@ const Wit = require('node-wit').Wit;
 const PORT = process.env.PORT || 8445;
 
 // Wit.ai parameters
-const WIT_TOKEN = process.env.WIT_SERVER_KEY;
+const WIT_TOKEN = 'JWT2GIFMQ5FBC6Q2F6V2IZ5NHBYFZYJY'; // process.env.WIT_SERVER_KEY;
 
 // Messenger API parameters
 const FB_PAGE_ID = process.env.FB_PAGE_ID || '1620191058306200';
