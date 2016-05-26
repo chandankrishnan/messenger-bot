@@ -68,11 +68,11 @@ const FB_PAGE_ID = process.env.FB_PAGE_ID || '1620191058306200';
 if (!FB_PAGE_ID) {
     throw new Error('missing FB_PAGE_ID');
 }
-const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN;
+const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN || "EAAJiekb5XukBAFDZA01x8HkufiGQIiF5vZAdMi8QuwXIhaw3JuwTA6IoeMIKvZAZBvSlEeb66UBrtBd9sKTsIBfxGllEOVGPB3N3eiY0OC4Xnnvw4W1z5z6Hx3I4OcVvBu6ZB8bFZBHcr5TZBCfDZCzggmCPV56n6knEBBEuSfdl4wZDZD";
 if (!FB_PAGE_TOKEN) {
     throw new Error('missing FB_PAGE_TOKEN');
 }
-const FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
+const FB_VERIFY_TOKEN = '';
 
 // Messenger API specific code
 
