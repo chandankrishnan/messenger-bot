@@ -4,6 +4,14 @@ var request=require('request'),
     SERVER_TOKEN=process.env.WIT_SERVER_TOKEN || "JWT2GIFMQ5FBC6Q2F6V2IZ5NHBYFZYJY";
 
 
+const Logger = require('node-wit').Logger;
+const levels = require('node-wit').logLevels;
+const Wit = require('node-wit').Wit;
+const logger = new Logger(levels.DEBUG);
+const client = new Wit(SERVER_TOKEN, actions, logger);
+
+
+
 module.exports.message=function(query,cb,err)
 {
     request({

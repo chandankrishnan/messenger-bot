@@ -38,7 +38,7 @@ function messageReceive(data,sender_id,cb) {
 
     switch (text) {
         case 'hi':
-            sendMessage(sender_id, 'hi ',true,function(data,error){
+            sendMessage(sender_id,template.welcome(),false,function(data,error){
                 if(typeof cb=='function') cb();
             });
             break;
