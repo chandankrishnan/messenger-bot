@@ -157,7 +157,7 @@ const actions = {
         fbMessage(recipientId, message, (err, data) => {
             if (err) {
             console.log(
-                'Oops! An error occurred while forwarding the response to',
+                'Oops! An error occurred while forwarding the response to .',
                 recipientId,
                 ':',
                 err
