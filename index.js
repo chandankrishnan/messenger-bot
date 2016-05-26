@@ -209,6 +209,8 @@ if (req.query['hub.mode'] === 'subscribe' &&
 app.post('/hooks/fb/webhook', (req, res) => {
     // Parsing the Messenger API response
     const messaging = getFirstMessagingEntry(req.body);
+    console.log('post hook called');
+    console.log(messaging);
 if (messaging && messaging.message && messaging.recipient.id === FB_PAGE_ID) {
     // Yay! We got a new message!
 
