@@ -4,7 +4,8 @@ var bodyParser = require('body-parser');
 var request = require('request'),
    db=require('./models/db'),
    logger=require('./helpers/logger'),
-   user=require('./models/users.js');
+   user=require('./models/users.js'),
+   router=express.Router();
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -18,8 +19,11 @@ app.use(express.static(__dirname + '/public'));
 
 
 //middelware to load
-app.use(require('./controllers'))
+// app.use(require('./controllers'))
 // app.use('/hooks',require('./webhooks'))
+router.get('/',function(req,res){
+  console.log("defined");
+});
 
 db.connect(function () {
    //callback when connect success
