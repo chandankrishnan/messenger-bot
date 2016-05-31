@@ -21,6 +21,9 @@ app.use(express.static(__dirname + '/public'));
 //middelware to load
 // app.use(require('./controllers'))
 // app.use('/hooks',require('./webhooks'))
+app.use('/a',function(){
+  console.log("in a");
+})
 router.get('/',function(req,res){
   console.log("defined");
 });
