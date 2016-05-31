@@ -34,7 +34,7 @@ router.post('/fb/webhook',function(req,res,next){
 router.get('/',function(req,res){
     res.send('c=main');
 });
-
+console.log("app staring");
 app.use('/',router);
 app.set('port', PORT);
 
