@@ -2,10 +2,15 @@ var express=require('express')
     ,app=express()
     ,router=express.Router()
 
-router.use('/hooks/fb',require('./fbctrl'))
+
+router.use('/fb',require('./fbCtrl'));
+router.use('/',function(req,res,next){
+  console.log('reached');
+  next();
+})
 
 //home page
-router.get('/',function(req,res) {
+router.get('/a',function(req,res) {
     res.send('This is main controller');
 });
 

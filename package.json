@@ -1,34 +1,17 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.2.5",
-  "description": "A sample Node.js app using Express 4",
-  "engines": {
-    "node": "5.9.1"
-  },
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
+  "name": "chat-example",
+  "version": "0.0.0",
+  "description": "A chat example to showcase how to use `socket.io` with a static `express` server with `async` for control flow.",
+  "main": "server.js",
+  "repository": "",
+  "author": "Mostafa Eweda <mo.eweda@gmail.com>",
   "dependencies": {
+    "async": "~0.2.8",
     "body-parser": "^1.15.1",
-    "bunyan": "^1.8.1",
-    "ejs": "^2.4.1",
-    "express": "^4.13.4",
-    "fbgraph": "^1.1.0",
-    "mongoose": "^4.4.17",
+    "express": "^4.12.3",
+    "http": "0.0.0",
     "node-wit": "^3.3.2",
     "request": "^2.72.0",
-    "node-fetch": "^1.5.1",
-    "node-uuid": "^1.4.7"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
-  },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
+    "socket.io": "~0.9.14"
+  }
 }
