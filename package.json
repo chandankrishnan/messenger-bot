@@ -9,9 +9,13 @@
     "async": "~0.2.8",
     "body-parser": "^1.15.1",
     "express": "^4.12.3",
+    "google-geocode": "0.0.2",
     "http": "0.0.0",
+    "moment": "^2.13.0",
+    "node-cricapi": "^1.2.2",
     "node-wit": "^3.3.2",
     "request": "^2.72.0",
+    "showtimes": "^2.1.0",
     "socket.io": "~0.9.14"
   }
 }
