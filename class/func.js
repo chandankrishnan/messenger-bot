@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * define modeule dependencies
  */
@@ -24,7 +26,33 @@ module.exports = {
             uri += '&radius=500&types=' + search; //+search;
             uri += '&key=AIzaSyDnT1tOkCdp7ZLyLyOa3OYGs8X6cKFaNPc';
             request(uri, function(err, res, body) {
-                cb(JSON.parse(body));
+              let data=JSON.parse(body);
+              let elements=[];
+              data.results.forEach(function(data,index){
+                // results[index]={name:data.name,vicinity:data.vicinity};
+                elements[index]={ title:(data.name.length >= 80) ? data.name.substr(-75) + ' ...' : data.name,
+                                  subtitle:(data.subtitle)?(data.subtitle.length >= 80) ? data.subtitle.substr(-75) + '...' : data.subtitle : "No address",
+                                  buttons:[
+                                    {
+                                      "type":"web_url",
+                                      "url":"https://petersapparel.parseapp.com/view_item?item_id=100",
+                                      "title":"Google Search"
+                                    },
+                                    {
+                                      "type":"web_url",
+                                      "url":"https://petersapparel.parseapp.com/buy_item?item_id=100",
+                                      "title":"Buy Item"
+                                    },
+                                    {
+                                      "type":"postback",
+                                      "title":"Bookmark Item",
+                                      "payload":"USER_DEFINED_PAYLOAD_FOR_ITEM100"
+                                    }]
+                                  }
+                });
+                var results={ "attachment":{ "type":"template", "payload":{
+              "template_type":"generic", "elements":elements } } };
+                cb(results);
             })
         });
     },
@@ -74,7 +102,34 @@ module.exports = {
             if (error) {
                 cb(error);
             } else {
-                cb(theaters);
+              let elements=[];
+              theaters.forEach(function(data,index){
+                // results[index]={name:data.name,vicinity:data.vicinity};
+                elements[index]={ title:(data.name.length >= 80) ? data.name.substr(-75) + ' ...' : data.name,
+                                  subtitle:(data.address)?(data.address.length >= 80) ? data.address.substr(-75) + '...' : data.address : "No address",
+                                  buttons:[
+                                    {
+                                      "type":"web_url",
+                                      "url":"https://petersapparel.parseapp.com/view_item?item_id=100",
+                                      "title":"Google Search"
+                                    },
+                                    {
+                                      "type":"web_url",
+                                      "url":"https://petersapparel.parseapp.com/buy_item?item_id=100",
+                                      "title":"Buy Item"
+                                    },
+                                    {
+                                      "type":"postback",
+                                      "title":"Bookmark Item",
+                                      "payload":"USER_DEFINED_PAYLOAD_FOR_ITEM100"
+                                    }]
+                                  }
+                });
+                var results={ "attachment":{ "type":"template", "payload":{
+              "template_type":"generic", "elements":elements } } };
+
+                cb(results);
+                // cb(theaters);
             }
         });
     }
