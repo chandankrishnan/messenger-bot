@@ -2,30 +2,58 @@
 
 const Wit=require('node-wit').Wit;
 const express = require('express'),
-      router = express.Router(),
-      app=express(),
-      request = require('request'),
-      bodyParser=require('body-parser'),
-      Func=require('./../class/func'),
-      FBMessenger = require('fb-messenger'),
-      session=require('./../class/session');
+    router = express.Router(),
+    app=express(),
+    request = require('request'),
+    bodyParser=require('body-parser'),
+    Func=require('./../class/func');
+
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID,
-      FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN,
-      WIT_TOKEN=process.env.WIT_TOKEN;
+    FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN,
+    WIT_TOKEN=process.env.WIT_TOKEN;
 
 const weather_dict=['weather','temp','temperature','rain'];
-const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
+// Messenger API specific code
+
+// See the Send API reference
+// https://developers.facebook.com/docs/messenger-platform/send-api-reference
+const fbReq = request.defaults({
+  uri: 'https://graph.facebook.com/me/messages',
+  method: 'POST',
+  json: true,
+  qs: { access_token: FB_PAGE_TOKEN },
+  headers: {'Content-Type': 'application/json'},
+});
+
+const fbMessage = (recipientId, msg,textOnly, cb) => {
+  var opts = {
+    form: {
+      recipient: {
+        id: recipientId,
+      },
+      message: {
+        text:msg
+      },
+    },
+  };
+
+  fbReq(opts, (err, resp, data) => {
+    if (cb) {
+      cb(err || data.error && data.error.message, data);
+    }
+  });
+};
 
 
 var extractEntity=function(entities,entity){
   const val = entities && entities[entity]
-  && Array.isArray(entities[entity])
-  && entities[entity].length > 0 &&
-    entities[entity][0].value;
-    if(val) return val;
-    else return false;
+      && Array.isArray(entities[entity])
+      && entities[entity].length > 0 &&
+      entities[entity][0].value;
+  if(val) return val;
+  else return false;
 
 }
 
@@ -33,25 +61,24 @@ var extractEntity=function(entities,entity){
 // https://developers.facebook.com/docs/messenger-platform/webhook-reference
 const getFirstMessagingEntry = (body) => {
   const val = body.object == 'page' &&
-    body.entry &&
-    Array.isArray(body.entry) &&
-    body.entry.length > 0 &&
-    body.entry[0] &&
-    body.entry[0].id == FB_PAGE_ID &&
-    body.entry[0].messaging &&
-    Array.isArray(body.entry[0].messaging) &&
-    body.entry[0].messaging.length > 0 &&
-    body.entry[0].messaging[0]
-  ;
+          body.entry &&
+          Array.isArray(body.entry) &&
+          body.entry.length > 0 &&
+          body.entry[0] &&
+          body.entry[0].id == FB_PAGE_ID &&
+          body.entry[0].messaging &&
+          Array.isArray(body.entry[0].messaging) &&
+          body.entry[0].messaging.length > 0 &&
+          body.entry[0].messaging[0]
+      ;
   return val || null;
 };
 
-//const sessions=[];
-//const findOrCreateSession = (fbid) => {
-//    let Session=new session(fbid);
-//  sessions=Session.sessions;
-//  return Session.sessionId;
-//};
+// Wit.ai bot specific code
+
+// This will contain all user sessions.
+// Each session has an entry:
+// sessionId -> {fbid: facebookUserId, context: sessionState}
 const sessions = {};
 
 const findOrCreateSession = (fbid) => {
@@ -71,6 +98,7 @@ const findOrCreateSession = (fbid) => {
   }
   return sessionId;
 };
+
 // Our bot actions
 const actions = {
   say(sessionId, context, message, cb) {
@@ -85,10 +113,10 @@ const actions = {
       fbMessage(recipientId, message,true, (err, data) => {
         if (err) {
           console.log(
-            'Oops! An error occurred while forwarding the response to',
-            recipientId,
-            ':',
-            err
+              'Oops! An error occurred while forwarding the response to',
+              recipientId,
+              ':',
+              err
           );
         }
 
@@ -107,16 +135,16 @@ const actions = {
   merge(sessionId, context, entities, message, cb) {
     console.log(entities);
     if(context.search_result) delete context.search_result;
-   
+
 
     let local_query=extractEntity(entities,'local_search_query');
     let entertainment=extractEntity(entities,'entertainment');
-      if(local_query)
-      {
-        if(local_query=="weather") context.intent="weather";
-        else context.intent="local_query";
-      }
-      if(entertainment) context.intent=entertainment;
+    if(local_query)
+    {
+      if(local_query=="weather") context.intent="weather";
+      else context.intent="local_query";
+    }
+    if(entertainment) context.intent=entertainment;
     if(extractEntity(entities,"location")) context.location=extractEntity(entities,"location");
     console.log("context after merge");
     console.log(context);
@@ -144,23 +172,19 @@ const actions = {
   },
   ['find-cinema'](sessionId,context,cb)
   {
-     if(context.intent=="entertainment")
-     {
-       console.log('inside find cinmea loop');
+    if(context.intent=="entertainment")
+    {
+      console.log('inside find cinmea loop');
       Func.movieTheater("Chembur,Mumbai",function(data){
         context.search_result="your moview list";
         context.done=true;
-        //messenger.sendHScrollMessage('10209313623095789',data,function(err,body){
-        //  if(err ) console.log(err);
-        //  else console.log(body);
-        //});
         cb(context);
       });
-     }
-     else cb(context);
-    
+    }
+    else cb(context);
+
   }
-  
+
   // You should implement your custom actions here
   // See https://wit.ai/docs/quickstart
 };
@@ -174,15 +198,14 @@ const finshSession=(sID)=>
 const wit = new Wit(WIT_TOKEN, actions);
 
 
-
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
-    console.warn('authentication called');
-    if (req.query['hub.verify_token'] === 'testbot_verify_token') {
-        res.send(req.query['hub.challenge']);
-    } else {
-        res.send('Invalid verify token');
-    }
+  console.warn('authentication called');
+  if (req.query['hub.verify_token'] === 'testbot_verify_token') {
+    res.send(req.query['hub.challenge']);
+  } else {
+    res.send('Invalid verify token');
+  }
 });
 
 
@@ -209,37 +232,37 @@ router.post('/webhook', (req, res) => {
 
       // Let's reply with an automatic message
       fbMessage(
-        sender,
-        'Sorry I can only process text messages for now.',
-        true
+          sender,
+          'Sorry I can only process text messages for now.',
+          true
       );
     } else if (msg) {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
       wit.runActions(
-        sessionId, // the user's current session
-        msg, // the user's message
-        sessions[sessionId].context, // the user's current session state
-        (error, context) => {
-          if (error) {
-            console.log('Oops! Got an error from Wit:', error);
-          } else {
-            // Our bot did everything it has to do.
-            // Now it's waiting for further messages to proceed.
-            console.log('Waiting for futher messages.');
+          sessionId, // the user's current session
+          msg, // the user's message
+          sessions[sessionId].context, // the user's current session state
+          (error, context) => {
+            if (error) {
+              console.log('Oops! Got an error from Wit:', error);
+            } else {
+              // Our bot did everything it has to do.
+              // Now it's waiting for further messages to proceed.
+              console.log('Waiting for futher messages.');
 
-            // Based on the session state, you might want to reset the session.
-            // This depends heavily on the business logic of your bot.
-            // Example:
-            if (context['done']) {
-              delete sessions[sessionId];
+              // Based on the session state, you might want to reset the session.
+              // This depends heavily on the business logic of your bot.
+              // Example:
+              if (context['done']) {
+                delete sessions[sessionId];
+              }
+
+              // Updating the user's current session state
+              sessions[sessionId].context = context;
             }
-
-            // Updating the user's current session state
-            sessions[sessionId].context = context;
           }
-        }
       );
     }
   }
