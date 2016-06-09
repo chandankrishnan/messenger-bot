@@ -46,13 +46,31 @@ const getFirstMessagingEntry = (body) => {
   return val || null;
 };
 
-var sessions=[];
-const findOrCreateSession = (fbid) => {
-    let Session=new session(fbid);
-  sessions=Session.sessions;
-  return Session.sessionId;
-};
+//const sessions=[];
+//const findOrCreateSession = (fbid) => {
+//    let Session=new session(fbid);
+//  sessions=Session.sessions;
+//  return Session.sessionId;
+//};
+const sessions = {};
 
+const findOrCreateSession = (fbid) => {
+  let sessionId;
+  // Let's see if we already have a session for the user fbid
+  Object.keys(sessions).forEach(k => {
+    if (sessions[k].fbid === fbid) {
+      // Yep, got it!
+      sessionId = k;
+    }
+  });
+  if (!sessionId) {
+    // No session found for user fbid, let's create a new one
+    sessionId = new Date().toISOString();
+    sessions[sessionId] = {fbid: fbid, context: {}};
+    console.log("new session created :" + JSON.stringify(sessions));
+  }
+  return sessionId;
+};
 // Our bot actions
 const actions = {
   say(sessionId, context, message, cb) {
