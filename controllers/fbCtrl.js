@@ -50,7 +50,7 @@ var sessions=[];
 var findOrCreateSession = (fbid) => {
   const Session=new session(fbid);
   sessions=Session.get();
-  return Session.sessionId;
+  return Session.sessionID();
 };
 
 // Our bot actions

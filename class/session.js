@@ -5,7 +5,7 @@ var sessionId='';
 class Session {
 
     constructor(id) {
-        this.findOrCreate(id);
+        sessionId=this.findOrCreate(id);
         console.log(id);
     }
 
@@ -14,6 +14,10 @@ class Session {
         return sessions;
     }
 
+    sessionID()
+    {
+        return sessionId;
+    }
     findOrCreate(id)
     {
         Object.keys(sessions).forEach(k => {
@@ -28,6 +32,8 @@ class Session {
             sessions[sessionId] = {fbid: sessionId, context: {}};
             console.log("new session created :" + JSON.stringify(sessions));
         }
+
+        return sessionId;
     }
 }
 
