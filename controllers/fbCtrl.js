@@ -28,10 +28,7 @@ const fbReq = request.defaults({
 });
 
 const fbMessage = (recipientId, msg,textOnly, cb) => {
-var opts={};
-if(textOnly)
-{
-  opts = {
+var opts = {
     form: {
       recipient: {
         id: recipientId,
@@ -41,21 +38,6 @@ if(textOnly)
       },
     },
   };
-}
-else {
-  console.log('executing 2nd opts');
-  opts = {
-    form: {
-      recipient: {
-        id: recipientId,
-      },
-      message: {
-       msg
-      },
-    },
-  };
-}
-  console.log(JSON.stringify(opts));
 
   fbReq(opts, (err, resp, data) => {
     if (cb) {
@@ -70,8 +52,6 @@ var extractEntity=function(entities,entity){
   && Array.isArray(entities[entity])
   && entities[entity].length > 0 &&
     entities[entity][0].value;
-
-    console.log('value is ' + val);
     if(val) return val;
     else return false;
 
@@ -155,7 +135,7 @@ const actions = {
   merge(sessionId, context, entities, message, cb) {
     console.log(entities);
     if(context.search_result) delete context.search_result;
-    if(context.intent) delete context.intent;
+   
 
     let local_query=extractEntity(entities,'local_search_query');
     let entertainment=extractEntity(entities,'entertainment');
@@ -173,45 +153,38 @@ const actions = {
   error(sessionId, context, error) {
     console.log(error.message);
   },['find-local'](sessionId, context, cb) {
-    console.warn('firing find-local action');
+    console.warn('firing find-local action context' + JSON.stringify(context));
     // Here should go the api call, e.g.:
     // context.forecast = apiCall(context.loc)
     if(context.intent=="weather")
     {
+      console.log('inside weather condition');
       // delete context.search_result;
       Func.weather(context.location,function(data){
+        console.log('finding weather');
         context.search_result=data.toString();
         console.log('searhc data set through weather event' + JSON.stringify(context));
         context.done=true;
         cb(context);
       });
     }
-    else if(context.intent=="local_query")
-    {
-
-    }
     else cb(context);
   },
-  ['find-cinema'](sessionId,context,cb){
-    Func.movieTheater("Chembur,Mumbai",function(data){
-      context.search_result="your moview list";
-      context.done=true;
-
-      fbMessage(sessions[sessionId].fbid, data,false, (err, data) => {
-        if (err) {
-          console.log(
-            'Oops! An error occurred while forwarding the response to',
-            sessions[sessionId].fbid,
-            ':',
-            err
-          );
-        }
-    });
-      console.log(data);
-      cb(context);
-    });
-
+  ['find-cinema'](sessionId,context,cb)
+  {
+     if(context.intent=="entertainment")
+     {
+       console.log('inside find cinmea loop');
+      Func.movieTheater("Chembur,Mumbai",function(data){
+        context.search_result="your moview list";
+        context.done=true;
+        cb(context);
+      });
+     }
+     else cb(context);
+    
   }
+  
   // You should implement your custom actions here
   // See https://wit.ai/docs/quickstart
 };
@@ -239,11 +212,10 @@ router.get('/webhook', function (req, res) {
 // Message handler
 router.post('/webhook', (req, res) => {
   // Parsing the Messenger API response
-  console.log("reached in");
+  console.log("reached inside hook post");
   const messaging = getFirstMessagingEntry(req.body);
-  if (messaging && messaging.message && messaging.recipient.id === FB_PAGE_ID) {
+  if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
     // Yay! We got a new message!
-
     // We retrieve the Facebook user ID of the sender
     const sender = messaging.sender.id;
 
@@ -266,7 +238,6 @@ router.post('/webhook', (req, res) => {
       );
     } else if (msg) {
       // We received a text message
-
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
       wit.runActions(
