@@ -4,10 +4,7 @@ const express = require('express'),
     router = express.Router(),
     bodyParser=require('body-parser'),
     http=require('http'),
-    Func=require('./class/func'),
-    request = require('request');
-
-//const Wit=require('node-wit').Wit;
+    Func=require('./class/func')
 
 const PORT= process.env.PORT;
 const HOST=process.env.IP;
@@ -16,7 +13,15 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-//const wit = new Wit('OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG', actions);
+app.use(require('./controllers'));
+//Func.movieTheater("Chembur,Mumbai",function(data) {
+//    //console.log(data);
+//    messenger.sendTextMessage('10209313623095789', 'Hello', 'NO_PUSH');
+//    messenger.sendHScrollMessage('10209313623095789',data,function(err,body){
+//        if(err ) console.log(err);
+//        else console.log(body);
+//    });
+// });
 
 
 app.use('/',router);
