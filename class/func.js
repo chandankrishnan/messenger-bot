@@ -105,31 +105,31 @@ module.exports = {
               let elements=[];
               theaters.forEach(function(data,index){
                 // results[index]={name:data.name,vicinity:data.vicinity};
-                elements[index]={ title:(data.name.length >= 80) ? data.name.substr(-75) + ' ...' : data.name,
-                                  subtitle:(data.address)?(data.address.length >= 80) ? data.address.substr(-75) + '...' : data.address : "No address",
-                                  buttons:[
-                                    {
-                                      "type":"web_url",
-                                      "url":"https://petersapparel.parseapp.com/view_item?item_id=100",
-                                      "title":"Google Search"
-                                    },
-                                    {
-                                      "type":"web_url",
-                                      "url":"https://petersapparel.parseapp.com/buy_item?item_id=100",
-                                      "title":"Buy Item"
-                                    },
-                                    {
-                                      "type":"postback",
-                                      "title":"Bookmark Item",
-                                      "payload":"USER_DEFINED_PAYLOAD_FOR_ITEM100"
-                                    }]
-                                  }
+                    if(index <= 9)
+                    {
+                        elements[index]={ title:(data.name.length >= 80) ? data.name.substr(-75) + ' ...' : data.name,
+                            subtitle: (data.address)?(data.address.length >= 80) ? data.address.substr(-75) + '...' : data.address : "No address" ,
+                            buttons:[
+                                {
+                                    "type":"web_url",
+                                    "url":"https://petersapparel.parseapp.com/view_item?item_id=100",
+                                    "title":"Google Search"
+                                },
+                                {
+                                    "type":"postback",
+                                    "title":"Bookmark Item",
+                                    "payload":"USER_DEFINED_PAYLOAD_FOR_ITEM100"
+                                }]
+                        }
+                    }
+
                 });
-                var results={ "attachment":{ "type":"template", "payload":{
-              "template_type":"generic", "elements":elements } } };
+                //{ "attachment":{ "type":"template", "payload":{
+                //    "template_type":"generic", "elements":elements } } };
+                var results=elements;
 
                 cb(results);
-                // cb(theaters);
+
             }
         });
     }

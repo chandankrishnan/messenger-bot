@@ -9,6 +9,7 @@
     "async": "~0.2.8",
     "body-parser": "^1.15.1",
     "express": "^4.12.3",
+    "fb-messenger": "^1.0.0",
     "google-geocode": "0.0.2",
     "http": "0.0.0",
     "moment": "^2.13.0",

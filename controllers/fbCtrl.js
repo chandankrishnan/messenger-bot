@@ -6,45 +6,17 @@ const express = require('express'),
       app=express(),
       request = require('request'),
       bodyParser=require('body-parser'),
-      Func=require('./../class/func');
-
+      Func=require('./../class/func'),
+      FBMessenger = require('fb-messenger'),
+      session=require('./../class/session');
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID,
       FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN,
       WIT_TOKEN=process.env.WIT_TOKEN;
 
 const weather_dict=['weather','temp','temperature','rain'];
+const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
-// Messenger API specific code
-
-// See the Send API reference
-// https://developers.facebook.com/docs/messenger-platform/send-api-reference
-const fbReq = request.defaults({
-  uri: 'https://graph.facebook.com/me/messages',
-  method: 'POST',
-  json: true,
-  qs: { access_token: FB_PAGE_TOKEN },
-  headers: {'Content-Type': 'application/json'},
-});
-
-const fbMessage = (recipientId, msg,textOnly, cb) => {
-var opts = {
-    form: {
-      recipient: {
-        id: recipientId,
-      },
-      message: {
-       text:msg
-      },
-    },
-  };
-
-  fbReq(opts, (err, resp, data) => {
-    if (cb) {
-      cb(err || data.error && data.error.message, data);
-    }
-  });
-};
 
 
 var extractEntity=function(entities,entity){
@@ -74,29 +46,11 @@ const getFirstMessagingEntry = (body) => {
   return val || null;
 };
 
-// Wit.ai bot specific code
-
-// This will contain all user sessions.
-// Each session has an entry:
-// sessionId -> {fbid: facebookUserId, context: sessionState}
-const sessions = {};
-
+var sessions=[];
 const findOrCreateSession = (fbid) => {
-  let sessionId;
-  // Let's see if we already have a session for the user fbid
-  Object.keys(sessions).forEach(k => {
-    if (sessions[k].fbid === fbid) {
-      // Yep, got it!
-      sessionId = k;
-    }
-  });
-  if (!sessionId) {
-    // No session found for user fbid, let's create a new one
-    sessionId = new Date().toISOString();
-    sessions[sessionId] = {fbid: fbid, context: {}};
-    console.log("new session created :" + JSON.stringify(sessions));
-  }
-  return sessionId;
+    let Session=new session(fbid);
+  sessions=Session.sessions;
+  return Session.sessionId;
 };
 
 // Our bot actions
@@ -178,6 +132,10 @@ const actions = {
       Func.movieTheater("Chembur,Mumbai",function(data){
         context.search_result="your moview list";
         context.done=true;
+        //messenger.sendHScrollMessage('10209313623095789',data,function(err,body){
+        //  if(err ) console.log(err);
+        //  else console.log(body);
+        //});
         cb(context);
       });
      }
@@ -196,6 +154,7 @@ const finshSession=(sID)=>
 }
 // Setting up our bot
 const wit = new Wit(WIT_TOKEN, actions);
+
 
 
 // Facebook Webhook
