@@ -47,9 +47,9 @@ const getFirstMessagingEntry = (body) => {
 };
 
 var sessions=[];
-const findOrCreateSession = (fbid) => {
-  let Session=new session(fbid);
-  sessions=Session.sessions;
+var findOrCreateSession = (fbid) => {
+  const Session=new session(fbid);
+  sessions=Session.get();
   return Session.sessionId;
 };
 

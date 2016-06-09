@@ -4,7 +4,9 @@ const express = require('express'),
     router = express.Router(),
     bodyParser=require('body-parser'),
     http=require('http'),
-    Func=require('./class/func')
+    Func=require('./class/func'),
+    session=require('./class/session');
+
 
 const PORT= process.env.PORT;
 const HOST=process.env.IP;
@@ -13,7 +15,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(require('./controllers'));
+router.use(require('./controllers'));
+
+
 //Func.movieTheater("Chembur,Mumbai",function(data) {
 //    //console.log(data);
 //    messenger.sendTextMessage('10209313623095789', 'Hello', 'NO_PUSH');
