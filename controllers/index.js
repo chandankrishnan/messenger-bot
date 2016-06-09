@@ -3,7 +3,7 @@ var express=require('express')
     ,router=express.Router()
 
 
-router.use('/fb/v1',require('./fbCtrl'));
+router.use('/fb',require('./fbCtrl'));
 router.use('/',function(req,res,next){
   next();
 })
