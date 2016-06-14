@@ -145,6 +145,7 @@ const actions = {
   },
   ['find-cinema'](sessionId,context,cb)
   {
+      console.warn('firing find-cinema action context' + JSON.stringify(context));
     if(context.intent=="entertainment")
     {
       console.log('inside find cinmea loop');
