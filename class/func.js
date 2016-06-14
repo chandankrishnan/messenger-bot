@@ -72,8 +72,8 @@ module.exports = {
         if (type === "weather") {
             request(uri, function(err, res, body) {
                 var data = JSON.parse(body),
-                    weather = "In " + data.name + ", I see " + data.weather[0].description + " ! ";
-                weather += " Temp: " + Math.floor(data.main.temp) + " degrees(F)";
+                weather = "In " + data.name + ", I see " + data.weather[0].description + " ! ";
+                weather += " Temp: " + ((Math.floor(data.main.temp))-30)/2 + " degrees(C)";
                 weather += " Humidity: " + data.main.humidity + " %";
                 weather += " Wind: " + Math.floor(data.wind.speed) + " mph";
                 weather += " Cloud Cover :" + data.clouds.all + " %";

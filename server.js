@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 router.use(require('./controllers'));
-messenger.sendTextMessage('10209313623095789', 'Hello', 'NO_PUSH');
+messenger.sendTextMessage('10209313623095789', 'Hello');
 
 //Func.movieTheater("Chembur,Mumbai",function(data) {
 //    //console.log(data);
