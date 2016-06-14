@@ -64,16 +64,7 @@ const actions = {
     if (recipientId) {
       // Yay, we found our recipient!
       // Let's forward our bot response to her.
-      fbMessage(recipientId, message,true, (err, data) => {
-        if (err) {
-          console.log(
-              'Oops! An error occurred while forwarding the response to',
-              recipientId,
-              ':',
-              err
-          );
-        }
-
+          messenger.sendTextMessage(recipientId, message);
         // Let's give the wheel back to our bot
         cb();
       });
@@ -188,13 +179,7 @@ router.post('/webhook', (req, res) => {
 
     if (atts) {
       // We received an attachment
-
-      // Let's reply with an automatic message
-      fbMessage(
-          sender,
-          'Sorry I can only process text messages for now.',
-          true
-      );
+        messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
     } else if (msg) {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
