@@ -195,7 +195,10 @@ router.post('/webhook', (req, res) => {
     const msg = messaging.message.text;
     const atts = messaging.message.attachments;
 
-   if (msg) {
+    if (atts) {
+      // We received an attachment
+        messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.' + JSON.stringify(atts));
+    } if (msg) {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
