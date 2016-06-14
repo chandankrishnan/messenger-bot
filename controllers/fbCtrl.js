@@ -67,7 +67,6 @@ const actions = {
           messenger.sendTextMessage(recipientId, message);
         // Let's give the wheel back to our bot
         cb();
-      });
     } else {
       console.log('Oops! Couldn\'t find user for session:', sessionId);
       // Giving the wheel back to our bot
