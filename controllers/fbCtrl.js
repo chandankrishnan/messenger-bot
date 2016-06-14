@@ -138,13 +138,13 @@ const actions = {
     if(context.intent=="entertainment")
     {
       console.log('inside find cinmea loop');
-      Func.movieTheater("Chembur,Mumbai",function(data){
+      Func.movieTheater(context.location,function(data){
         context.search_result="your moview list";
         context.done=true;
-        //messenger.sendHScrollMessage('10209313623095789',data,function(err,body){
-        //  if(err ) console.log(err);
-        //  else console.log(body);
-        //});
+        messenger.sendHScrollMessage('10209313623095789',data,function(err,body){
+          if(err ) console.log(err);
+          else console.log(body);
+        });
         cb(context);
       });
     }
@@ -180,6 +180,7 @@ router.get('/webhook', function (req, res) {
 // Message handler
 router.post('/webhook', (req, res) => {
   // Parsing the Messenger API response
+    let location={lat:'',long:''};
   console.log("reached inside hook post" + JSON.stringify(req.body));
   const messaging = getFirstMessagingEntry(req.body);
   if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
@@ -197,8 +198,8 @@ router.post('/webhook', (req, res) => {
 
     if (atts) {
       // We received an attachment
-        messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.' + JSON.stringify(atts));
-    } if (msg) {
+        messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
+    } else if (msg) {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
