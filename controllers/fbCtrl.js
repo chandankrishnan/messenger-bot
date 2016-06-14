@@ -46,8 +46,8 @@ const getFirstMessagingEntry = (body) => {
   return val || null;
 };
 
-var sessions=[];
-var sessionId;
+const sessions=[];
+
 //var findOrCreateSession = (fbid) => {
 //  const Session=new session(fbid);
 //  sessions=Session.get();
@@ -58,13 +58,13 @@ var findOrCreateSession = (fbid) => {
     Object.keys(sessions).forEach(k => {
         if (sessions[k].fbid === fbid) {
             // Yep, got it!
-            sessionId = k;
+            const sessionId = k;
         }
         console.log('using old session');
     });
     if (!sessionId) {
         // No session found for user fbid, let's create a new one
-         sessionId = new Date().toISOString();
+         const sessionId = new Date().toISOString();
          sessions[sessionId] = {fbid: fbid, context: {}};
         console.log("new session created :" + JSON.stringify(sessions));
     }
