@@ -3,16 +3,8 @@
 const express = require('express'),
     router = express.Router(),
     bodyParser=require('body-parser'),
-    http=require('http'),
-    Func=require('./class/func'),
-    session=require('./class/session'),
-FBMessenger = require('fb-messenger')
-const FB_PAGE_ID=process.env.FB_PAGE_ID,
-    FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN,
-    WIT_TOKEN=process.env.WIT_TOKEN;
+    http=require('http')
 
-const weather_dict=['weather','temp','temperature','rain'];
-const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
 const PORT= process.env.PORT;
 const HOST=process.env.IP;

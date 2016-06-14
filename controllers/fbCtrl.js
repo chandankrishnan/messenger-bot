@@ -139,11 +139,9 @@ const actions = {
     {
       console.log('inside find cinmea loop');
       Func.movieTheater(context.location,function(data){
-        context.search_result="your moview list";
+        context.search_result="your movie list";
         context.done=true;
-        messenger.sendHScrollMessage('10209313623095789',data,function(err,body){
-          if(err ) console.log(err);
-          else console.log(body);
+        messenger.sendHScrollMessage(session[sessionId].fbid,data,function(err,body){
         });
         cb(context);
       });
