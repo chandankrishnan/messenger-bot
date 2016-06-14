@@ -1,36 +1,35 @@
 'use strict';
-let map =  new WeakMap();
-var sessions=[];
-var sessionId='';
+var data={sessions:[],sessionId:''};
+
 class Session {
 
     constructor(id) {
-        sessionId=this.findOrCreate(id);
-        console.log(id);
+        data.sessionId=this.findOrCreate(id);
+        console.log(data.sessions);
     }
 
     get()
     {
-        return sessions;
+        return data.sessions;
     }
 
     sessionID()
     {
-        return sessionId;
+        return data.sessionId;
     }
     findOrCreate(id)
     {
-        Object.keys(sessions).forEach(k => {
-            if (sessions[k].fbid === id) {
+        Object.keys(data.sessions).forEach(k => {
+            if (data.sessions[k].fbid === id) {
                 // Yep, got it!
                 sessionId = k;
             }
         });
-        if (!sessionId) {
+        if (!data.sessionId) {
             // No session found for user fbid, let's create a new one
-            let sessionId = new Date().toISOString();
-            sessions[sessionId] = {fbid: sessionId, context: {}};
-            console.log("new session created :" + JSON.stringify(sessions));
+            var sessionId = new Date().toISOString();
+            data.sessions[sessionId] = {fbid: sessionId, context: {}};
+            console.log("new session created :" + JSON.stringify(data.sessions));
         }
 
         return sessionId;
