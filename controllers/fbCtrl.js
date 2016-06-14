@@ -55,16 +55,17 @@ const sessions=[];
 //  return Session.sessionID();
 //};
 const findOrCreateSession = (fbid) => {
+    let sessionId='';
     Object.keys(sessions).forEach(k => {
         if (sessions[k].fbid === fbid) {
             // Yep, got it!
-            const sessionId = k;
+             sessionId = k;
         }
         console.log('using old session');
     });
     if (!sessionId) {
         // No session found for user fbid, let's create a new one
-         const sessionId = new Date().toISOString();
+          sessionId = new Date().toISOString();
          sessions[sessionId] = {fbid: fbid, context: {}};
         console.log("new session created :" + JSON.stringify(sessions));
     }
