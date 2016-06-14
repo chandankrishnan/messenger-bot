@@ -5,6 +5,7 @@ var express=require('express')
 
 router.use('/fb',require('./fbCtrl'));
 router.use('/',function(req,res,next){
+    res.send("this is main controller index");
   next();
 })
 
