@@ -48,28 +48,29 @@ const getFirstMessagingEntry = (body) => {
 
 var sessions=[];
 var sessionId;
-var findOrCreateSession = (fbid) => {
-  const Session=new session(fbid);
-  sessions=Session.get();
-    console.log('Sessions data' + JSON.stringify(sessions));
-  return Session.sessionID();
-};
 //var findOrCreateSession = (fbid) => {
-//    Object.keys(sessions).forEach(k => {
-//        if (sessions[k].fbid === fbid) {
-//            // Yep, got it!
-//            sessionId = k;
-//        }
-//    });
-//    if (!sessionId) {
-//        // No session found for user fbid, let's create a new one
-//         sessionId = new Date().toISOString();
-//         sessions[sessionId] = {fbid: fbid, context: {}};
-//        console.log("new session created :" + JSON.stringify(data.sessions));
-//    }
-//
-//    return sessionId;
+//  const Session=new session(fbid);
+//  sessions=Session.get();
+//    console.log('Sessions data' + JSON.stringify(sessions));
+//  return Session.sessionID();
 //};
+var findOrCreateSession = (fbid) => {
+    Object.keys(sessions).forEach(k => {
+        if (sessions[k].fbid === fbid) {
+            // Yep, got it!
+            sessionId = k;
+        }
+        console.log('using old session');
+    });
+    if (!sessionId) {
+        // No session found for user fbid, let's create a new one
+         sessionId = new Date().toISOString();
+         sessions[sessionId] = {fbid: fbid, context: {}};
+        console.log("new session created :" + JSON.stringify(data.sessions));
+    }
+
+    return sessionId;
+};
 
 // Our bot actions
 const actions = {
