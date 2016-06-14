@@ -64,7 +64,9 @@ const actions = {
     if (recipientId) {
       // Yay, we found our recipient!
       // Let's forward our bot response to her.
+        console.log("sent message to messenger " + message);
           messenger.sendTextMessage(recipientId, message);
+
         // Let's give the wheel back to our bot
         cb();
     } else {
@@ -161,7 +163,7 @@ router.get('/webhook', function (req, res) {
 // Message handler
 router.post('/webhook', (req, res) => {
   // Parsing the Messenger API response
-  console.log("reached inside hook post");
+  console.log("reached inside hook post" + JSON.stringify(req.body));
   const messaging = getFirstMessagingEntry(req.body);
   if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
     // Yay! We got a new message!
