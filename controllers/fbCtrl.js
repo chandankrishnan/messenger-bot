@@ -141,7 +141,9 @@ const actions = {
         cb(context);
       });
     }
+        else cb(context);
   },
+
   ['find-cinema'](sessionId,context,cb)
   {
       console.warn('firing find-cinema action context' + JSON.stringify(context));
