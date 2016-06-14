@@ -157,6 +157,7 @@ const actions = {
       //});
         context.search_result="your movie list";
         context.done=true;
+        cb(context);
     }
     else cb(context);
 
