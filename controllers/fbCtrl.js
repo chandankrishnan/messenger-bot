@@ -7,7 +7,7 @@ const express = require('express'),
     request = require('request'),
     bodyParser=require('body-parser'),
     Func=require('./../class/func'),
-    FBMessenger = require('fb-messenger'),
+    FBMessenger = require('fb-messenger')
     //session=require('./../class/session');
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID,
