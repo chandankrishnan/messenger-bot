@@ -50,6 +50,7 @@ var sessions=[];
 var findOrCreateSession = (fbid) => {
   const Session=new session(fbid);
   sessions=Session.get();
+    console.log('Sessions data' + JSON.stringify(sessions));
   return Session.sessionID();
 };
 
