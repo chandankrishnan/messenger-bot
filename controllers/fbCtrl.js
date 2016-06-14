@@ -141,27 +141,23 @@ const actions = {
         cb(context);
       });
     }
-    else cb(context);
   },
   ['find-cinema'](sessionId,context,cb)
   {
       console.warn('firing find-cinema action context' + JSON.stringify(context));
-    if(context.intent=="entertainment")
-    {
-      console.log('inside find cinmea loop');
-      //Func.movieTheater(context.location,function(data){
-      //  context.search_result="your movie list";
-      //  context.done=true;
-      //  messenger.sendHScrollMessage(session[sessionId].fbid,data,function(err,body){
-      //  });
-      //  cb(context);
-      //});
-        context.search_result="your movie list";
-        context.done=true;
+    if(context.intent=="entertainment") {
+        console.log('inside find cinmea loop');
+        //Func.movieTheater(context.location,function(data){
+        //  context.search_result="your movie list";
+        //  context.done=true;
+        //  messenger.sendHScrollMessage(session[sessionId].fbid,data,function(err,body){
+        //  });
+        //  cb(context);
+        //});
+        context.search_result = "your movie list";
+        context.done = true;
         cb(context);
     }
-    else cb(context);
-
   }
 
   // You should implement your custom actions here
