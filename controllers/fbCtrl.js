@@ -54,7 +54,7 @@ const sessions=[];
 //    console.log('Sessions data' + JSON.stringify(sessions));
 //  return Session.sessionID();
 //};
-var findOrCreateSession = (fbid) => {
+const findOrCreateSession = (fbid) => {
     Object.keys(sessions).forEach(k => {
         if (sessions[k].fbid === fbid) {
             // Yep, got it!
