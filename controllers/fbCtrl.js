@@ -158,6 +158,7 @@ const actions = {
         context.done = true;
         cb(context);
     }
+      else cb(context);
   }
 
   // You should implement your custom actions here
