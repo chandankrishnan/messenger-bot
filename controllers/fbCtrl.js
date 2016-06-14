@@ -66,7 +66,7 @@ var findOrCreateSession = (fbid) => {
         // No session found for user fbid, let's create a new one
          sessionId = new Date().toISOString();
          sessions[sessionId] = {fbid: fbid, context: {}};
-        console.log("new session created :" + JSON.stringify(data.sessions));
+        console.log("new session created :" + JSON.stringify(sessions));
     }
 
     return sessionId;
@@ -108,7 +108,15 @@ const actions = {
       if(local_query=="weather") context.intent="weather";
       else context.intent="local_query";
     }
-    if(entertainment) context.intent=entertainment;
+    if(entertainment)
+    {
+        switch(entertainment)
+        {
+            case 'cinema':
+                context.intent=entertainment;
+                break;
+        }
+    }
     if(extractEntity(entities,"location")) context.location=extractEntity(entities,"location");
     console.log("context after merge");
     console.log(context);
@@ -139,13 +147,15 @@ const actions = {
     if(context.intent=="entertainment")
     {
       console.log('inside find cinmea loop');
-      Func.movieTheater(context.location,function(data){
+      //Func.movieTheater(context.location,function(data){
+      //  context.search_result="your movie list";
+      //  context.done=true;
+      //  messenger.sendHScrollMessage(session[sessionId].fbid,data,function(err,body){
+      //  });
+      //  cb(context);
+      //});
         context.search_result="your movie list";
         context.done=true;
-        messenger.sendHScrollMessage(session[sessionId].fbid,data,function(err,body){
-        });
-        cb(context);
-      });
     }
     else cb(context);
 
