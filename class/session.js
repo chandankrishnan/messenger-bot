@@ -28,7 +28,7 @@ class Session {
         if (!data.sessionId) {
             // No session found for user fbid, let's create a new one
             var sessionId = new Date().toISOString();
-            data.sessions[sessionId] = {fbid: sessionId, context: {}};
+            data.sessions[sessionId] = {fbid: id, context: {}};
             console.log("new session created :" + JSON.stringify(data.sessions));
         }
 
