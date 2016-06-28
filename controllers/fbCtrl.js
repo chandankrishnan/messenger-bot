@@ -6,7 +6,7 @@ const express = require('express'),
     FBMessenger = require('fb-messenger'),
     Wit=require('./witCtrl');
 
-const FB_PAGE_ID=process.env.FB_PAGE_ID,
+const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
     FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN;
     
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
@@ -49,8 +49,7 @@ router.post('/webhook', (req, res) => {
     let location={lat:'',long:''};
   console.log("reached inside hook post" + JSON.stringify(req.body));
   const messaging = getFirstMessagingEntry(req.body);
-  console.log('Messageing : ' + JSON.stringify(messaging));
-  console.log(messaging.recipient.id == FB_PAGE_ID);
+  console.log('page id ' + FB_PAGE_ID);
   if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
     console.log('reached if condition of webhook');
     // Yay! We got a new message!
