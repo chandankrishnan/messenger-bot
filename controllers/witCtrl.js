@@ -3,6 +3,8 @@ const Wit=require('node-wit').Wit;
 const WIT_TOKEN=process.env.WIT_TOKEN;
 const sessions=[];
 
+const weather_dict=['weather','climate','temp','temperature','atmosphere'];
+
 const findOrCreateSession = (fbid) => {
     let sessionId='';
     Object.keys(sessions).forEach(k => {
@@ -21,6 +23,17 @@ const findOrCreateSession = (fbid) => {
 
     return sessionId;
 };
+
+var extractEntity=function(entities,entity){
+  const val = entities && entities[entity]
+      && Array.isArray(entities[entity])
+      && entities[entity].length > 0 &&
+      entities[entity][0].value;
+  if(val) return val;
+  else return false;
+
+}
+
 // Our bot actions
 // Our bot actions
 const actions = {
@@ -46,16 +59,17 @@ const actions = {
     console.log("context before action");
     console.log(context);
   },
+  
   merge(sessionId, context, entities, message, cb) {
-    console.log(entities);
+    console.log('Entities form merge:' + JSON.stringify(entities));
+    //clear search result
     if(context.search_result) delete context.search_result;
-
 
     let local_query=extractEntity(entities,'local_search_query');
     let entertainment=extractEntity(entities,'entertainment');
     if(local_query)
     {
-      if(local_query=="weather") context.intent="weather";
+      if(weather_dict.indexOf(local_query) != -1 ) context.intent="weather";
       else context.intent="local_query";
     }
     if(entertainment)
@@ -67,6 +81,7 @@ const actions = {
                 break;
         }
     }
+    // merge location if exist
     if(extractEntity(entities,"location")) context.location=extractEntity(entities,"location");
     console.log("context after merge");
     console.log(context);

@@ -2,8 +2,6 @@
 const express = require('express'),
     router = express.Router(),
     app=express(),
-    request = require('request'),
-    bodyParser=require('body-parser'),
     Func=require('./../class/func'),
     FBMessenger = require('fb-messenger'),
     Wit=require('./witCtrl');
@@ -19,16 +17,6 @@ const messenger = new FBMessenger(FB_PAGE_TOKEN);
 const wit = Wit.init;
 //bot sessions
 const sessions=Wit.session; 
-
-var extractEntity=function(entities,entity){
-  const val = entities && entities[entity]
-      && Array.isArray(entities[entity])
-      && entities[entity].length > 0 &&
-      entities[entity][0].value;
-  if(val) return val;
-  else return false;
-
-}
 
 // See the Webhook reference
 // https://developers.facebook.com/docs/messenger-platform/webhook-reference
