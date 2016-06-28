@@ -14,10 +14,8 @@ const messenger = new FBMessenger(FB_PAGE_TOKEN);
 // Setting up our bot
 const wit = Wit.init;
 //bot sessions
-const findOrCreateSession=(fbid)=>{
-  return Wit.findOrCreateSession(fbid);
-}
-const sessions=Wit.session; 
+// const findOrCreateSession=Wit.findOrCreateSession;
+// const sessions=Wit.session; 
 
 // See the Webhook reference
 // https://developers.facebook.com/docs/messenger-platform/webhook-reference
@@ -61,7 +59,7 @@ router.post('/webhook', (req, res) => {
 
     // We retrieve the user's current session, or create one if it doesn't exist
     // This is needed for our bot to figure out the conversation history
-    let sessionId = findOrCreateSession(sender);
+    let sessionId = Wit.findOrCreateSession(sender);
 
     // We retrieve the message content
     const msg = messaging.message.text;
@@ -77,7 +75,7 @@ router.post('/webhook', (req, res) => {
       wit.runActions(
           sessionId, // the user's current session
           msg, // the user's message
-          sessions[sessionId].context, // the user's current session state
+          Wit.sessions[sessionId].context, // the user's current session state
           (error, context) => {
             if (error) {
               console.log('Oops! Got an error from Wit:', error);
@@ -90,11 +88,11 @@ router.post('/webhook', (req, res) => {
               // This depends heavily on the business logic of your bot.
               // Example:
               if (context['done']) {
-                delete sessions[sessionId];
+                delete Wit.sessions[sessionId];
               }
 
               // Updating the user's current session state
-              sessions[sessionId].context = context;
+              Wit.sessions[sessionId].context = context;
             }
           }
       );
