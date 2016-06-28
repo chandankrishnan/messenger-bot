@@ -9,8 +9,6 @@ const express = require('express'),
 const FB_PAGE_ID=process.env.FB_PAGE_ID,
     FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN;
     
-
-const weather_dict=['weather','temp','temperature','rain'];
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
 // Setting up our bot
@@ -52,6 +50,7 @@ router.post('/webhook', (req, res) => {
   console.log("reached inside hook post" + JSON.stringify(req.body));
   const messaging = getFirstMessagingEntry(req.body);
   if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
+    console.log('reached if condition of webhook');
     // Yay! We got a new message!
     // We retrieve the Facebook user ID of the sender
     const sender = messaging.sender.id;
