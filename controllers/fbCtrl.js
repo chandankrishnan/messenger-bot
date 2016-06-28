@@ -15,7 +15,7 @@ const messenger = new FBMessenger(FB_PAGE_TOKEN);
 const wit = Wit.init;
 //bot sessions
 const findOrCreateSession=(fbid)=>{
-  return wit.findOrCreateSession(fbid);
+  return Wit.findOrCreateSession(fbid);
 }
 const sessions=Wit.session; 
 
