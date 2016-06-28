@@ -1,6 +1,4 @@
 'use strict';
-
-const Wit=require('node-wit').Wit;
 const express = require('express'),
     router = express.Router(),
     app=express(),
@@ -8,16 +6,19 @@ const express = require('express'),
     bodyParser=require('body-parser'),
     Func=require('./../class/func'),
     FBMessenger = require('fb-messenger'),
-    session=require('./../class/session');
+    Wit=require('./witCtrl');
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID,
-    FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN,
-    WIT_TOKEN=process.env.WIT_TOKEN;
+    FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN;
+    
 
 const weather_dict=['weather','temp','temperature','rain'];
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
-
+// Setting up our bot
+const wit = Wit.init;
+//bot sessions
+const sessions=Wit.session; 
 
 var extractEntity=function(entities,entity){
   const val = entities && entities[entity]
@@ -45,117 +46,6 @@ const getFirstMessagingEntry = (body) => {
       ;
   return val || null;
 };
-
-var sessions=[];
-var findOrCreateSession = (fbid) => {
-  const Session=new session(fbid);
-  sessions=Session.get();
-  return Session.sessionID();
-};
-
-// Our bot actions
-const actions = {
-  say(sessionId, context, message, cb) {
-
-    // Our bot has something to say!
-    // Let's retrieve the Facebook user whose session belongs to
-    const recipientId = sessions[sessionId].fbid;
-    if (recipientId) {
-      // Yay, we found our recipient!
-      // Let's forward our bot response to her.
-      fbMessage(recipientId, message,true, (err, data) => {
-        if (err) {
-          console.log(
-              'Oops! An error occurred while forwarding the response to',
-              recipientId,
-              ':',
-              err
-          );
-        }
-
-        // Let's give the wheel back to our bot
-        cb();
-      });
-    } else {
-      console.log('Oops! Couldn\'t find user for session:', sessionId);
-      // Giving the wheel back to our bot
-      cb();
-    }
-
-    console.log("context before action");
-    console.log(context);
-  },
-  merge(sessionId, context, entities, message, cb) {
-    console.log(entities);
-    if(context.search_result) delete context.search_result;
-
-
-    let local_query=extractEntity(entities,'local_search_query');
-    let entertainment=extractEntity(entities,'entertainment');
-    if(local_query)
-    {
-      if(local_query=="weather") context.intent="weather";
-      else context.intent="local_query";
-    }
-    if(entertainment) context.intent=entertainment;
-    if(extractEntity(entities,"location")) context.location=extractEntity(entities,"location");
-    console.log("context after merge");
-    console.log(context);
-    cb(context);
-  },
-  error(sessionId, context, error) {
-    console.log(error.message);
-  },['find-local'](sessionId, context, cb) {
-    console.warn('firing find-local action context' + JSON.stringify(context));
-    // Here should go the api call, e.g.:
-    // context.forecast = apiCall(context.loc)
-    if(context.intent=="weather")
-    {
-      console.log('inside weather condition');
-      // delete context.search_result;
-      Func.weather(context.location,function(data){
-        console.log('finding weather');
-        context.search_result=data.toString();
-        console.log('searhc data set through weather event' + JSON.stringify(context));
-        context.done=true;
-        cb(context);
-      });
-    }
-    else cb(context);
-  },
-  ['find-cinema'](sessionId,context,cb)
-  {
-    if(context.intent=="entertainment")
-    {
-      console.log('inside find cinmea loop');
-      Func.movieTheater("Chembur,Mumbai",function(data){
-        context.search_result="your moview list";
-        context.done=true;
-        //messenger.sendHScrollMessage('10209313623095789',data,function(err,body){
-        //  if(err ) console.log(err);
-        //  else console.log(body);
-        //});
-        cb(context);
-      });
-    }
-    else cb(context);
-
-  }
-
-  // You should implement your custom actions here
-  // See https://wit.ai/docs/quickstart
-};
-
-const finshSession=(sID)=>
-{
-  console.log('deleting sessions');
-  delete sessions[sID];
-}
-// Setting up our bot
-const wit = new Wit(WIT_TOKEN, actions);
-
-
-
 // Facebook Webhook
 router.get('/webhook', function (req, res) {
   console.warn('authentication called');
@@ -170,7 +60,8 @@ router.get('/webhook', function (req, res) {
 // Message handler
 router.post('/webhook', (req, res) => {
   // Parsing the Messenger API response
-  console.log("reached inside hook post");
+    let location={lat:'',long:''};
+  console.log("reached inside hook post" + JSON.stringify(req.body));
   const messaging = getFirstMessagingEntry(req.body);
   if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
     // Yay! We got a new message!
@@ -179,7 +70,7 @@ router.post('/webhook', (req, res) => {
 
     // We retrieve the user's current session, or create one if it doesn't exist
     // This is needed for our bot to figure out the conversation history
-    const sessionId = findOrCreateSession(sender);
+    let sessionId = findOrCreateSession(sender);
 
     // We retrieve the message content
     const msg = messaging.message.text;
@@ -187,13 +78,7 @@ router.post('/webhook', (req, res) => {
 
     if (atts) {
       // We received an attachment
-
-      // Let's reply with an automatic message
-      fbMessage(
-          sender,
-          'Sorry I can only process text messages for now.',
-          true
-      );
+        messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
     } else if (msg) {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
