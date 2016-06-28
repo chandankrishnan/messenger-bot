@@ -49,6 +49,8 @@ router.post('/webhook', (req, res) => {
     let location={lat:'',long:''};
   console.log("reached inside hook post" + JSON.stringify(req.body));
   const messaging = getFirstMessagingEntry(req.body);
+  console.log('Messageing : ' + JSON.stringify(messaging));
+  console.log(messaging.recipient.id == FB_PAGE_ID);
   if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
     console.log('reached if condition of webhook');
     // Yay! We got a new message!
