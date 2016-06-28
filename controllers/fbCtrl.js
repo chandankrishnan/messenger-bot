@@ -14,7 +14,9 @@ const messenger = new FBMessenger(FB_PAGE_TOKEN);
 // Setting up our bot
 const wit = Wit.init;
 //bot sessions
-const findOrCreateSession=wit.findOrCreateSession;
+const findOrCreateSession=(fbid)=>{
+  return wit.findOrCreateSession(fbid);
+}
 const sessions=Wit.session; 
 
 // See the Webhook reference
