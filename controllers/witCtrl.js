@@ -59,7 +59,7 @@ const actions = {
     console.log("context before action");
     console.log(context);
   },
-  
+
   merge(sessionId, context, entities, message, cb) {
     console.log('Entities form merge:' + JSON.stringify(entities));
     //clear search result
@@ -131,7 +131,10 @@ const actions = {
   // See https://wit.ai/docs/quickstart
 };
 module.exports={
-    init: new Wit(WIT_TOKEN, actions),
+    init: function(){
+      sessions=[];
+      return new Wit(WIT_TOKEN, actions)
+    },
     findOrCreateSession:findOrCreateSession,
     session:sessions
 }

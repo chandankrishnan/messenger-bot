@@ -12,7 +12,7 @@ const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
 // Setting up our bot
-const wit = Wit.init;
+const wit = Wit.init();
 //bot sessions
 // const findOrCreateSession=Wit.findOrCreateSession;
 // const sessions=Wit.session; 
