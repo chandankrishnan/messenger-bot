@@ -7,6 +7,7 @@
   "author": "Mostafa Eweda <mo.eweda@gmail.com>",
   "dependencies": {
     "async": "~0.2.8",
+    "bluebird": "^3.4.1",
     "body-parser": "^1.15.1",
     "express": "^4.12.3",
     "fb-messenger": "^1.0.0",
@@ -15,6 +16,7 @@
     "moment": "^2.13.0",
     "node-cricapi": "^1.2.2",
     "node-wit": "^3.3.2",
+    "redis": "^2.6.2",
     "request": "^2.72.0",
     "showtimes": "^2.1.0",
     "socket.io": "~0.9.14"

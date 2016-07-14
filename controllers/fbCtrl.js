@@ -100,4 +100,10 @@ router.post('/webhook', (req, res) => {
   }
   res.sendStatus(200);
 });
+
+router.post('/trail',(req,res)=>{
+let uid=req.body.uid;
+let sid=req.body.sid;
+
+});
 module.exports = router;

@@ -4,9 +4,7 @@ const express = require('express'),
     router = express.Router(),
     bodyParser=require('body-parser'),
     http=require('http'),
-    Func=require('./class/func'),
-    session=require('./class/session');
-
+    Func=require('./class/func')
 
 const PORT= process.env.PORT;
 const HOST=process.env.IP;
