@@ -2,7 +2,7 @@
 const Wit=require('node-wit').Wit;
 const bluebird=require('bluebird');
 const redis = require("redis"),
-    client = redis.createClient(process.ENV.REDIS_URL);
+    client = redis.createClient(process.env.REDIS_URL);
     
 const WIT_TOKEN=process.env.WIT_TOKEN;
 const sessions=[];
