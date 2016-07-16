@@ -69,13 +69,13 @@ const actions = {
 
     const text=response.text,
        quickreplies= response.quickreplies;
-       
+
     return new Promise(function(resolve, reject) {
       console.log('sending...', JSON.stringify(response));
       return resolve();
     });
   },
-  ['fetch-weather']({context, entities}) {
+  ['fetch-weather'](context, entities) {
     return new Promise(function(resolve, reject) {
       var location = firstEntityValue(entities, 'location');
       if(location) context.location=location;
@@ -90,7 +90,7 @@ const actions = {
       return resolve(context);
     });
   },
-   getLocation({context, entities}) {
+   getLocation(context, entities) {
     return new Promise(function(resolve, reject) {
       
       return resolve(context);
