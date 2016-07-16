@@ -59,7 +59,7 @@ const actions = {
     const sessionId=request.sessionId,
           context=request.context,
           entities=request.entities;
-          
+
     console.log(entities);
     let intent=firstEntityValue(request.entities, 'intent');
     let location=firstEntityValue(request.entities, 'location');
@@ -67,7 +67,9 @@ const actions = {
     if(intent) context.intent=intent;
     console.log('reciving... ' + JSON.stringify(request.context));
 
-    const {text, quickreplies} = response;
+    const text=response.text,
+       quickreplies= response.quickreplies;
+       
     return new Promise(function(resolve, reject) {
       console.log('sending...', JSON.stringify(response));
       return resolve();
