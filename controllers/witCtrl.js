@@ -55,6 +55,9 @@ var extractEntity=function(entities,entity){
 
 // Our bot actions
 const actions = {
+  say(request,response){
+
+  },
   send(request, response) {
     const sessionId=request.sessionId,
           context=request.context,
