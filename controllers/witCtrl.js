@@ -56,7 +56,10 @@ var extractEntity=function(entities,entity){
 // Our bot actions
 const actions = {
   send(request, response) {
-    const {sessionId, context, entities} = request;
+    const sessionId=request.sessionId,
+          context=request.context,
+          entities=request.entities;
+          
     console.log(entities);
     let intent=firstEntityValue(request.entities, 'intent');
     let location=firstEntityValue(request.entities, 'location');
