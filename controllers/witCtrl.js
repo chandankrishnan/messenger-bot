@@ -32,7 +32,7 @@ const findOrCreateSession = (fbid) => {
       if(!res)
       {
         sessionId = new Date().toISOString();
-        client.set(key,val, redis.print);
+        client.set(key,{fbid: fbid, context: {}}, redis.print);
         return sessionId;
       }
       else
