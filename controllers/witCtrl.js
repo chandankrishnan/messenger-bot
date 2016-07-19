@@ -17,13 +17,15 @@ const findOrCreateSession = (fbid) => {
     return client.getAsync(key).then(function(res){
       if(!res)
       {
-        console.log("new session created");
+        
         sessionId = new Date().toISOString();
         let val={fbid: fbid, context: {},sessionId:sessionId};
+        console.log("new session created" + JSON.stringify(val));
         client.hmset([key,'fbid',fbid, 'context','{}','sessionId',sessionId], function(err,response){
+            if(err ) console.error(err);
             console.log('Redis response get: ' + JSON.stringify(response));
-        });
-        return val;
+            return val;
+        });        
       }
       else
       {
