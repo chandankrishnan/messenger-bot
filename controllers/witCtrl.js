@@ -112,7 +112,7 @@ const actions = {
 
 module.exports={
     init: function(){
-      sessions.length=0;
+      
       return new Wit(WIT_TOKEN, actions)
     },
     findOrCreateSession:findOrCreateSession,
