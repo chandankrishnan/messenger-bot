@@ -75,7 +75,7 @@ router.post('/webhook', (req, res) => {
       wit.runActions(
           sessionId, // the user's current session
           msg, // the user's message
-          Wit.sessions[sessionId].context, // the user's current session state
+          Wit.findOrCreateSession.context, // the user's current session state
           (error, context) => {
             if (error) {
               console.log('Oops! Got an error from Wit:', error);
@@ -88,11 +88,12 @@ router.post('/webhook', (req, res) => {
               // This depends heavily on the business logic of your bot.
               // Example:
               if (context['done']) {
-                delete Wit.sessions[sessionId];
+                Wit.deleteSession(sender,'context');
+                Wit.deleteSession(sender,'sessionId');
               }
 
               // Updating the user's current session state
-              Wit.sessions[sessionId].context = context;
+              Wit.updateSession(sender,'context',context)
             }
           }
       );

@@ -5,7 +5,6 @@ const redis = require("redis"),
     client = redis.createClient(process.env.REDIS_URL);
     
 const WIT_TOKEN=process.env.WIT_TOKEN;
-const sessions=[];
 
 const weather_dict=['weather','climate','temp','temperature','atmosphere'];
 
@@ -18,7 +17,7 @@ const findOrCreateSession = (fbid) => {
     //     if (sessions[k].fbid === fbid) {
     //         // Yep, got it!
     //          sessionId = k;
-    //     }
+    //   qweqweqweqweqwe
     //     console.log('using old session');
     // });
     // if (!sessionId) {
@@ -31,18 +30,51 @@ const findOrCreateSession = (fbid) => {
     return client.getAsync(key).then(function(res){
       if(!res)
       {
+        console.log("new session created");
         sessionId = new Date().toISOString();
-        client.set(key,{fbid: fbid, context: {}}, redis.print);
-        return sessionId;
+        let val={fbid: fbid, context: {},sessionId:sessionId};
+        client.hmset([key,'fbid',fbid, 'context','{}','sessionId',sessionId], function(err,response){
+            console.log('Redis response get: ' + JSON.stringify(response));
+        });
+        return val;
       }
       else
       {
+        console.log("using old session" + res);
         return res;
       }
     })
-    
 };
 
+const updateSession=(fbid,key,val)=>{
+  console.log('updating session ');
+  const key1='user:'+fbid;
+   client.hmset([key1,key,val], function(err,response){
+            console.log('Redis: Field updated ' + response);
+        });
+}
+
+const deleteSession=(fbid,key)=>{
+  const key1='user:'+fbid;
+   
+   client.hdel([key1,key], function(err,response){
+       console.log('Redis: field deleted' +  response);
+    });
+}
+// const sessions=(fbid)=>{
+// return client.getAsync(key).then(function(res){
+//       if(!res)
+//       {
+//         sessionId = new Date().toISOString();
+//         client.set(key,{fbid: fbid, context: {}}, redis.print);
+//         return sessionId;
+//       }
+//       else
+//       {
+//         return res;
+//       }
+//     })
+// }
 var extractEntity=function(entities,entity){
   const val = entities && entities[entity]
       && Array.isArray(entities[entity])
@@ -55,49 +87,26 @@ var extractEntity=function(entities,entity){
 
 // Our bot actions
 const actions = {
-  say(request,response){
-
+  say(sessionId, context, message, cb) {
+    console.log(message);
+    cb();
   },
-  send(request, response) {
-    const sessionId=request.sessionId,
-          context=request.context,
-          entities=request.entities;
-
-    console.log(entities);
-    let intent=firstEntityValue(request.entities, 'intent');
-    let location=firstEntityValue(request.entities, 'location');
-    if(location) context.location=location;
-    if(intent) context.intent=intent;
-    console.log('reciving... ' + JSON.stringify(request.context));
-
-    const text=response.text,
-       quickreplies= response.quickreplies;
-
-    return new Promise(function(resolve, reject) {
-      console.log('sending...', JSON.stringify(response));
-      return resolve();
-    });
+  merge(sessionId, context, entities, message, cb) {
+    // Retrieve the location entity and store it into a context field
+    const loc = firstEntityValue(entities, 'location');
+    if (loc) {
+      context.loc = loc;
+    }
+    cb(context);
   },
-  ['fetch-weather'](context, entities) {
-    return new Promise(function(resolve, reject) {
-      var location = firstEntityValue(entities, 'location');
-      if(location) context.location=location;
-      console.log('location ' + JSON.stringify(context));
-      if (location) {
-        context.forecast = 'sunny in ' + location; // we should call a weather API here
-        delete context.missingLocation;
-      } else {
-        context.missingLocation = true;
-        delete context.forecast;
-      }
-      return resolve(context);
-    });
+  error(sessionId, context, error) {
+    console.log(error.message);
   },
-   getLocation(context, entities) {
-    return new Promise(function(resolve, reject) {
-      
-      return resolve(context);
-    });
+  ['fetch-weather'](sessionId, context, cb) {
+    // Here should go the api call, e.g.:
+    // context.forecast = apiCall(context.loc)
+    context.forecast = 'sunny';
+    cb(context);
   },
 };
 
@@ -107,5 +116,7 @@ module.exports={
       return new Wit(WIT_TOKEN, actions)
     },
     findOrCreateSession:findOrCreateSession,
+    updateSession:updateSession,
+    deleteSession:deleteSession,
     session:sessions
 }
