@@ -13,20 +13,7 @@ bluebird.promisifyAll(redis.RedisClient.prototype);
 const findOrCreateSession = (fbid) => {
     let sessionId='';
     const key='user:'+fbid;
-    // Object.keys(sessions).forEach(k => {
-    //     if (sessions[k].fbid === fbid) {
-    //         // Yep, got it!
-    //          sessionId = k;
-    //   qweqweqweqweqwe
-    //     console.log('using old session');
-    // });
-    // if (!sessionId) {
-    //     // No session found for user fbid, let's create a new one
-    //       sessionId = new Date().toISOString();
-    //       const val= {fbid: fbid, context: {}};
-    //     console.log("new session created :" + JSON.stringify(sessions));
-    // }
-    // //redis 
+   console.log('findOrCreate Session called');
     return client.getAsync(key).then(function(res){
       if(!res)
       {
@@ -113,7 +100,7 @@ const actions = {
 module.exports={
     init: function(){
       
-      return new Wit(WIT_TOKEN, actions)
+      return new Wit(WIT_TOKEN || "OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG", actions)
     },
     findOrCreateSession:findOrCreateSession,
     updateSession:updateSession,
