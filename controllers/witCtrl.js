@@ -117,6 +117,5 @@ module.exports={
     },
     findOrCreateSession:findOrCreateSession,
     updateSession:updateSession,
-    deleteSession:deleteSession,
-    session:sessions
+    deleteSession:deleteSession
 }
