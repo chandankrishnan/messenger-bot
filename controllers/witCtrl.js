@@ -30,7 +30,7 @@ const findOrCreateSession = (fbid) => {
       else
       {
         console.log("using old session" + res);
-        return res;
+        return JSON.parse(res);
       }
     })
 };
