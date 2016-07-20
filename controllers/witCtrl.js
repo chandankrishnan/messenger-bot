@@ -14,14 +14,14 @@ const findOrCreateSession = (fbid) => {
     let sessionId='';
     const key='user:'+fbid;
    console.log('findOrCreate Session called');
-    return client.getAsync(key).then(function(res){
+    return client.hgetAsync(key,"sessionId").then(function(res){
       if(!res)
       {
         
         sessionId = new Date().toISOString();
         let val={fbid: fbid, context: {},sessionId:sessionId};
         console.log("new session created" + JSON.stringify(val));
-        client.hmset([key,'fbid',fbid, 'context','{}','sessionId',sessionId], function(err,response){
+        client.hmset([key,'fbid',fbid, 'context','{}',sessionId,sessionId], function(err,response){
             if(err ) console.error(err);
             console.log('Redis response get: ' + JSON.stringify(response));
             return val;
