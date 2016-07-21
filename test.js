@@ -37,8 +37,8 @@ function session(fbid)
     };
 
     let get=function(label){
-        return client.hgetAsync(key,label).then(function(res){
-            return res.toString();
+        client.hget(key,label,function(err,res){
+            return (res) ? res.toString() : res;
         });
     }
     let update=function(label,value){
@@ -60,3 +60,9 @@ function session(fbid)
     };
 
 }
+
+var a=session('1110').findOrCreate();
+
+var b=session('1110').get('context');
+
+console.log(b);

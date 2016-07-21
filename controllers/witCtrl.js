@@ -37,7 +37,7 @@ function session(fbid)
 
     let get=function(label){
         return client.hgetAsync(key,label).then(function(res){
-            return res.toString();
+            return (res) ? res.toString() : res;
         });
     }
     let update=function(label,value){

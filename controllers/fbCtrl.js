@@ -73,10 +73,12 @@ router.post('/webhook', (req, res) => {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
-      wit.runActions(
+      
+      session(sender).get('context').then(function(contextVal){
+        wit.runActions(
           sessionId, // the user's current session
           msg, // the user's message
-          JSON.parse(Wit.session(sender).get('context')), // the user's current session state
+          JSON.parse(contextVal), // the user's current session state
           (error, context) => {
             if (error) {
               console.log('Oops! Got an error from Wit:', error);
@@ -89,15 +91,17 @@ router.post('/webhook', (req, res) => {
               // This depends heavily on the business logic of your bot.
               // Example:
               if (context['done']) {
-                Wit.deleteSession(sender,'context');
-                Wit.deleteSession(sender,'sessionId');
+                Wit.session(sender).update('context',{});
+                Wit.session(sender).update('sessionId','');
               }
 
               // Updating the user's current session state
-              Wit.updateSession(sender,'context',context)
+              Wit.session(sender).update('context',context);
             }
           }
-      );
+        );
+      });
+      
     }
   }
   res.sendStatus(200);
