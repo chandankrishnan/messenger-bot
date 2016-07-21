@@ -10,60 +10,56 @@ const weather_dict=['weather','climate','temp','temperature','atmosphere'];
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 
-const findOrCreateSession = (fbid) => {
-    let sessionId='';
-    const key='user:'+fbid;
-   console.log('findOrCreate Session called');
-    return client.hgetAsync(key,"sessionId").then(function(res){
-      if(!res)
-      {
-        
-        sessionId = new Date().toISOString();
-        let val={fbid: fbid, context: {},sessionId:sessionId};
-        console.log("new session created" + JSON.stringify(val));
-        client.hmset([key,'fbid',fbid, 'context','{}',sessionId,sessionId], function(err,response){
-            if(err ) console.error(err);
-            console.log('Redis response get: ' + JSON.stringify(response));
-            return val;
-        });        
-      }
-      else
-      {
-        console.log("using old session" + res);
-        return JSON.parse(res);
-      }
-    })
-};
+//session handler for redis
+function session(fbid)
+{
+    const key="user:"+fbid;
 
-const updateSession=(fbid,key,val)=>{
-  console.log('updating session ');
-  const key1='user:'+fbid;
-   client.hmset([key1,key,val], function(err,response){
-            console.log('Redis: Field updated ' + response);
+    let findOrCreate=function()
+    {
+       return client.hgetAsync(key,"sessionId").then(function(res){
+        if(!res || res=="")
+        {     
+            let sessionId = new Date().toISOString();
+            client.hmset([key,'fbid',fbid, 'context','{}','sessionId',sessionId], function(err,response){
+                if(err ) console.error(err);
+                console.log('Redis response get: ' + JSON.stringify(response));
+            });   
+            return sessionId;     
+        }
+        else
+        {
+            console.log("using old session" + res);
+            return res.toString();
+        }
         });
+    };
+
+    let get=function(label){
+        return client.hgetAsync(key,label).then(function(res){
+            return res.toString();
+        });
+    }
+    let update=function(label,value){
+        value= (typeof value== 'object') ? dfdfdd.stringify(value) : value; 
+        client.hmset([key,label,value], function(err,response){
+                if(err ) console.error(err);
+                console.log('Updating Value of : ' + JSON.stringify(response));
+            }); 
+    };
+
+    let del=function(){
+        
+    } ;
+    return{
+        'findOrCreate':findOrCreate,
+        'update':update,
+        'get':get,
+        'del':del
+    };
+
 }
 
-const deleteSession=(fbid,key)=>{
-  const key1='user:'+fbid;
-   
-   client.hdel([key1,key], function(err,response){
-       console.log('Redis: field deleted' +  response);
-    });
-}
-// const sessions=(fbid)=>{
-// return client.getAsync(key).then(function(res){
-//       if(!res)
-//       {
-//         sessionId = new Date().toISOString();
-//         client.set(key,{fbid: fbid, context: {}}, redis.print);
-//         return sessionId;
-//       }
-//       else
-//       {
-//         return res;
-//       }
-//     })
-// }
 var extractEntity=function(entities,entity){
   const val = entities && entities[entity]
       && Array.isArray(entities[entity])
@@ -104,7 +100,5 @@ module.exports={
       
       return new Wit(WIT_TOKEN || "OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG", actions)
     },
-    findOrCreateSession:findOrCreateSession,
-    updateSession:updateSession,
-    deleteSession:deleteSession
+    session:session
 }

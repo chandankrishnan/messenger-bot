@@ -59,9 +59,8 @@ router.post('/webhook', (req, res) => {
 
     // We retrieve the user's current session, or create one if it doesn't exist
     // This is needed for our bot to figure out the conversation history
-    console.log(typeof Wit.findOrCreateSession(sender));
-    console.log(Wit.findOrCreateSession(sender));
-    let sessionId = Wit.findOrCreateSession(sender).sessionId;
+   
+    let sessionId = Wit.session(sender).findOrCreate();
 
     // We retrieve the message content
     const msg = messaging.message.text;
@@ -77,7 +76,7 @@ router.post('/webhook', (req, res) => {
       wit.runActions(
           sessionId, // the user's current session
           msg, // the user's message
-          Wit.findOrCreateSession(sender).context, // the user's current session state
+          JSON.parse(Wit.session(sender).get('context')), // the user's current session state
           (error, context) => {
             if (error) {
               console.log('Oops! Got an error from Wit:', error);
