@@ -74,7 +74,7 @@ router.post('/webhook', (req, res) => {
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
       
-      session(sender).get('context').then(function(contextVal){
+      Wit.session(sender).get('context').then(function(contextVal){
         wit.runActions(
           sessionId, // the user's current session
           msg, // the user's message
