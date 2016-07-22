@@ -75,7 +75,7 @@ const actions = {
   say(sessionId, context, message, cb) {
     console.log(message);
     context.first="22";
-    cb(context);
+    cb();
   },
   merge(sessionId, context, entities, message, cb) {
     // Retrieve the location entity and store it into a context field
