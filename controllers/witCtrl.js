@@ -36,7 +36,7 @@ function session(fbid)
     };
 
     let get=function(label){
-        return client.hgetAsync(key,label).then(function(res){
+        return client.hmgetAsync(key,label).then(function(res){
             return (res) ? res.toString() : res;
         });
     }

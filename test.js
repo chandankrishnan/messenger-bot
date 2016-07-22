@@ -37,7 +37,7 @@ function session(fbid)
     };
 
     let get=function(label){
-        client.hget(key,label,function(err,res){
+        return client.hmgetAsync(key,label).then(function(res){
             return (res) ? res.toString() : res;
         });
     }
@@ -61,8 +61,11 @@ function session(fbid)
 
 }
 
-var a=session('1110').findOrCreate();
+// var a=session('1110').findOrCreate();
 
-var b=session('1110').get('context');
+// var b=session('1110').get('context');
 
-console.log(b);
+// console.log(b);
+var a=session('1110').get(['sessionId','fbid']).then(function(data){
+    console.log(data.split(",")[0]);
+})

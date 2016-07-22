@@ -74,11 +74,11 @@ router.post('/webhook', (req, res) => {
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
       
-      Wit.session(sender).get('context').then(function(contextVal){
+      Wit.session(sender).get(['context','sessionId']).then(function(sessionData){
         wit.runActions(
-          sessionId, // the user's current session
+          sessionData[1], // the user's current session
           msg, // the user's message
-          JSON.parse(contextVal), // the user's current session state
+          JSON.parse(sessionData[0]), // the user's current session state
           (error, context) => {
             if (error) {
               console.log('Oops! Got an error from Wit:', error);
