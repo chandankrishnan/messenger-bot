@@ -80,11 +80,12 @@ router.post('/webhook', (req, res) => {
         wit.runActions(
           sessionData[1], // the user's current session
           msg, // the user's message
-          sessionData[0], // the user's current session state
+          JSON.parse(sessionData[0]), // the user's current session state
           (error, context) => {
             if (error) {
+                            console.log('Waiting for futher messages.' + JSON.stringify(context));
+
               console.log('Oops! Got an error from Wit:', error);
-              console.log('Waiting for futher messages.' + JSON.stringify(context));
             } else {
               // Our bot did everything it has to do.
               // Now it's waiting for further messages to proceed.
