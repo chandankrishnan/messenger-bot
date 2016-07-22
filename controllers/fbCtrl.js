@@ -79,7 +79,7 @@ router.post('/webhook', (req, res) => {
         wit.runActions(
           sessionData[1], // the user's current session
           msg, // the user's message
-          JSON.parse(sessionData[0]), // the user's current session state
+          sessionData[0], // the user's current session state
           (error, context) => {
             if (error) {
               console.log('Oops! Got an error from Wit:', error);
