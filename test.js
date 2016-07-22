@@ -66,6 +66,7 @@ function session(fbid)
 // var b=session('1110').get('context');
 
 // console.log(b);
-var a=session('1110').get(['sessionId','fbid']).then(function(data){
-    console.log(data.split(",")[0]);
+var a=session('1110').get(['context','sessionId']).then(function(data){
+    var context=data.split(",")[0];
+    console.log(JSON.parse(context));
 })
