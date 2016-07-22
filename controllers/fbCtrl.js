@@ -75,6 +75,7 @@ router.post('/webhook', (req, res) => {
       // This will run all actions until our bot has nothing left to do
       
       Wit.session(sender).get(['context','sessionId']).then(function(sessionData){
+        console.log("REsponse data " + JSON.stringify(sessionData));
         wit.runActions(
           sessionData[1], // the user's current session
           msg, // the user's message
