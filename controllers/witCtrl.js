@@ -74,11 +74,13 @@ var extractEntity=function(entities,entity){
 const actions = {
   say(sessionId, context, message, cb) {
     console.log(message);
-    cb();
+    context.first="22";
+    cb(context);
   },
   merge(sessionId, context, entities, message, cb) {
     // Retrieve the location entity and store it into a context field
     const loc = firstEntityValue(entities, 'location');
+    context.second="ddd";
     if (loc) {
       context.loc = loc;
     }

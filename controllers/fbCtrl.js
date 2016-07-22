@@ -76,6 +76,7 @@ router.post('/webhook', (req, res) => {
       
       Wit.session(sender).get(['context','sessionId']).then(function(sessionData){
         sessionData=sessionData.split(',');
+        console.log('Session Data:' + JSON.stringify(sessionData));
         wit.runActions(
           sessionData[1], // the user's current session
           msg, // the user's message
@@ -83,10 +84,11 @@ router.post('/webhook', (req, res) => {
           (error, context) => {
             if (error) {
               console.log('Oops! Got an error from Wit:', error);
+              console.log('Waiting for futher messages.' + JSON.stringify(context));
             } else {
               // Our bot did everything it has to do.
               // Now it's waiting for further messages to proceed.
-              console.log('Waiting for futher messages.');
+              console.log('Waiting for futher messages.' + JSON.stringify(context));
 
               // Based on the session state, you might want to reset the session.
               // This depends heavily on the business logic of your bot.
