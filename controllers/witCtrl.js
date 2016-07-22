@@ -41,7 +41,7 @@ function session(fbid)
         });
     }
     let update=function(label,value){
-        value= (typeof value== 'object') ? dfdfdd.stringify(value) : value; 
+        value= (typeof value== 'object') ? JSON.stringify(value) : value; 
         client.hmset([key,label,value], function(err,response){
                 if(err ) console.error(err);
                 console.log('Updating Value of : ' + JSON.stringify(response));
