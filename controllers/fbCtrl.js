@@ -48,9 +48,8 @@ router.get('/webhook', function (req, res) {
 router.post('/webhook', (req, res) => {
   // Parsing the Messenger API response
     let location={lat:'',long:''};
-  console.log("reached inside hook post" + JSON.stringify(req.body));
   const messaging = getFirstMessagingEntry(req.body);
-  console.log('page id ' + FB_PAGE_ID);
+  
   if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
     console.log('reached if condition of webhook');
     // Yay! We got a new message!
@@ -83,13 +82,11 @@ router.post('/webhook', (req, res) => {
           JSON.parse(sessionData[0]), // the user's current session state
           (error, context) => {
             if (error) {
-                            console.log('Waiting for futher messages.' + JSON.stringify(context));
-
-              console.log('Oops! Got an error from Wit:', error);
+              console.error('Oops! Got an error from Wit:', error);
             } else {
               // Our bot did everything it has to do.
               // Now it's waiting for further messages to proceed.
-              console.log('Waiting for futher messages.' + JSON.stringify(context));
+              console.log('Waiting for futher messages.');
 
               // Based on the session state, you might want to reset the session.
               // This depends heavily on the business logic of your bot.

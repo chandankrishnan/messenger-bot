@@ -2,7 +2,7 @@
 const Wit=require('node-wit').Wit;
 const bluebird=require('bluebird');
 const redis = require("redis"),
-    client = redis.createClient(process.env.REDIS_URL);
+      client = redis.createClient(process.env.REDIS_URL);
     
 const WIT_TOKEN=process.env.WIT_TOKEN;
 
@@ -10,7 +10,7 @@ const weather_dict=['weather','climate','temp','temperature','atmosphere'];
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 
-//session handler for redis
+//session handler using redis
 function session(fbid)
 {
     const key="user:"+fbid;
@@ -73,26 +73,28 @@ var extractEntity=function(entities,entity){
 // Our bot actions
 const actions = {
   say(sessionId, context, message, cb) {
-    console.log(message);
-    context.first="22";
     cb();
   },
   merge(sessionId, context, entities, message, cb) {
     // Retrieve the location entity and store it into a context field
-    const loc = firstEntityValue(entities, 'location');
-    context.second="ddd";
-    if (loc) {
-      context.loc = loc;
+    console.log('Merge Context : ' + JSON.stringify(context));
+    const reminder = firstEntityValue(entities, 'reminder');
+    const datetime=   firstEntityValue(entities, 'datetime');
+    if (reminder) {
+      context.reminder = reminder;
     }
+    if(datetime)  context.datetime=datetime;
     cb(context);
   },
   error(sessionId, context, error) {
     console.log(error.message);
   },
-  ['fetch-weather'](sessionId, context, cb) {
+  ['save-reminder'](sessionId, context, cb) {
     // Here should go the api call, e.g.:
     // context.forecast = apiCall(context.loc)
-    context.forecast = 'sunny';
+    console.log('context in save-reminder: ' + JSON.stringify(context));
+    context.result="reminder saved";
+    context.done=true;
     cb(context);
   },
 };
