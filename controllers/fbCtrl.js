@@ -4,7 +4,7 @@ const express = require('express'),
     app=express(),
     Func=require('./../class/func'),
     FBMessenger = require('fb-messenger'),
-    Wit=require('./witCtrl');
+    WitCtrl=require('./witCtrl');
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
     FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN;
@@ -12,7 +12,7 @@ const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
 // Setting up our bot
-const wit = Wit.init();
+const wit = WitCtrl.init();
 //bot sessions
 // const findOrCreateSession=Wit.findOrCreateSession;
 // const sessions=Wit.session; 
@@ -49,7 +49,7 @@ router.post('/webhook', (req, res) => {
   // Parsing the Messenger API response
     let location={lat:'',long:''};
   const messaging = getFirstMessagingEntry(req.body);
-  
+
   if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
     console.log('reached if condition of webhook');
     // Yay! We got a new message!
@@ -59,7 +59,7 @@ router.post('/webhook', (req, res) => {
     // We retrieve the user's current session, or create one if it doesn't exist
     // This is needed for our bot to figure out the conversation history
    
-    let sessionId = Wit.session(sender).findOrCreate();
+    let sessionId = wit.session(sender).findOrCreate();
 
     // We retrieve the message content
     const msg = messaging.message.text;
@@ -73,7 +73,7 @@ router.post('/webhook', (req, res) => {
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
       
-      Wit.session(sender).get(['context','sessionId']).then(function(sessionData){
+      WitCtrl.session(sender).get(['context','sessionId']).then(function(sessionData){
         sessionData=sessionData.split(',');
         console.log('Session Data:' + JSON.stringify(sessionData));
         wit.runActions(
@@ -92,12 +92,12 @@ router.post('/webhook', (req, res) => {
               // This depends heavily on the business logic of your bot.
               // Example:
               if (context['done']) {
-                Wit.session(sender).update('context',{});
-                Wit.session(sender).update('sessionId','');
+                WitCtrl.session(sender).update('context',{});
+                WitCtrl.session(sender).update('sessionId','');
               }
 
               // Updating the user's current session state
-              Wit.session(sender).update('context',context);
+              WitCtrl.session(sender).update('context',context);
             }
           }
         );
