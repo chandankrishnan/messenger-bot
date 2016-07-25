@@ -59,7 +59,7 @@ router.post('/webhook', (req, res) => {
     // We retrieve the user's current session, or create one if it doesn't exist
     // This is needed for our bot to figure out the conversation history
    
-    let sessionId = wit.session(sender).findOrCreate();
+    let sessionId =WitCtrl.session(sender).findOrCreate();
 
     // We retrieve the message content
     const msg = messaging.message.text;
