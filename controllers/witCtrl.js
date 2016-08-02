@@ -62,7 +62,7 @@ const actions = {
           data['score']=date_diff;
 
           ReminderModel.create('3001',data,function(res){
-              consle.log("response from model saveReminder: " + res);
+              console.log("response from model saveReminder: " + res);
           });
           console.log("------Reminder Saved");
           context.done=true;
