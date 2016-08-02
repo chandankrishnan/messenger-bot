@@ -1,66 +1,17 @@
 'use strict';
 const Wit=require('node-wit').Wit;
-const bluebird=require('bluebird');
-const redis = require("redis"),
-      client = redis.createClient(process.env.REDIS_URL);
-    
-const WIT_TOKEN=process.env.WIT_TOKEN;
+const redis=require("./../redisDB");
+const ReminderModel=require('./../model/ReminderModel').Reminder;
+const Session=require('./../session');
 
+const client=redis.client;
+
+const accessToken = (() => {
+  return process.env.WIT_TOKEN || 'OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG';
+})();
 const weather_dict=['weather','climate','temp','temperature','atmosphere'];
 
-bluebird.promisifyAll(redis.RedisClient.prototype);
-
-//session handler using redis
-function session(fbid)
-{
-    const key="user:"+fbid;
-
-    let findOrCreate=function()
-    {
-       return client.hgetAsync(key,"sessionId").then(function(res){
-        if(!res || res=="")
-        {     
-            let sessionId = new Date().toISOString();
-            client.hmset([key,'fbid',fbid, 'context','{}','sessionId',sessionId], function(err,response){
-                if(err ) console.error(err);
-                console.log('Redis response get: ' + JSON.stringify(response));
-            });   
-            return sessionId;     
-        }
-        else
-        {
-            console.log("using old session" + res);
-            return res.toString();
-        }
-        });
-    };
-
-    let get=function(label){
-        return client.hmgetAsync(key,label).then(function(res){
-            return (res) ? res.toString() : res;
-        });
-    }
-    let update=function(label,value){
-        value= (typeof value== 'object') ? JSON.stringify(value) : value; 
-        client.hmset([key,label,value], function(err,response){
-                if(err ) console.error(err);
-                console.log('Updating Value of : ' + JSON.stringify(response));
-            }); 
-    };
-
-    let del=function(){
-        
-    } ;
-    return{
-        'findOrCreate':findOrCreate,
-        'update':update,
-        'get':get,
-        'del':del
-    };
-
-}
-
-var extractEntity=function(entities,entity){
+var firstEntityValue=function(entities,entity){
   const val = entities && entities[entity]
       && Array.isArray(entities[entity])
       && entities[entity].length > 0 &&
@@ -70,39 +21,61 @@ var extractEntity=function(entities,entity){
 
 }
 
-// Our bot actions
 const actions = {
-  say(sessionId, context, message, cb) {
-    cb();
+  send(request, response) {
+     
+    const {sessionId, context, entities} = request;
+    const {text, quickreplies} = response;
+    context.sessionID=sessionId;
+     console.log("entities" + JSON.stringify(entities));
+    
+    return new Promise(function(resolve, reject) {
+      console.log('sending...', JSON.stringify(request));
+      return resolve();
+    });
   },
-  merge(sessionId, context, entities, message, cb) {
-    // Retrieve the location entity and store it into a context field
-    console.log('Merge Context : ' + JSON.stringify(context));
+  merge(request){
+    console.log("res in merge : "+ JSON.stringify(request));
+  },
+  showReminder({sessionId, context, text, entities}) {
+    const intent = firstEntityValue(entities, 'intent');
+
+    return new Promise(function(resolve, reject) {
+      if(intent=='show-reminder')
+      {
+          console.log("-----This is reminder list ");
+          context.done=true;
+      }
+      return resolve(context);
+    });
+  },
+  saveReminder({context, entities}) {
+      var data=[];
     const reminder = firstEntityValue(entities, 'reminder');
-    const datetime=   firstEntityValue(entities, 'datetime');
-    if (reminder) {
-      context.reminder = reminder;
-    }
-    if(datetime)  context.datetime=datetime;
-    cb(context);
+    const datetime =   firstEntityValue(entities, 'datetime');
+    let date_diff= (datetime) ? moment(datetime).diff(new Date()) : 0;
+    return new Promise(function(resolve, reject) {
+      if(reminder)
+      {
+          data['title']=reminder;
+          data['datetime']=datetime;
+          data['score']=date_diff;
+
+          ReminderModel.create('3001',data,function(res){
+              consle.log("response from model saveReminder: " + res);
+          });
+          console.log("------Reminder Saved");
+          context.done=true;
+      }
+      console.log('Save reminder context :' + JSON.stringify(context))
+      return resolve(context);
+    });
   },
-  error(sessionId, context, error) {
-    console.log(error.message);
-  },
-  ['save-reminder'](sessionId, context, cb) {
-    // Here should go the api call, e.g.:
-    // context.forecast = apiCall(context.loc)
-    console.log('context in save-reminder: ' + JSON.stringify(context));
-    context.result="reminder saved";
-    context.done=true;
-    cb(context);
-  },
+
 };
 
 module.exports={
     init: function(){
-      
-      return new Wit(WIT_TOKEN || "OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG", actions)
-    },
-    session:session
+      return new Wit({accessToken, actions})
+    }
 }

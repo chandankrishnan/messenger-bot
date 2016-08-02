@@ -13,7 +13,7 @@
     "fb-messenger": "^1.0.0",
     "google-geocode": "0.0.2",
     "http": "0.0.0",
-    "moment": "^2.13.0",
+    "moment": "^2.14.1",
     "node-cricapi": "^1.2.2",
     "node-wit": "^3.3.2",
     "redis": "^2.6.2",
