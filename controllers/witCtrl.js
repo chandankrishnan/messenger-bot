@@ -49,7 +49,9 @@ const actions = {
       return resolve(context);
     });
   },
-  saveReminder({context, entities}) {
+  saveReminder({sessionId, context, text, entities}) {
+    console.log("insedie save reminder: " + JSON.stringify(context));
+    console.log("sessionId " + sessionId);
       var data=[];
     const reminder = firstEntityValue(entities, 'reminder');
     const datetime =   firstEntityValue(entities, 'datetime');
@@ -61,7 +63,7 @@ const actions = {
           data['datetime']=datetime;
           data['score']=date_diff;
 
-          ReminderModel.create('3001',data,function(res){
+          ReminderModel.create(sessionId,data,function(res){
               console.log("response from model saveReminder: " + res);
           });
           console.log("------Reminder Saved");

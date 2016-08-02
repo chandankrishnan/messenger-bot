@@ -17,6 +17,7 @@ function Session()
 //TODO: try redis session implementation
 Session.prototype.findOrCreate=function(id,k)
 {   let key="session:"+id;
+    console.log("session findOrCreate method called");
     return client.hgetAsync(key,k || 'sessionId').then(function(res){
         if(!res || res=="")
         {  
@@ -36,6 +37,7 @@ Session.prototype.findOrCreate=function(id,k)
 
 Session.prototype.set=function(key,data)
 {
+    console.log("session get method called");
     client.hmset("session:"+key,data, function(err,response){
                 if(err ) console.error(err);
                 console.log('Redis response get: ' + JSON.stringify(response));

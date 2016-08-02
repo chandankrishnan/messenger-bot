@@ -34,7 +34,7 @@ Reminder.prototype.create=function(fbid,data,cb)
             multi.sadd("user:reminders:"+fbid,totalCount);
 
             // add reminder in sorted list with date diff as secodary index
-            multi.zadd("reminders:"+totalCount,data['score'],data['title'],client.print);
+            multi.zadd("reminder:"+totalCount,data['score'],data['title'],client.print);
 
             // ADD REMINDER INFORMATION IN SEPERATE REMINDER LIST FOR EACH REMINDER
             // multi.hmset(["reminder:"+totalCount,'title',data['title'], 'date',data['date'],'duration',data['duration']],client.print);
