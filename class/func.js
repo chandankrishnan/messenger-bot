@@ -67,12 +67,12 @@ module.exports = {
             uri = "http://api.openweathermap.org/data/2.5/" + type;
         uri += "?q=" + location;
         uri += "&APPID=" + APPID;
-        uri += "&units=imperial";
+        uri += "&units=metric";
 
         if (type === "weather") {
             request(uri, function(err, res, body) {
                 var data = JSON.parse(body),
-                    weather = "In " + data.name + ", I see " + data.weather[0].description + " ! ";
+                weather = "In " + data.name + ", I see " + data.weather[0].description + " ! ";
                 weather += " Temp: " + Math.floor(data.main.temp) + " degrees(F)";
                 weather += " Humidity: " + data.main.humidity + " %";
                 weather += " Wind: " + Math.floor(data.wind.speed) + " mph";

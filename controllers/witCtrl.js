@@ -3,7 +3,7 @@ const Wit=require('node-wit').Wit;
 const redis=require("./../redisDB");
 const ReminderModel=require('./../model/ReminderModel').Reminder;
 const Session=require('./../session');
-
+const Func=require('./../class/func'),
 const client=redis.client;
 
 const accessToken = (() => {
@@ -50,29 +50,39 @@ const actions = {
     });
   },
   saveReminder({sessionId, context, text, entities}) {
-    console.log("insedie save reminder: " + JSON.stringify(context));
-    console.log("sessionId " + sessionId);
-      var data=[];
+    let data=[];
+    const intent = firstEntityValue(entities, 'intent');
     const reminder = firstEntityValue(entities, 'reminder');
     const datetime =   firstEntityValue(entities, 'datetime');
     let date_diff= (datetime) ? moment(datetime).diff(new Date()) : 0;
     return new Promise(function(resolve, reject) {
-      if(reminder)
+      if(reminder && !intent)
       {
-          data['title']=reminder;
-          data['datetime']=datetime;
-          data['score']=date_diff;
-
+          data={title:reminder,datetime:datetime,score:date_diff};
+        
           ReminderModel.create(sessionId,data,function(res){
               console.log("response from model saveReminder: " + res);
           });
-          console.log("------Reminder Saved");
+          
           context.done=true;
       }
       console.log('Save reminder context :' + JSON.stringify(context))
       return resolve(context);
     });
   },
+  getForecast({sessionId, context, text, entities}){
+    const intent = firstEntityValue(entities, 'intent');
+    const location = firstEntityValue(entities, 'location');
+    return new Promise(function(resolve,reject){
+        if(intent=='weather' && location)
+        {
+          Func.weather(location,function(forecast){
+            context.weather_result=forecast;
+            context.done=true;
+          });
+        }
+    });
+  }
 
 };
 

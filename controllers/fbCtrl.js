@@ -2,7 +2,6 @@
 const express = require('express'),
     router = express.Router(),
     app=express(),
-    Func=require('./../class/func'),
     FBMessenger = require('fb-messenger'),
     WitCtrl=require('./witCtrl'),
     Session=require('./../session');
@@ -92,7 +91,7 @@ router.post('/webhook', (req, res) => {
               // This depends heavily on the business logic of your bot.
               // Example:
               if (context['done']) {
-                Session().update(sender,{'context':'{}',sessionId:''});
+                Session().del(sender);
               }
 
               // Updating the user's current session state
