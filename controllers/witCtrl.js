@@ -77,6 +77,7 @@ const actions = {
         if(intent=='weather' && location)
         {
           Func.weather(location,function(forecast){
+            console.log("weather data " + forecast)
             context.weather_result=forecast;
             context.done=true;
           });

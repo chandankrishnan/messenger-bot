@@ -91,9 +91,10 @@ router.post('/webhook', (req, res) => {
               // This depends heavily on the business logic of your bot.
               // Example:
               if (context['done']) {
+                console.log("clearing session data");
                 Session().del(sender);
               }
-
+              console.log("updating session data");
               // Updating the user's current session state
               Session().update(sender,{'context':context});
             }
