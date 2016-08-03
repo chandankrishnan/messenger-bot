@@ -4,7 +4,7 @@ const redis=require("./../redisDB");
 const ReminderModel=require('./../model/ReminderModel').Reminder;
 const Session=require('./../session');
 const Func=require('./../class/func');
-const FBMessenger = require('fb-messenger'),
+const FBMessenger = require('fb-messenger');
 
 const client=redis.client;
 
