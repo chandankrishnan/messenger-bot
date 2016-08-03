@@ -4,7 +4,14 @@ const redis=require("./../redisDB");
 const ReminderModel=require('./../model/ReminderModel').Reminder;
 const Session=require('./../session');
 const Func=require('./../class/func');
+const FBMessenger = require('fb-messenger'),
+
 const client=redis.client;
+
+const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
+    FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN;
+    
+const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
 const accessToken = (() => {
   return process.env.WIT_TOKEN || 'OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG';
@@ -30,7 +37,7 @@ const actions = {
      console.log("entities" + JSON.stringify(entities));
     
     return new Promise(function(resolve, reject) {
-      console.log('sending...', JSON.stringify(request));
+      messenger.sendTextMessage(sender, text);
       return resolve();
     });
   },
