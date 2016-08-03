@@ -46,7 +46,7 @@ const actions = {
           console.log("-----This is reminder list ");
           context.done=true;
       }
-      return resolve(context);
+      resolve(context);
     });
   },
   saveReminder({sessionId, context, text, entities}) {
@@ -60,14 +60,14 @@ const actions = {
       {
           data={title:reminder,datetime:datetime,score:date_diff};
         
-          ReminderModel.create(sessionId,data,function(res){
+          ReminderModel.create(sessionId,data,function(err,res){
               console.log("response from model saveReminder: " + res);
           });
           context.reminder_result="Reminder saved."
           context.done=true;
+          resolve(context);
       }
       console.log('Save reminder context :' + JSON.stringify(context))
-      return resolve(context);
     });
   },
   getForecast({sessionId, context, text, entities}){
@@ -80,7 +80,7 @@ const actions = {
             console.log("weather data " + forecast)
             context.weather_result=forecast;
             context.done=true;
-            return resolve(context);
+            resolve(context);
           });
         }
         resolve(context);
