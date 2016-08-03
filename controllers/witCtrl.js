@@ -46,6 +46,7 @@ const actions = {
     console.log("res in merge : "+ JSON.stringify(request));
   },
   showReminder({sessionId, context, text, entities}) {
+    console.log("showReminder fired");
     const intent = firstEntityValue(entities, 'intent');
 
     return new Promise(function(resolve, reject) {
@@ -58,6 +59,7 @@ const actions = {
     });
   },
   saveReminder({sessionId, context, text, entities}) {
+    console.log('saveReminder Fired');
     let data=[];
     const intent = firstEntityValue(entities, 'intent');
     const reminder = firstEntityValue(entities, 'reminder');
@@ -79,6 +81,7 @@ const actions = {
     });
   },
   getForecast({sessionId, context, text, entities}){
+    console.log('getForecast Fired');
     const intent = firstEntityValue(entities, 'intent');
     const location = firstEntityValue(entities, 'location');
     return new Promise(function(resolve,reject){
