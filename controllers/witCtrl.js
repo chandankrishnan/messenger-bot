@@ -37,8 +37,9 @@ const actions = {
      console.log("entities" + JSON.stringify(entities));
     
     return new Promise(function(resolve, reject) {
-      messenger.sendTextMessage(sender, text);
-      return resolve();
+      console.log(" sending :" + JSON.stringify(request));
+      messenger.sendTextMessage(sessionId, text);
+       resolve();
     });
   },
   merge(request){
