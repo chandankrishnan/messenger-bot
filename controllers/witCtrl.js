@@ -63,7 +63,7 @@ const actions = {
           ReminderModel.create(sessionId,data,function(res){
               console.log("response from model saveReminder: " + res);
           });
-          
+          context.reminder_result="Reminder saved."
           context.done=true;
       }
       console.log('Save reminder context :' + JSON.stringify(context))
@@ -80,8 +80,10 @@ const actions = {
             console.log("weather data " + forecast)
             context.weather_result=forecast;
             context.done=true;
+            return resolve(context);
           });
         }
+        resolve(context);
     });
   }
 
