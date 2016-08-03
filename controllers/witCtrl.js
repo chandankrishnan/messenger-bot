@@ -75,25 +75,33 @@ const actions = {
           });
           context.reminder_result="Reminder saved."
           context.done=true;
+          console.log('save first context');
           resolve(context);
       }
+      console.log('save second context');
+      resolve(context);
       console.log('Save reminder context :' + JSON.stringify(context))
     });
   },
   getForecast({sessionId, context, text, entities}){
     console.log('getForecast Fired');
+    console.log("entities " + JSON.stringify(entities));
     const intent = firstEntityValue(entities, 'intent');
-    const location = firstEntityValue(entities, 'location');
+    const location = firstEntityValue(entities, 'location');    
     return new Promise(function(resolve,reject){
+        if(!location) context.missingLocation=true;
         if(intent=='weather' && location)
         {
           Func.weather(location,function(forecast){
             console.log("weather data " + forecast)
             context.weather_result=forecast;
+            context.missingLocation=true;
             context.done=true;
+            console.log("first context");
             resolve(context);
           });
         }
+        console.log("second context");
         resolve(context);
     });
   }
