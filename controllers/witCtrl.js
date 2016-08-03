@@ -3,7 +3,7 @@ const Wit=require('node-wit').Wit;
 const redis=require("./../redisDB");
 const ReminderModel=require('./../model/ReminderModel').Reminder;
 const Session=require('./../session');
-const Func=require('./../class/func'),
+const Func=require('./../class/func');
 const client=redis.client;
 
 const accessToken = (() => {
