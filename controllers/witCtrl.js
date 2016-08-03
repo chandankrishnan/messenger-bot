@@ -34,7 +34,7 @@ const actions = {
     const {sessionId, context, entities} = request;
     const {text, quickreplies} = response;
     context.sessionID=sessionId;
-     console.log("entities" + JSON.stringify(entities));
+     console.log("entities" + JSON.stringify(request));
     
     return new Promise(function(resolve, reject) {
       console.log(" sending :" + JSON.stringify(request));
@@ -66,7 +66,7 @@ const actions = {
     const datetime =   firstEntityValue(entities, 'datetime');
     let date_diff= (datetime) ? moment(datetime).diff(new Date()) : 0;
     return new Promise(function(resolve, reject) {
-      if(reminder && !intent)
+      if(reminder && intent!="weather")
       {
           data={title:reminder,datetime:datetime,score:date_diff};
         
