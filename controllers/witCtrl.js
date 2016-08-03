@@ -61,12 +61,11 @@ const actions = {
   saveReminder({sessionId, context, text, entities}) {
     console.log('saveReminder Fired');
     let data=[];
-    const intent = firstEntityValue(entities, 'intent');
     const reminder = firstEntityValue(entities, 'reminder');
     const datetime =   firstEntityValue(entities, 'datetime');
     let date_diff= (datetime) ? moment(datetime).diff(new Date()) : 0;
     return new Promise(function(resolve, reject) {
-      if(reminder && intent!="weather")
+      if(reminder)
       {
           data={title:reminder,datetime:datetime,score:date_diff};
         
@@ -78,8 +77,7 @@ const actions = {
           console.log('save first context');
           resolve(context);
       }
-      console.log('save second context');
-      resolve(context);
+      else resolve(context);
       console.log('Save reminder context :' + JSON.stringify(context))
     });
   },
