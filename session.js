@@ -30,7 +30,7 @@ Session.prototype.findOrCreate=function(id,k)
         else
         {
             console.log("using old session" + res);
-            return res.toString();
+            return res;
         }
         });
 }

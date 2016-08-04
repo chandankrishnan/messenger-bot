@@ -55,17 +55,15 @@ router.post('/webhook', (req, res) => {
     // Yay! We got a new message!
     // We retrieve the Facebook user ID of the sender
     const sender = messaging.sender.id;
-
-    // We retrieve the user's current session, or create one if it doesn't exist
-    // This is needed for our bot to figure out the conversation history
-   
-    let sessionId =Session.findOrCreate(sender);
-
     // We retrieve the message content
     const msg = messaging.message.text;
     const atts = messaging.message.attachments;
-
-    if (atts) {
+    // We retrieve the user's current session, or create one if it doesn't exist
+    // This is needed for our bot to figure out the conversation history
+   
+    Session.findOrCreate(sender).then(function(sessionId){
+      console.log("sessionId returned :" + sessionId);
+       if (atts) {
       // We received an attachment
         messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
     } else if (msg) {
@@ -101,8 +99,8 @@ router.post('/webhook', (req, res) => {
           }
         );
       });
-      
-    }
+    }  //end else if
+    });  // end finOrCreate promise
   }
   res.sendStatus(200);
 });
