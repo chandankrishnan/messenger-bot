@@ -82,7 +82,7 @@ router.post('/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
-function weather(entities,sender);
+function weather(entities,sender)
 {
   console.log('reached inside weather ' + entities + sender)
   if(!entities.location) messenger.sendTextMessage(sender, 'Where Exactly ?');
