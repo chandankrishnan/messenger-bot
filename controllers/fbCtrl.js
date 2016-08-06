@@ -3,7 +3,7 @@ const express = require('express'),
     router = express.Router(),
     app=express(),
     FBMessenger = require('fb-messenger'),
-    WitCtrl=require('./witCtrl'),
+    WitCtrl=require('./wit'),
     Session=require('./../session');
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
@@ -12,7 +12,7 @@ const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 
 // Setting up our bot
-const wit = WitCtrl.init();
+// const wit = WitCtrl.init();
 //bot sessions
 // const findOrCreateSession=Wit.findOrCreateSession;
 // const sessions=Wit.session; 
@@ -59,7 +59,7 @@ router.post('/webhook', (req, res) => {
     // We retrieve the user's current session, or create one if it doesn't exist
     // This is needed for our bot to figure out the conversation history
    
-    let sessionId =Session.findOrCreate(sender);
+    // let sessionId =Session.findOrCreate(sender);
 
     // We retrieve the message content
     const msg = messaging.message.text;
@@ -72,34 +72,8 @@ router.post('/webhook', (req, res) => {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
-      
-      Session.get(sender,['context','sessionId']).then(function(sessionData){
-        console.log('Session Data:' + JSON.stringify(sessionData));
-        wit.runActions(
-          sessionData[1], // the user's current session
-          msg, // the user's message
-          JSON.parse(sessionData[0]), // the user's current session state (context)
-          (error, context) => {
-            if (error) {
-              console.error('Oops! Got an error from Wit:', error);
-            } else {
-              // Our bot did everything it has to do.
-              // Now it's waiting for further messages to proceed.
-              console.log('Waiting for futher messages.');
-
-              // Based on the session state, you might want to reset the session.
-              // This depends heavily on the business logic of your bot.
-              // Example:
-              if (context['done']) {
-                console.log("clearing session data");
-                Session().del(sender);
-              }
-              console.log("updating session data");
-              // Updating the user's current session state
-              Session().update(sender,{'context':context});
-            }
-          }
-        );
+      WitCtrl.Wit(msg,function(ent){
+         if(ent.intent[0].value =='weather') weather(ent,sender);
       });
       
     }
@@ -107,9 +81,12 @@ router.post('/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
-router.post('/trail',(req,res)=>{
-let uid=req.body.uid;
-let sid=req.body.sid;
-
-});
+function weather(entities,sender)
+{
+  if(!entities.location) messenger.sendTextMessage(sender, 'Where Exactly ?');
+  else if(entities.location)
+  {
+    messenger.sendTextMessage(sender, 'This is weather');
+  }
+}
 module.exports = router;
