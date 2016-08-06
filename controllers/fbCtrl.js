@@ -86,9 +86,13 @@ function weather(entities,sender)
 {
   console.log('reached inside weather ' + JSON.stringify(entities) + sender);
   console.log("location " + entities.location);
-  if(!entities.location) messenger.sendTextMessage(sender, 'Where Exactly ?');
-  else if(entities.location)
+  if(!entities.location){
+    console.log("sending no location defined");
+    messenger.sendTextMessage(sender, 'Where Exactly ?');
+  }
+  if(entities.location)
   {
+    console.log("sending with location");
     messenger.sendTextMessage(sender, 'This is weather');
   }
 }
