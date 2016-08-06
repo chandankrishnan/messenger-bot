@@ -73,7 +73,8 @@ router.post('/webhook', (req, res) => {
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
       WitCtrl.Wit(msg,function(ent){
-         if(ent.intent[0].value =='weather') weather(ent,sender);
+        console.log('firing wit ');
+         if(ent.intent[0].value =='weather') weather(ent,sender,messenger);
       });
       
     }
@@ -81,7 +82,7 @@ router.post('/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
-function weather(entities,sender)
+function weather(entities,sender,messenger)
 {
   if(!entities.location) messenger.sendTextMessage(sender, 'Where Exactly ?');
   else if(entities.location)
