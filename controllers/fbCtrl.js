@@ -74,7 +74,7 @@ router.post('/webhook', (req, res) => {
       // This will run all actions until our bot has nothing left to do
       WitCtrl.Wit(msg,function(ent){
         console.log('firing wit ');
-         if(ent.intent[0].value =='weather') weather(ent,sender,messenger);
+         if(ent.intent[0].value =='weather') weather(ent,sender);
       });
       
     }
@@ -82,8 +82,9 @@ router.post('/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
-function weather(entities,sender,messenger)
+function weather(entities,sender);
 {
+  console.log('reached inside weather ' + entities + sender)
   if(!entities.location) messenger.sendTextMessage(sender, 'Where Exactly ?');
   else if(entities.location)
   {
