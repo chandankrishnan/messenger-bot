@@ -5,6 +5,7 @@ const express = require('express'),
     FBMessenger = require('fb-messenger'),
     WitCtrl=require('./wit'),
     Session=require('./../session');
+const Func=require('./../class/func');
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
     FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN || 'EAAHVizlMZBFkBAA6Ltx64kHqPypTgja5B1ez0QjeI2KP0zZCq5WnDvb153c4Ivn7Mk1fwmuR44LhE2XY6T2ZAgnNKC8DZARyxOLZB7AmX9HTohj1TExPZB9uxjsmTxcEkT2IksQNoxLl1p96YCfYGBTLbRU6R6R7DYbPGgxOYpuQZDZD';
@@ -88,18 +89,14 @@ function weather(entities,sender)
   console.log("location " + entities.location);
   if(!entities.location){
     console.log("sending no location defined");
-    messenger.sendTextMessage(sender, 'Where Exactly ?',function (err, body) {
-      if(err) return console.error(err)
-      console.log(body)
-    })
+    messenger.sendTextMessage(sender, 'Where Exactly ?');
   }
   if(entities.location)
   {
-    console.log("sending with location");
-    messenger.sendTextMessage(sender, 'This is weather',function (err, body) {
-    if(err) return console.error(err)
-    console.log(body)
-  });
+    Func.weather(entities.location[0].value,function(res){
+      messenger.sendTextMessage(sender, res);
+    })
+    
   }
 }
 module.exports = router;
