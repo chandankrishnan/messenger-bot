@@ -59,9 +59,7 @@ router.post('/webhook', (req, res) => {
 
     // We retrieve the user's current session, or create one if it doesn't exist
     // This is needed for our bot to figure out the conversation history
-   
-    let sessionId =Session.findOrCreate(sender);
-
+  
     // We retrieve the message content
     const msg = messaging.message.text;
     const atts = messaging.message.attachments;
@@ -73,7 +71,7 @@ router.post('/webhook', (req, res) => {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
-      Session.get(sender,['context','sessionId']).then(function(sessionData){
+      Session.findOrCreate(sender,['context','sessionId']).then(function(sessionData){
         console.log('Session Data:' + JSON.stringify(sessionData));
         wit.runActions(
           sessionData[1], // the user's current session

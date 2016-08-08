@@ -10,7 +10,7 @@ const moment=require('moment');
 const client=redis.client;
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
-    FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN;
+    FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN || 'EAAHVizlMZBFkBAA6Ltx64kHqPypTgja5B1ez0QjeI2KP0zZCq5WnDvb153c4Ivn7Mk1fwmuR44LhE2XY6T2ZAgnNKC8DZARyxOLZB7AmX9HTohj1TExPZB9uxjsmTxcEkT2IksQNoxLl1p96YCfYGBTLbRU6R6R7DYbPGgxOYpuQZDZD';
     
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 

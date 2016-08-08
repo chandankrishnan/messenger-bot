@@ -14,11 +14,7 @@ function Session()
     
 };
 
-//TODO: try redis session implementation
-Session.prototype.findOrCreate=function(id,k)
-{   let key="session:"+id;
-    console.log("session findOrCreate method called");
-    return client.hgetAsync(key,k || 'sessionId').then(function(res){
+ client.hgetAsync(key,k || 'sessionId').then(function(res){
         if(!res || res=="")
         {  
             client.hmset([key,'context','{}','sessionId',id], function(err,response){
@@ -33,6 +29,26 @@ Session.prototype.findOrCreate=function(id,k)
             return res;
         }
         });
+
+
+//TODO: try redis session implementation
+Session.prototype.findOrCreate=function(id,k)
+{   let key="session:"+id;
+    console.log("session findOrCreate method called");
+    return new Promise(function(resolve,reject){
+       clinet.hmgetAsync(key,k).then(function(res){
+           if(!res || res==""){
+            client.hmset([key,'context','{}','sessionId',id], function(err,response){
+                if(err ) console.error(err);
+                console.log('New Session created: ' + JSON.stringify(response));
+                resolve([{},id]);
+            });  
+            }
+           else{
+               resolve(res);
+           }
+       })
+    }); //end Promise
 }
 
 Session.prototype.set=function(key,data)
