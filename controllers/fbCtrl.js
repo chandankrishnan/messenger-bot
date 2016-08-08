@@ -73,34 +73,26 @@ router.post('/webhook', (req, res) => {
       // This will run all actions until our bot has nothing left to do
       Session.findOrCreate(sender,['context','sessionId']).then(function(sessionData){
         console.log('Session Data:' + JSON.stringify(sessionData));
-        wit.runActions(
-          sessionData[1], // the user's current session
-          msg, // the user's message
-          JSON.parse(sessionData[0]), // the user's current session state (context)
-          (error, context) => {
-            if (error) {
-              console.error('Oops! Got an error from Wit:', error);
-            } else {
-              // Our bot did everything it has to do.
-              // Now it's waiting for further messages to proceed.
-              console.log('Waiting for futher messages.');
 
-              // Based on the session state, you might want to reset the session.
-              // This depends heavily on the business logic of your bot.
-              // Example:
-              if (context['done']) {
-                console.log("clearing session data");
-                Session().del(sender);
-              }
-              console.log("updating session data");
-              // Updating the user's current session state
-              Session().update(sender,{'context':context});
-            }
-          }
-        );
-      });
+        wit.runActions(
+              sessionData[1], // the user's current session
+              msg, // the user's message
+              JSON.parse(sessionData[0]) // the user's current session state
+          ).then((context) => {
+            console.log('Wit Bot haS completed its action');
+                if (context['done']) {
+                          console.log("clearing session data");
+                          Session().del(sender);
+                        }
+                        console.log("updating session data");
+                        // Updating the user's current session state
+                        Session().update(sender,{'context':context});
+          }).catch((err) => {
+              console.error('Oops! Got an error from Wit: ', err.stack || err);
+          });
+      }); //end findOrCreateSession
       
-    }
+    } //end else if
   }
   res.sendStatus(200);
 });
