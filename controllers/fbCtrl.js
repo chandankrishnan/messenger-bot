@@ -72,6 +72,7 @@ router.post('/webhook', (req, res) => {
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
       Session.findOrCreate(sender, ['context', 'sessionId']).then(function (sessionData) {
+        console.log("sesnder ID : " +sender);
         console.log('Session Data:' + JSON.stringify(sessionData));
 
         wit.runActions(
