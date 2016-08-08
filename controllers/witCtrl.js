@@ -65,7 +65,7 @@ const actions = {
     console.log('saveReminder Fired');
     let data=[];
     const reminder = firstEntityValue(entities, 'reminder');
-    const datetime =   firstEntityValue(entities, 'datetime');
+    const datetime = firstEntityValue(entities, 'datetime');
     let date_diff= (datetime) ? moment(datetime).diff(new Date()) : 0;
     return new Promise(function(resolve, reject) {
       if(reminder)

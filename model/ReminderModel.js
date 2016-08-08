@@ -28,7 +28,7 @@ Reminder.prototype.create=function(fbid,data,cb)
     console.log("creating reminder");
     client.incrAsync("totalReminders").then(function(totalCount){
             //user uncompleted reminder list
-            multi.sadd("reminders:uncompleted"+fbid,totalCount);
+            multi.sadd("reminders:uncompleted:"+fbid,totalCount);
 
             // keep all the reminder in one sorted set for alaram
             multi.zadd("reminders",data['score'],totalCount,client.print);

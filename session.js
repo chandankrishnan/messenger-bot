@@ -19,6 +19,7 @@ Session.prototype.findOrCreate=function(id,k)
     console.log("session findOrCreate method called");
     return new Promise(function(resolve,reject){
        client.hmgetAsync(key,k).then(function(res){
+           console.log('hmget result : ' + res);
            if(!res || res==""){
             client.hmset([key,'context','{}','sessionId',id], function(err,response){
                 if(err ) console.error(err);

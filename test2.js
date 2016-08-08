@@ -4,12 +4,11 @@
 // const moment =require("moment");
 // const WitCtrl=require('./controllers/witCtrl');
 // const wit = WitCtrl.init();
-
+const Session = require('./session');
 // wit.interactive();
 
 
-var a=[2,3,4,5];
+Session.findOrCreate('200',['sessionId']).then(function(res){
+console.log("res " + res);
+});
 
-a.forEach(count=>{
-    console.log(count);
-})
