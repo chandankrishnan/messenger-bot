@@ -39,7 +39,10 @@ const actions = {
     
     return new Promise(function(resolve, reject) {
       console.log(" sending :" + JSON.stringify(request));
-      messenger.sendTextMessage(sessionId, text);
+      messenger.sendTextMessage(sessionId, text,function (err, body) {
+        if(err) return console.error(err)
+        console.log(body)
+      });
        resolve();
     });
   },
@@ -54,7 +57,6 @@ const actions = {
       if(intent=='show-reminder')
       {
           console.log("-----This is reminder list ");
-          context.done=true;
       }
       resolve(context);
     });
@@ -73,8 +75,7 @@ const actions = {
           ReminderModel.create(sessionId,data,function(err,res){
               console.log("response from model saveReminder: " + res);
           });
-          context.reminder_result="Reminder saved."
-          context.done=true;
+          context.reminder_result="Reminder saved.";
           console.log('save first context');
           resolve(context);
       }

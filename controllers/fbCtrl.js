@@ -107,20 +107,4 @@ router.post('/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
-function weather(entities,sender)
-{
-  console.log('reached inside weather ' + JSON.stringify(entities) + sender);
-  console.log("location " + entities.location);
-  if(!entities.location){
-    console.log("sending no location defined");
-    messenger.sendTextMessage(sender, 'Where Exactly ?');
-  }
-  if(entities.location)
-  {
-    Func.weather(entities.location[0].value,function(res){
-      messenger.sendTextMessage(sender, res);
-    })
-    
-  }
-}
 module.exports = router;
