@@ -20,8 +20,10 @@ Session.prototype.findOrCreate=function(id,k)
     return new Promise(function(resolve,reject){
        client.hmgetAsync(key,k).then(function(res){
            console.log('hmget result : ' + res);
-           if(!res || res==""){
-            client.hmset([key,'context','{}','sessionId',id], function(err,response){
+           if(!res || res=="")
+           {
+               console.log('inside hmget');
+            client.hmsetAsync([key,'context','{}','sessionId',id]).then(function(err,response){
                 if(err ) console.error(err);
                 console.log('New Session created: ' + JSON.stringify(response));
                 resolve([{},id]);
