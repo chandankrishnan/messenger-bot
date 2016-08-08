@@ -18,7 +18,7 @@ Session.prototype.findOrCreate=function(id,k)
 {   let key="session:"+id;
     console.log("session findOrCreate method called");
     return new Promise(function(resolve,reject){
-      clinet.hmget(key,k,function(res){
+      client.hmget(key,k,function(res){
           console.log('inside hmget ' + res);
            if(!res || res==""){
 
