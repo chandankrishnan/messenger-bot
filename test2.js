@@ -8,7 +8,7 @@ const Session = require('./session');
 // wit.interactive();
 
 
-Session.findOrCreate('200',['sessionId']).then(function(res){
+Session.findOrCreate('200',['sessionId','context']).then(function(res){
 console.log("res " + res);
 });
 

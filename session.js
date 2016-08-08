@@ -18,10 +18,7 @@ Session.prototype.findOrCreate=function(id,k)
 {   let key="session:"+id;
     return new Promise(function(resolve,reject){
        client.hmget(key,k,function(err,res){
-           console.log('hmget result : ' + res);
-           console.log(typeof res);
-           res=res.toString();
-           if(!res)
+           if(!res[0])
            {
             client.hmset([key,'context','{}','sessionId',id],function(err,response){
                 if(err ) console.error(err);
