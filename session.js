@@ -14,24 +14,6 @@ function Session()
     
 };
 
- client.hgetAsync(key,k || 'sessionId').then(function(res){
-        if(!res || res=="")
-        {  
-            client.hmset([key,'context','{}','sessionId',id], function(err,response){
-                if(err ) console.error(err);
-                console.log('Redis response get: ' + JSON.stringify(response));
-            });   
-            return id;     
-        }
-        else
-        {
-            console.log("using old session" + res);
-            return res;
-        }
-        });
-
-
-//TODO: try redis session implementation
 Session.prototype.findOrCreate=function(id,k)
 {   let key="session:"+id;
     console.log("session findOrCreate method called");
