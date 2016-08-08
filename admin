@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+ <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+ <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.css"/>
+    <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css"/>
+    <link rel="stylesheet" href="bower_components/nvd3/nv.d3.css"/>
+    <!--<link rel="stylesheet" href="https://cdn.rawgit.com/esvit/ng-table/v1.0.0/dist/ng-table.min.css">-->
+    <!--<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/ngDatepicker/src/css/ngDatepicker.css">
+    <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css"/>
+    <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap-toggle/css/bootstrap-toggle.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel='stylesheet' type='text/css'>
+    <link href="http://select2.github.io/dist/css/select2.min.css" type="text/css" rel="stylesheet" />
+
+    <!--<link rel="stylesheet" href="bower_components/angularjs-nvd3-directives/examples/stylesheets/nv.d3.css"/>-->
+
+</head>
+
+<!--<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script-->
+<body ng-app="MyApp" >
+<!--<div ng-include="'template/Navbar.html'"></div>-->
+<div class="container-fluid">
+
+  <div class="row-fluid">
+      <!--<div class="col-md-12">-->
+          <ui-view></ui-view>
+      <!--</div>-->
+
+  </div>
+
+    </div>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/momentjs/moment.js"></script>
+<!--<script data-require="angular.js@1.2.2" src="http://code.angularjs.org/1.2.2/angular.js" data-semver="1.2.2"></script>-->
+<script data-require="d3@*" data-semver="3.3.11" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js"></script>
+<script type="text/javascript" src="https://rawgit.com/chinmaymk/angular-charts/bower/dist/angular-charts.min.js"></script>
+<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script src="bower_components/angular-daterangepicker/js/angular-daterangepicker.js"></script>
+<script src="bower_components/satellizer/satellizer.min.js"></script>
+
+<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script src="bower_components/angular-daterangepicker/js/angular-daterangepicker.js"></script>
+<script src="bower_components/d3/d3.js"></script>
+<script src="bower_components/nvd3/nv.d3.js"></script>
+<script src="bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+<script src="bower_components/ng-csv/build/ng-csv.min.js"></script>
+<script src="bower_components/ngDatepicker/src/js/ngDatepicker.min.js"></script>
+<script src="bower_components/alasql/dist/alasql.min.js"></script>
+<script src="bower_components/js-xls/dist/xls.core.min.js"></script>
+<script src="bower_components/js-xlsx/dist/xlsx.core.min.js"></script>
+<script src="bower_components/zingchart/client/zingchart.min.js"></script>
+<script src="bower_components/ZingChart-AngularJS/src/zingchart-angularjs.js"></script>
+<script src="bower_components/ng-file-upload/ng-file-upload.js"></script>
+<script src="bower_components/ng-idle/angular-idle.min.js"></script>
+<!--<script type="text/javascript" src="bower_components/prism/prism.js"></script>-->
+
+<script src="bower_components/angular/angular.js" type="text/javascript"></script>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js" type="text/javascript"></script>
+<script src="bower_components/angular-aria/angular-aria.js" type="text/javascript"></script>
+<script src="bower_components/angular-material/angular-material.js" type="text/javascript"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="bower_components/angular-messages/angular-messages.min.js"></script>
+<script src="bower_components/angular-material-icons/angular-material-icons.js"></script>
+<script src="bower_components/angular-resource/angular-resource.min.js"></script>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
+<!--<script src="bower_components/angular-fusioncharts/dist/angular-fusioncharts.min.js"></script>-->
+<!--<script src="bower_components/angular-fusioncharts/app/charts/FusionCharts.js"></script>-->
+<!--<script src="bower_components/angular-fusioncharts/app/js/fusioncharts.js"></script>-->
+<!--<script src="bower_components/angular/angular.min.js"></script>-->
+<!--<script src="bower_components/angular/angular.min.js"></script>-->
+<script src="bower_components/Chart.js/Chart.js"></script>
+<script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+<script src="bower_components/bootstrap-toggle/js/bootstrap-toggle.js"></script>
+<!--<script src="https://cdn.rawgit.com/esvit/ng-table/v1.0.0/dist/ng-table.js"></script>-->
+<script src="bower_components/ng-table/dist/ng-table.js"></script>
+<script type="text/javascript" src="http://select2.github.io/dist/js/select2.full.js"></script>
+<script data-require="ui-bootstrap@*" data-semver="0.10.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
+<script src="bower_components/pdfmake/build/pdfmake.min.js"></script>
+<script src="bower_components/pdfmake/build/vfs_fonts.js"></script>
+<script src="bower_components/html2canvas.js"></script>
+<!--<script src="http://html2canvas.hertzen.com/build/html2canvas.js"></script>-->
+<!--<script src="bower_components/angularUtils-pagination/dirPagination.js"></script>-->
+<!--<script src="bower_components/ng-simplePagination/simplePagination.js"></script>-->
+<!--<<<<<<< HEAD-->
+<!--&lt;!&ndash;<script type="text/javascript" src="bower_components/prism/prism.js"></script>&ndash;&gt;-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>-->
+
+
+
+    <!----------------------------------------script file----------------------------------------------------->
+<script src="app.js"></script>
+    <!----------------------------------------controllers----------------------------------------------------->
+<script src="controller/login.js"></script>
+<!--<script src="controller/signUp.js"></script>-->
+<script src="controller/date_picker.js"></script>
+<script src="controller/homeCtrl.js"></script>
+<script src="controller/Navbarctrl.js"></script>
+<script src="controller/logout.js"></script>
+<script src="controller/monthCtrl.js"></script>
+<script src="controller/homePageController.js"></script>
+<!--<script src="controller/chart.js"></script>-->
+<script src="controller/client.js"></script>
+<script src="controller/group_tracker.js"></script>
+<script src="controller/apr.js"></script>
+<script src="controller/SummCtrl.js"></script>
+<script src="controller/tcsCtrl.js"></script>
+<script src="controller/wiproCtrl.js"></script>
+<script src="controller/pan.js"></script>
+<script src="controller/mmm.js"></script>
+<script src="controller/analyst_performance.js"></script>
+<script src="controller/bulkCtrl.js"></script>
+<script src="controller/pdfCtrl.js"></script>
+<script src="controller/aprred.js"></script>
+<script src="controller/status.js"></script>
+<script src="controller/master_qc.js"></script>
+<script src="controller/newbar.js"></script>
+<script src="controller/watch.js"></script>
+<script src="controller/single_case.js"></script>
+<!--<script src="directive/datepicker.js"></script>-->
+    <!---------------------------------------services--------------------------------------------------------->
+<script src="services/apr.js"></script>
+<script src="services/pagetitle.js"></script>
+<script src="services/datastore.js"></script>
+</body>
+</html>

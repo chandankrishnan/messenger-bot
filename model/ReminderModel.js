@@ -27,11 +27,11 @@ Reminder.prototype.create=function(fbid,data,cb)
     let multi =client.multi();
     console.log("creating reminder");
     client.incrAsync("totalReminders").then(function(totalCount){
-            // ADD COUNT AS ID IN USERS RESPECTIVE REMINDER LIST
-            console.log('TotalCount:' + totalCount);
-            
-            //add reminder to user reminder set to keep track of all reminder of particular user
-            multi.sadd("user:reminders:"+fbid,totalCount);
+            //user uncompleted reminder list
+            multi.sadd("reminders:uncompleted"+fbid,totalCount);
+
+            // keep all the reminder in one sorted set for alaram
+            multi.zadd("reminders",data['score'],totalCount,client.print);
 
             // add reminder in sorted list with date diff as secodary index
             multi.zadd("reminder:"+totalCount,data['score'],data['title'],client.print);
@@ -51,10 +51,9 @@ Reminder.prototype.create=function(fbid,data,cb)
 
 Reminder.prototype.get=function(fbid,reminder)
 {
-    // if(!reminder)
-    // {
-    //     client.hmgetall
-    // }
+    client.smembers("user:reminders:"+fbid,function(ids){
+        client.s
+    });
 };
 
 exports.Reminder=new Reminder();
