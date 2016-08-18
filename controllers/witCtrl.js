@@ -75,7 +75,7 @@ const actions = {
           ReminderModel.create(sessionId,data,function(err,res){
               console.log("response from model saveReminder: " + res);
           });
-          context.reminder_result="";
+          context.reminder_result="Reminder Saved !";
           console.log('save first context');
           resolve(context);
       }
