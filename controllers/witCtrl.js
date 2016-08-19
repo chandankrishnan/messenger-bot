@@ -76,6 +76,7 @@ const actions = {
               console.log("response from model saveReminder: " + res);
           });
           context.reminder_result="Reminder Saved !";
+          context.done=true;
           console.log('save first context');
           resolve(context);
       }
