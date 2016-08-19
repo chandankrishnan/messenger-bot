@@ -62,7 +62,7 @@ Session.prototype.update=function(key,data)
 
 Session.prototype.del=function(key)
 {
-    clinet.del("session:"+key,function(err,response){
+    client.del("session:"+key,function(err,response){
         if(err) console.error(err);
         console.log("deleting session" + response);
     });
