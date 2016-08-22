@@ -37,6 +37,7 @@ const actions = {
     context.sessionID=sessionId;
      console.log("entities" + JSON.stringify(request));
     let sessionData=Session.getById(sessionId);
+    console.log("sessionData " + sessionData);
     return new Promise(function(resolve, reject) {
       console.log(" sending :" + JSON.stringify(request));
       messenger.sendTextMessage(sessionData['fbid'], text,function (err, body) {
