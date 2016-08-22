@@ -3,7 +3,7 @@
 const bluebird=require('bluebird');
 const redis = require("redis");
 
-const redis_url=process.env.REDIS_URL || "redis://h:p2sd4j5e3448iu2tacphihpptrs@ec2-23-23-126-210.compute-1.amazonaws.com:28019";
+const redis_url=process.env.REDIS_URL || "redis://h:p2sd4j5e3448iu2tacphihpptrs@23.23.126.210:28019";
 var client=(!client) ?  redis.createClient(redis_url) : client;
 
 client.on("error", function (err) {

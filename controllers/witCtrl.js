@@ -1,13 +1,13 @@
 'use strict';
 const Wit=require('node-wit').Wit;
-const redis=require("./../redisDB");
-const ReminderModel=require('./../model/ReminderModel').Reminder;
+// const redis=require("./../redisDB");
+// const ReminderModel=require('./../model/ReminderModel').Reminder;
 const Session=require('./../session');
 const Func=require('./../class/func');
 const FBMessenger = require('fb-messenger');
 const moment=require('moment');
 
-const client=redis.client;
+// const client=redis.client;
 
 const FB_PAGE_ID=process.env.FB_PAGE_ID || '1620191058306200',
     FB_PAGE_TOKEN=process.env.FB_PAGE_TOKEN || 'EAAHVizlMZBFkBAA6Ltx64kHqPypTgja5B1ez0QjeI2KP0zZCq5WnDvb153c4Ivn7Mk1fwmuR44LhE2XY6T2ZAgnNKC8DZARyxOLZB7AmX9HTohj1TExPZB9uxjsmTxcEkT2IksQNoxLl1p96YCfYGBTLbRU6R6R7DYbPGgxOYpuQZDZD';
@@ -72,9 +72,9 @@ const actions = {
       {
           data={title:reminder,datetime:datetime,score:date_diff};
           let userId=Session.getById(sessionId);
-          ReminderModel.create(userId,data,function(err,res){
-              console.log("response from model saveReminder: " + res);
-          });
+          // ReminderModel.create(userId,data,function(err,res){
+          //     console.log("response from model saveReminder: " + res);
+          // });
           context.reminder_result="Reminder Saved !";
           context.done=true;
           console.log('save first context');
