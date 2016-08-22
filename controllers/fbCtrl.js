@@ -77,7 +77,7 @@ router.post('/webhook', (req, res) => {
         wit.runActions(
           sessionData.sessionID, // the user's current session
           msg, // the user's message
-          JSON.parse(sessionData.context) // the user's current session state
+          sessionData.context // the user's current session state
         ).then((context) => {
           console.log('Wit Bot haS completed its action');
           if (context['done']) {
