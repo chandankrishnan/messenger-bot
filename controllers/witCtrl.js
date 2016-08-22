@@ -36,10 +36,10 @@ const actions = {
     const {text, quickreplies} = response;
     context.sessionID=sessionId;
      console.log("entities" + JSON.stringify(request));
-    
+    let sessionData=Session.getById(sessionId);
     return new Promise(function(resolve, reject) {
       console.log(" sending :" + JSON.stringify(request));
-      messenger.sendTextMessage(sessionId, text,function (err, body) {
+      messenger.sendTextMessage(sessionData['fbid'], text,function (err, body) {
         if(err) return console.error(err)
         console.log(body)
       });
