@@ -71,8 +71,8 @@ const actions = {
       if(reminder)
       {
           data={title:reminder,datetime:datetime,score:date_diff};
-        
-          ReminderModel.create(sessionId,data,function(err,res){
+          let userId=Session.getById(sessionId);
+          ReminderModel.create(userId,data,function(err,res){
               console.log("response from model saveReminder: " + res);
           });
           context.reminder_result="Reminder Saved !";

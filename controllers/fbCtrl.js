@@ -71,12 +71,13 @@ router.post('/webhook', (req, res) => {
       // We received a text message
       // Let's forward the message to the Wit.ai Bot Engine
       // This will run all actions until our bot has nothing left to do
-      Session.findOrCreate(sender, ['context', 'sessionId']).then(function (sessionData) {
+      const sessionData=Session.findOrCreateSession(sender);
+      
         console.log('Session Data:' + sessionData);
         wit.runActions(
-          sessionData[1], // the user's current session
+          sessionData.sessionID, // the user's current session
           msg, // the user's message
-          JSON.parse(sessionData[0]) // the user's current session state
+          JSON.parse(sessionData.context) // the user's current session state
         ).then((context) => {
           console.log('Wit Bot haS completed its action');
           if (context['done']) {
@@ -85,11 +86,11 @@ router.post('/webhook', (req, res) => {
           }
           console.log("updating session data");
           // Updating the user's current session state
-          Session.update(sender, { 'context': context });
+          Session.update(sender,'context',context);
         }).catch((err) => {
           console.error('Oops! Got an error from Wit: ', err.stack || err);
         });
-      }); //end findOrCreateSession
+
 
     } //end else if
   }
