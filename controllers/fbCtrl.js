@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const app = express();
 const FBMessenger = require('fb-messenger');
-const Session = require('./../session');
+// const Session = require('./../session');
 const Func = require('./../class/func');
 // const redis = require("./../redisDB");
 // const ReminderModel = require('./../model/ReminderModel').Reminder;
@@ -193,12 +193,15 @@ router.post('/webhook', (req, res) => {
       ).then((context) => {
         console.log('Wit Bot haS completed its action');
         if (context['done']) {
-          console.log("clearing session data");
+          console.log("clearing session data" + JSON.stringify(sessions));
           delete sessions[sessionId];
         }
-        console.log("updating session data");
+        else
+        {
+          console.log("updating session data");
         // Updating the user's current session state
-        sessions[sessionId].context = context;
+          sessions[sessionId].context = context;
+        }
       }).catch((err) => {
         console.error('Oops! Got an error from Wit: ', err.stack || err);
       });
