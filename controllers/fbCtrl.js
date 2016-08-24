@@ -5,8 +5,8 @@ const app = express();
 const FBMessenger = require('fb-messenger');
 const Session = require('./../session');
 const Func = require('./../class/func');
-const redis = require("./../redisDB");
-const ReminderModel = require('./../model/ReminderModel').Reminder;
+// const redis = require("./../redisDB");
+// const ReminderModel = require('./../model/ReminderModel').Reminder;
 const moment = require('moment');
 const Wit = require('node-wit').Wit;
 const log = require('node-wit').log;
@@ -103,9 +103,9 @@ const actions = {
         let recipientId = sessions[sessionId].fbid;
         data = { title: reminder, datetime: datetime, score: date_diff };
 
-        ReminderModel.create(recipientId, data, function (err, res) {
-          console.log("response from model saveReminder: " + res);
-        });
+        // ReminderModel.create(recipientId, data, function (err, res) {
+        //   console.log("response from model saveReminder: " + res);
+        // });
         context.reminder_result = "Reminder Saved !";
         context.done = true;
         console.log('save first context');
