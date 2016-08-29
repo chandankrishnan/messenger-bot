@@ -6,7 +6,8 @@ const FBMessenger = require('fb-messenger');
 // const Session = require('./../session');
 const Func = require('./../class/func');
 // const redis = require("./../redisDB");
-// const ReminderModel = require('./../model/ReminderModel').Reminder;
+const Users=require('./../model/UserModel').userModel;
+const Reminder=require('./../model/ReminderModel').reminderModel;
 const moment = require('moment');
 const Wit = require('node-wit').Wit;
 const log = require('node-wit').log;
@@ -24,20 +25,21 @@ const firstEntityValue = function (entities, entity) {
     else return false;
 
 }
-const getFirstMessagingEntry = (body) => {
-    const val = body.object == 'page' &&
-            body.entry &&
-            Array.isArray(body.entry) &&
-            body.entry.length > 0 &&
-            body.entry[0] &&
-            body.entry[0].id == FB_PAGE_ID &&
-            body.entry[0].messaging &&
-            Array.isArray(body.entry[0].messaging) &&
-            body.entry[0].messaging.length > 0 &&
-            body.entry[0].messaging[0]
-        ;
-    return val || null;
-};
+//TODO:: delete getFirstMessageEntry function
+// const getFirstMessagingEntry = (body) => {
+//     const val = body.object == 'page' &&
+//             body.entry &&
+//             Array.isArray(body.entry) &&
+//             body.entry.length > 0 &&
+//             body.entry[0] &&
+//             body.entry[0].id == FB_PAGE_ID &&
+//             body.entry[0].messaging &&
+//             Array.isArray(body.entry[0].messaging) &&
+//             body.entry[0].messaging.length > 0 &&
+//             body.entry[0].messaging[0]
+//         ;
+//     return val || null;
+// };
 
 // This will contain all user sessions.
 // Each session has an entry:
@@ -56,7 +58,7 @@ const findOrCreateSession = (fbid) => {
     if (!sessionId) {
         // No session found for user fbid, let's create a new one
         sessionId = new Date().toISOString();
-        sessions[sessionId] = {fbid: fbid, context: {},logged:false};
+        sessions[sessionId] = {fbid: fbid, context: {}, logged: false};
     }
     return sessionId;
 };
@@ -71,10 +73,12 @@ const actions = {
 
         return new Promise(function (resolve, reject) {
             console.log(" sending :" + JSON.stringify(request));
-            messenger.sendTextMessage(recipientId, text, function (err, body) {
-                if (err) return console.error(err)
-                console.log(body)
-            });
+            if (recipientId) {
+                messenger.sendTextMessage(recipientId, text, function (err, body) {
+                    if (err) return console.error(err)
+                    console.log(body)
+                });
+            }
             resolve();
         });
     },
@@ -160,53 +164,57 @@ router.get('/webhook', function (req, res) {
 
 // Message handler
 router.post('/webhook', (req, res) => {
-    // Parsing the Messenger API response
 
-    const messaging = getFirstMessagingEntry(req.body);
+    // const messaging = getFirstMessagingEntry(req.body);
+    const data = req.body;
 
-    if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
-        console.log('reached if condition of webhook');
-        // Yay! We got a new message!
-        // We retrieve the Facebook user ID of the sender
-        const sender = messaging.sender.id;
+    if (data.object == 'page') {
+        data.entry.forEach(entry => {
+            entry.messaging.forEach(event => {
+                // We retrieve the Facebook user ID of the sender
+                const sender = event.sender.id;
+                // We retrieve the message content
+                const {text, attachments} = event.message;
+                Users.findOne({'facebook.id':sender},function (err,data) {
+                   if(!err && data){
+                       if (attachments) {
+                           // We received an attachment
+                           messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
+                       } else if (text) {
+                           // We received a text message
+                           // Let's forward the message to the Wit.ai Bot Engine
+                           // This will run all actions until our bot has nothing left to do
+                           const sessionId = findOrCreateSession(sender);
 
-        // We retrieve the user's current session, or create one if it doesn't exist
-        // This is needed for our bot to figure out the conversation history
+                           wit.runActions(
+                               sessionId, // the user's current session
+                               msg, // the user's message
+                               sessions[sessionId].context // the user's current session state
+                           ).then((context) => {
+                               console.log('Wit Bot haS completed its action');
+                               if (context['done']) {
+                                   console.log("clearing session data" + JSON.stringify(sessions));
+                                   delete sessions[sessionId];
+                               }
+                               else {
+                                   console.log("updating session data");
+                                   // Updating the user's current session state
+                                   sessions[sessionId].context = context;
+                               }
+                           }).catch((err) => {
+                               console.error('Oops! Got an error from Wit: ', err.stack || err);
+                           });
+                       } //end else if
+                   }
+                    else if(!err && !data)
+                   {
+                       messenger.sendTextMessage(sender, 'Sorry I can only answer to Registered Users. Say ` register me ` to signup.');
+                   }
+                    else if(err) console.error("Mongoose error " + err);
+                });
 
-        // We retrieve the message content
-        const msg = messaging.message.text;
-        const atts = messaging.message.attachments;
-
-        if (atts) {
-            // We received an attachment
-            messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
-        } else if (msg) {
-            // We received a text message
-            // Let's forward the message to the Wit.ai Bot Engine
-            // This will run all actions until our bot has nothing left to do
-            const sessionId = findOrCreateSession(sender);
-
-            wit.runActions(
-                sessionId, // the user's current session
-                msg, // the user's message
-                sessions[sessionId].context // the user's current session state
-            ).then((context) => {
-                console.log('Wit Bot haS completed its action');
-                if (context['done']) {
-                    console.log("clearing session data" + JSON.stringify(sessions));
-                    delete sessions[sessionId];
-                }
-                else {
-                    console.log("updating session data");
-                    // Updating the user's current session state
-                    sessions[sessionId].context = context;
-                }
-            }).catch((err) => {
-                console.error('Oops! Got an error from Wit: ', err.stack || err);
             });
-
-
-        } //end else if
+        });
     }
     res.sendStatus(200);
 });

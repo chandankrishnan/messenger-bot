@@ -6,8 +6,8 @@ const bodyParser = require('body-parser');
 const http = require('http');
 const Func = require('./class/func');
 const db = require('./db');
-// const Users=require('./model/UserModel').userModel;
-// const Reminder=require('./model/ReminderModel').reminderModel;
+const Users=require('./model/UserModel').userModel;
+const Reminder=require('./model/ReminderModel').reminderModel;
 const PORT = process.env.PORT || 8080;
 const HOST = process.env.IP;
 const app = express();
@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-router.use(require('./controllers'));
+// router.use(require('./controllers'));
 
 app.use('/', router);
 app.set('port', PORT);
