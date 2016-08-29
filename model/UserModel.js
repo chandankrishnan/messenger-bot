@@ -17,6 +17,4 @@ let userSchema = mongoose.Schema({
 });
 
 let userModel = mongoose.model('Users', userSchema);
-exports ={
-    userModel:userModel
-}
+exports.userModel=userModel;

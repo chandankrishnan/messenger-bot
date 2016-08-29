@@ -27,5 +27,8 @@ app.set('port', PORT);
 db.connect(() => {
     http.createServer(app).listen(PORT,function(){
         console.log("Listing server %s on %d ",process.env.IP,PORT);
+        // Users.findOne({'facebook.id':'111'},function (err,data) {
+        //     console.log(data);
+        // });
     });
 });
