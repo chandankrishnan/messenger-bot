@@ -36,7 +36,6 @@ Reminder.prototype.create=function(fbid,data,cb)
             // add reminder in sorted list with date diff as secodary index
             multi.zadd("reminder:"+totalCount,data['score'],data['title'],client.print);
 
-            // ADD REMINDER INFORMATION IN SEPERATE REMINDER LIST FOR EACH REMINDER
             // multi.hmset(["reminder:"+totalCount,'title',data['title'], 'date',data['date'],'duration',data['duration']],client.print);
             multi.exec(function (err, replies) {
                 console.log("Reply :" + replies);
@@ -49,11 +48,35 @@ Reminder.prototype.create=function(fbid,data,cb)
     });
 };
 
-Reminder.prototype.get=function(fbid,reminder)
+Reminder.prototype.getAll=function(fbid,count)
 {
-    client.smembers("user:reminders:"+fbid,function(ids){
-        client.s
+    let uncompletedIds=[];
+    let completedIds=[];
+    // get uncompleted reminders of user
+    client.smembers("reminders:uncompleted:"+fbid,function(ids){
+        // append like reminder:1,rmeinder:2
+        uncompletedIds=ids.map(ele=>'reminder:'+ele);
+        //get completed reminders
+        client.smembers("reminders:completed:"+fbid,function(ids){
+            completedIds=ids.map(ele=>'reminder:'+ele);
+        });
+    });
+
+    client.zunionstore("reminder:all:"+fbid,count,uncompletedIds+completedIds,function(res){
+        console.log(res);
     });
 };
-
+Reminder.prototype.getUncompleted=function(fbid,count)
+{
+    let uncompletedIds=[];
+    client.smembers("reminders:uncompleted:200",function(err,ids){
+        console.log(ids);
+         uncompletedIds=ids.map(ele=>'reminder:'+ele);
+         count=(!count) ? uncompletedIds.length : count;
+         console.log(count + '<--this is count');
+         client.zunionstore("reminder:all:"+fbid,count,'reminder:1','reminder:2',function(err,res){
+            console.log(res);
+        });
+    });
+}
 exports.Reminder=new Reminder();
