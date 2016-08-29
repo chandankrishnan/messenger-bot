@@ -4,13 +4,13 @@ var express=require('express')
 
 
 router.use('/fb',require('./fbCtrl'));
-router.use('/',function(req,res,next){
-    res.send("this is main controller index");
-  next();
-})
+// router.use('/',function(req,res,next){
+//     res.send("this is main controller index");
+//   next();
+// });
 
 //home page
-router.get('/a',function(req,res) {
+router.get('/',function(req,res) {
     res.send('This is main controller');
 });
 

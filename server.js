@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// router.use(require('./controllers'));
+router.use(require('./controllers'));
 
 app.use('/', router);
 app.set('port', PORT);
@@ -26,6 +26,6 @@ app.set('port', PORT);
 // console.log(Users);
 db.connect(() => {
     http.createServer(app).listen(PORT,function(){
-        console.log("Listing server %s on %d",process.env.IP,PORT);
+        console.log("Listing server %s on %d ",process.env.IP,PORT);
     });
 });
