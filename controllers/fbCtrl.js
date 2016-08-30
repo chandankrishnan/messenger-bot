@@ -167,7 +167,7 @@ router.post('/webhook', (req, res) => {
     console.log(res);
     console.log('Logged info : ' + res.get('logged'));
 
-    res.setHandlers('logged',true);
+    res.setHeader('logged',true);
     const data = req.body;
 
     if (data.object === 'page') {
