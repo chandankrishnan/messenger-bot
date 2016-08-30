@@ -164,63 +164,64 @@ router.get('/webhook', function (req, res) {
 // Message handler
 // Message handler
 router.post('/webhook', (req, res) => {
-    // Parsing the Messenger API response
+    console.log(res);
+    console.log('Logged info : ' + res.get('logged'));
 
-    const messaging = getFirstMessagingEntry(req.body);
+    res.setHandlers('logged',true);
+    const data = req.body;
 
-    if (messaging && messaging.message && messaging.recipient.id == FB_PAGE_ID) {
-        console.log('reached if condition of webhook');
-        // Yay! We got a new message!
-        // We retrieve the Facebook user ID of the sender
-        const sender = messaging.sender.id;
+    if (data.object === 'page') {
+        data.entry.forEach(entry => {
+            entry.messaging.forEach(event => {
+                if (event.message) {
+                    // Yay! We got a new message!
+                    // We retrieve the Facebook user ID of the sender
+                    const sender = event.sender.id;
 
-        // We retrieve the user's current session, or create one if it doesn't exist
-        // This is needed for our bot to figure out the conversation history
+                    // We retrieve the user's current session, or create one if it doesn't exist
+                    // This is needed for our bot to figure out the conversation history
+                    const sessionId = findOrCreateSession(sender);
 
-        // We retrieve the message content
-        const msg = messaging.message.text;
-        const atts = messaging.message.attachments;
+                    // We retrieve the message content
+                    const {text, attachments} = event.message;
 
-        if (atts) {
-            // We received an attachment
-            messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
-        } else if (msg) {
-            // We received a text message
-            // Let's forward the message to the Wit.ai Bot Engine
-            // This will run all actions until our bot has nothing left to do
-            const sessionId = findOrCreateSession(sender);
-
-            Users.findOne({'facebook.id':sender},function(err,data){
-                if(!err && !data)
-                {
-                    messenger.sendTextMessage(sender, 'Sorry I can only answer to registered users.');
-                }
-                else if(!err && data)
-                {
-                    wit.runActions(
-                        sessionId, // the user's current session
-                        msg, // the user's message
-                        sessions[sessionId].context // the user's current session state
-                    ).then((context) => {
-                        console.log('Wit Bot haS completed its action');
-                        if (context['done']) {
-                            console.log("clearing session data" + JSON.stringify(sessions));
-                            delete sessions[sessionId];
-                        }
-                        else
-                        {
-                            console.log("updating session data");
-                            // Updating the user's current session state
-                            sessions[sessionId].context = context;
-                        }
-                    }).catch((err) => {
-                        console.error('Oops! Got an error from Wit: ', err.stack || err);
-                    });
+                    if (attachments) {
+                        messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
+                    } else if (text) {
+                        Users.findOne({'facebook.id':sender},function(err,data){
+                            if(!err && !data)
+                            {
+                                messenger.sendTextMessage(sender, 'Sorry I can only answer to registered users.');
+                            }
+                            else if(!err && data)
+                            {
+                                wit.runActions(
+                                    sessionId, // the user's current session
+                                    text, // the user's message
+                                    sessions[sessionId].context // the user's current session state
+                                ).then((context) => {
+                                    console.log('Wit Bot haS completed its action');
+                                    if (context['done']) {
+                                        console.log("clearing session data" + JSON.stringify(sessions));
+                                        delete sessions[sessionId];
+                                    }
+                                    else
+                                    {
+                                        console.log("updating session data");
+                                        // Updating the user's current session state
+                                        sessions[sessionId].context = context;
+                                    }
+                                }).catch((err) => {
+                                    console.error('Oops! Got an error from Wit: ', err.stack || err);
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    console.log('received event', JSON.stringify(event));
                 }
             });
-
-
-        } //end else if
+        });
     }
     res.sendStatus(200);
 });
