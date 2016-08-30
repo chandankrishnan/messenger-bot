@@ -145,8 +145,8 @@ const actions = {
 // initializing Wit
 const wit = new Wit({
     accessToken: WIT_TOKEN,
-    actions,
-    logger: new log.Logger(log.INFO)
+    actions
+    // logger: new log.Logger(log.INFO)
 });
 
 
@@ -190,24 +190,33 @@ router.post('/webhook', (req, res) => {
             // This will run all actions until our bot has nothing left to do
             const sessionId = findOrCreateSession(sender);
 
-            wit.runActions(
-                sessionId, // the user's current session
-                msg, // the user's message
-                sessions[sessionId].context // the user's current session state
-            ).then((context) => {
-                console.log('Wit Bot haS completed its action');
-                if (context['done']) {
-                    console.log("clearing session data" + JSON.stringify(sessions));
-                    delete sessions[sessionId];
-                }
-                else
+            Users.findOne({'facebook.id':sender},function(err,data){
+                if(!err && !data)
                 {
-                    console.log("updating session data");
-                    // Updating the user's current session state
-                    sessions[sessionId].context = context;
+                    messenger.sendTextMessage(sender, 'Sorry I can only answer to registered users.');
                 }
-            }).catch((err) => {
-                console.error('Oops! Got an error from Wit: ', err.stack || err);
+                else if(!err && data)
+                {
+                    wit.runActions(
+                        sessionId, // the user's current session
+                        msg, // the user's message
+                        sessions[sessionId].context // the user's current session state
+                    ).then((context) => {
+                        console.log('Wit Bot haS completed its action');
+                        if (context['done']) {
+                            console.log("clearing session data" + JSON.stringify(sessions));
+                            delete sessions[sessionId];
+                        }
+                        else
+                        {
+                            console.log("updating session data");
+                            // Updating the user's current session state
+                            sessions[sessionId].context = context;
+                        }
+                    }).catch((err) => {
+                        console.error('Oops! Got an error from Wit: ', err.stack || err);
+                    });
+                }
             });
 
 
