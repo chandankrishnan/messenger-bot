@@ -166,7 +166,8 @@ router.get('/webhook', function (req, res) {
 router.post('/webhook', (req, res) => {
     console.log(res);
     console.log('Logged info : ' + res.get('logged'));
-
+    console.log('Logged info2 : ' + res.locals.user);
+    res.locals.user = 'logged';
     res.setHeader('logged',true);
     const data = req.body;
 
