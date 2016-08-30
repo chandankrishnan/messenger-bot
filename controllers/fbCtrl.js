@@ -6,8 +6,8 @@ const FBMessenger = require('fb-messenger');
 // const Session = require('./../session');
 const Func = require('./../class/func');
 // const redis = require("./../redisDB");
-const Users=require('./../model/UserModel').userModel;
-const Reminder=require('./../model/ReminderModel').reminderModel;
+const Users = require('./../model/UserModel').userModel;
+const Reminder = require('./../model/ReminderModel').reminderModel;
 const moment = require('moment');
 const Wit = require('node-wit').Wit;
 const log = require('node-wit').log;
@@ -24,7 +24,7 @@ const firstEntityValue = function (entities, entity) {
     if (val) return val;
     else return false;
 
-}
+};
 const getFirstMessagingEntry = (body) => {
     const val = body.object == 'page' &&
             body.entry &&
@@ -74,7 +74,7 @@ const actions = {
             console.log(" sending :" + JSON.stringify(request));
             if (recipientId) {
                 messenger.sendTextMessage(recipientId, text, function (err, body) {
-                    if (err) return console.error(err)
+                    if (err) return console.error(err);
                     console.log(body)
                 });
             }
@@ -127,7 +127,7 @@ const actions = {
             if (!location) context.missingLocation = true;
             if (intent == 'weather' && location) {
                 Func.weather(location, function (forecast) {
-                    console.log("weather data " + forecast)
+                    console.log("weather data " + forecast);
                     context.weather_result = forecast;
                     context.missingLocation = true;
                     context.done = true;
@@ -164,59 +164,19 @@ router.get('/webhook', function (req, res) {
 // Message handler
 // Message handler
 router.post('/webhook', (req, res) => {
-    console.log(res);
-    console.log('Logged info : ' + res.get('logged'));
-    console.log('Logged info2 : ' + res.locals.user);
-    res.locals.user = 'logged';
-    res.setHeader('logged',true);
     const data = req.body;
 
     if (data.object === 'page') {
         data.entry.forEach(entry => {
             entry.messaging.forEach(event => {
                 if (event.message) {
-                    // Yay! We got a new message!
-                    // We retrieve the Facebook user ID of the sender
                     const sender = event.sender.id;
-
-                    // We retrieve the user's current session, or create one if it doesn't exist
-                    // This is needed for our bot to figure out the conversation history
                     const sessionId = findOrCreateSession(sender);
-
-                    // We retrieve the message content
                     const {text, attachments} = event.message;
-
                     if (attachments) {
                         messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
                     } else if (text) {
-                        Users.findOne({'facebook.id':sender},function(err,data){
-                            if(!err && !data)
-                            {
-                                messenger.sendTextMessage(sender, 'Sorry I can only answer to registered users.');
-                            }
-                            else if(!err && data)
-                            {
-                                wit.runActions(
-                                    sessionId, // the user's current session
-                                    text, // the user's message
-                                    sessions[sessionId].context // the user's current session state
-                                ).then((context) => {
-                                    console.log('Wit Bot haS completed its action');
-                                    if (context['done']) {
-                                        console.log("clearing session data" + JSON.stringify(sessions));
-                                        delete sessions[sessionId];
-                                    }
-                                    else
-                                    {
-                                        console.log("updating session data");
-                                        // Updating the user's current session state
-                                        sessions[sessionId].context = context;
-                                    }
-                                }).catch((err) => {
-                                    console.error('Oops! Got an error from Wit: ', err.stack || err);
-                                });
-                            }
-                        });
+                        runWitAction(sessionId, text);
                     }
                 } else {
                     console.log('received event', JSON.stringify(event));
@@ -226,4 +186,53 @@ router.post('/webhook', (req, res) => {
     }
     res.sendStatus(200);
 });
+
+
+function runWitAction(sessionId, msg) {
+    wit.runActions(
+        sessionId, // the user's current session
+        msg, // the user's message
+        sessions[sessionId].context // the user's current session state
+    ).then((context) => {
+        console.log('Wit Bot haS completed its action');
+        if (context['done']) {
+            console.log("clearing session data" + JSON.stringify(sessions));
+            delete sessions[sessionId];
+        }
+        else {
+            console.log("updating session data");
+            // Updating the user's current session state
+            sessions[sessionId].context = context;
+        }
+    }).catch((err) => {
+        console.error('Oops! Got an error from Wit: ', err.stack || err);
+    });
+}
+
+function findOrCreateUser(data) {
+    return new Promise(function (resolve, reject) {
+        Users.findOne({'facebook.id': data.fbid}, function (err, res) {
+            if (!res) {
+                let u = new Users({'facebook.id': data.fbid});
+                u.save(function (err, data) {
+                    if (data) resolve(true);
+                });
+            }
+            else if (res) {
+                resolve(true);
+            }
+            else if (err) {
+                reject(err);
+            }
+        })
+    });
+}
+function addUser(data) {
+    return new Promise(function (resolve, reject) {
+        let user = new Users({'facebook.id': data.fbid});
+        Users.save(function (err, data) {
+            if (!err) resolve("created");
+        });
+    });
+}
 module.exports = router;
