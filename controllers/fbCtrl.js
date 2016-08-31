@@ -46,6 +46,7 @@ const getFirstMessagingEntry = (body) => {
 const sessions = {};
 
 const findOrCreateSession = (fbid) => {
+    console.log("recahed find or create session");
     return new Promise(function(resolve,reject){
         let sessionId;
         // Let's see if we already have a session for the user fbid
@@ -53,22 +54,26 @@ const findOrCreateSession = (fbid) => {
             if (sessions[k].fbid === fbid) {
                 // Yep, got it!
                 sessionId = k;
+                console.log("found session");
             }
         });
         if (!sessionId) {
             // No session found for user fbid, let's create a new one
             sessionId = new Date().toISOString();
             sessions[sessionId] = {fbid: fbid, context: {}, logged: false};
-
+            console.log("no session found creating new");
             Users.findOne({'facebook.id': fbid}, function (err, res) {
                 if (!res) {
                     let u = new Users({'facebook.id':fbid});
+                    console.log("no user found creating new");
                     u.save(function (err, data) {
+                        console.log("creating new user ", data ,err);
                         if (data) resolve(sessionId);
                         else reject(err);
                     });
                 }
                 else if (res) {
+                    console.log("user found");
                     resolve(sessionId);
                 }
                 else if (err) {
@@ -179,6 +184,7 @@ router.get('/webhook', function (req, res) {
 });
 
 router.post('/webhook', (req, res) => {
+    console.log("reached webhook");
 const data = req.body;
 
 if (data.object === 'page') {
