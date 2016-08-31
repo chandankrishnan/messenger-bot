@@ -55,6 +55,7 @@ const findOrCreateSession = (fbid) => {
                 // Yep, got it!
                 sessionId = k;
                 console.log("found session");
+                resolve(sessionId);
             }
         });
         if (!sessionId) {
