@@ -143,8 +143,11 @@ const actions = {
                 Reminder.create(rem).then(function(res){
                     context.reminder_result = "Reminder Saved !";
                     // send quick reply, depends weather date is provided or not
-                    datetime ? messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply2) :
-                        messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply1);
+                    // datetime ? messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply2) :
+                   messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply1,function(err,data){
+                       console.log(data);
+                       console.log(err);
+                   });
                     resolve(context);
                 },function(err){
                     console.log("error in saving reminder ",err);
