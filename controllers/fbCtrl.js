@@ -46,21 +46,39 @@ const getFirstMessagingEntry = (body) => {
 const sessions = {};
 
 const findOrCreateSession = (fbid) => {
-    let sessionId;
-    // Let's see if we already have a session for the user fbid
-    Object.keys(sessions).forEach(k => {
-        if (sessions[k].fbid === fbid) {
-            // Yep, got it!
-            sessionId = k;
+    return new Promise(function(resolve,reject){
+        let sessionId;
+        // Let's see if we already have a session for the user fbid
+        Object.keys(sessions).forEach(k => {
+            if (sessions[k].fbid === fbid) {
+                // Yep, got it!
+                sessionId = k;
+            }
+        });
+        if (!sessionId) {
+            // No session found for user fbid, let's create a new one
+            sessionId = new Date().toISOString();
+            sessions[sessionId] = {fbid: fbid, context: {}, logged: false};
+
+            Users.findOne({'facebook.id': fbid}, function (err, res) {
+                if (!res) {
+                    let u = new Users({'facebook.id':fbid});
+                    u.save(function (err, data) {
+                        if (data) resolve(sessionId);
+                        else reject(err);
+                    });
+                }
+                else if (res) {
+                    resolve(sessionId);
+                }
+                else if (err) {
+                    reject(err);
+                }
+            })
         }
     });
-    if (!sessionId) {
-        // No session found for user fbid, let's create a new one
-        sessionId = new Date().toISOString();
-        sessions[sessionId] = {fbid: fbid, context: {}, logged: false};
-    }
-    return sessionId;
 };
+
 
 // WIT.AI actions
 const actions = {
@@ -160,31 +178,34 @@ router.get('/webhook', function (req, res) {
     }
 });
 
-
-// Message handler
-// Message handler
 router.post('/webhook', (req, res) => {
-    const data = req.body;
+const data = req.body;
 
-    if (data.object === 'page') {
-        data.entry.forEach(entry => {
-            entry.messaging.forEach(event => {
-                if (event.message) {
-                    const sender = event.sender.id;
-                    const sessionId = findOrCreateSession(sender);
-                    const {text, attachments} = event.message;
-                    if (attachments) {
-                        messenger.sendTextMessage(sender, 'Sorry I can only process text messages for now.');
-                    } else if (text) {
-                        runWitAction(sessionId, text);
-                    }
-                } else {
-                    console.log('received event', JSON.stringify(event));
+if (data.object === 'page') {
+    data.entry.forEach(entry => {
+        entry.messaging.forEach(event => {
+            if (event.message) {
+                const sender = event.sender.id;  //get sender id
+                // const sessionId = findOrCreateSession(sender);  //get user current session
+                const {text, attachments} = event.message;
+                if(text)
+                {
+                    // create session and user if does not exist
+                    findOrCreateSession(sender).then(function(sessionId){
+                            runWitAction(sessionId,text);
+                    });
                 }
-            });
+                else if(attachments)
+                {
+
+                }
+            } else {
+                console.log('received event', JSON.stringify(event));
+            }
         });
-    }
-    res.sendStatus(200);
+    });
+}
+res.sendStatus(200);
 });
 
 
@@ -209,30 +230,4 @@ function runWitAction(sessionId, msg) {
     });
 }
 
-function findOrCreateUser(data) {
-    return new Promise(function (resolve, reject) {
-        Users.findOne({'facebook.id': data.fbid}, function (err, res) {
-            if (!res) {
-                let u = new Users({'facebook.id': data.fbid});
-                u.save(function (err, data) {
-                    if (data) resolve(true);
-                });
-            }
-            else if (res) {
-                resolve(true);
-            }
-            else if (err) {
-                reject(err);
-            }
-        })
-    });
-}
-function addUser(data) {
-    return new Promise(function (resolve, reject) {
-        let user = new Users({'facebook.id': data.fbid});
-        Users.save(function (err, data) {
-            if (!err) resolve("created");
-        });
-    });
-}
 module.exports = router;
