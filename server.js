@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// router.use(require('./controllers'));
+router.use(require('./controllers'));
 
 app.use('/', router);
 app.set('port', PORT);
@@ -36,7 +36,7 @@ db.connect(() => {
         //     if(err ) console.log(err);
         // });
 
-        
+
     });
 });
 
