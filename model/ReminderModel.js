@@ -96,5 +96,25 @@ let reminderSchema = mongoose.Schema({
 });
 
 let ReminderModel = mongoose.model('Reminders', reminderSchema);
-exports.reminderModel = ReminderModel;
+
+//constructor
+function Reminder(){}
+
+Reminder.prototype.create=function(data){
+   return new Promise(function(resolve,reject){
+        var result=new ReminderModel({"title":data.title,"user_id":data.user_id});
+       result.save(function(err,data){
+           console.log("err",err);
+           console.log('data',data);
+           if(data) resolve(data);
+           else reject(err);
+           console.log(err);
+           console.log(data);
+       });
+   });
+};
+
+
+exports.reminderModel =Reminder;
+// exports.reminderModel = ReminderModel;
 

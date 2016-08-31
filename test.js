@@ -14,6 +14,3 @@
 // app.use(cookieParser("secretSign#143_!223"));
 
 'use strict';
-const session=require('./session');
-session.findOrCreate('3233');
-console.log(session.get('3233'));

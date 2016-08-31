@@ -7,7 +7,7 @@ const http = require('http');
 const Func = require('./class/func');
 const db = require('./db');
 const Users=require('./model/UserModel').userModel;
-const Reminder=require('./model/ReminderModel').reminderModel;
+const reminder=require('./model/ReminderModel').reminderModel;
 const PORT = process.env.PORT || 8080;
 const HOST = process.env.IP;
 const app = express();
@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-router.use(require('./controllers'));
+// router.use(require('./controllers'));
 
 app.use('/', router);
 app.set('port', PORT);
@@ -27,9 +27,16 @@ app.set('port', PORT);
 db.connect(() => {
     http.createServer(app).listen(PORT,function(){
         console.log("Listing server %s on %d ",process.env.IP,PORT);
-        // Users.findOne({'facebook.id':'111'},function (err,data) {
-        //     console.log(data);
+
+        // var a={title:'erfrferf',user_id:'57c69b2893f0481000b59961'};
+        // var r=new reminder();
+        // console.log(r);
+        // r.create(a).then(function(data){
+        //     console.log("we saved " + data);
+        //     if(err ) console.log(err);
         // });
+
+        
     });
 });
 

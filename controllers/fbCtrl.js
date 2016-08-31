@@ -7,7 +7,8 @@ const FBMessenger = require('fb-messenger');
 const Func = require('./../class/func');
 // const redis = require("./../redisDB");
 const Users = require('./../model/UserModel').userModel;
-const Reminder = require('./../model/ReminderModel').reminderModel;
+const ReminderModel = require('./../model/ReminderModel').reminderModel;
+const Reminder=new ReminderModel();
 const moment = require('moment');
 const Wit = require('node-wit').Wit;
 const log = require('node-wit').log;
@@ -25,28 +26,17 @@ const firstEntityValue = function (entities, entity) {
     else return false;
 
 };
-const getFirstMessagingEntry = (body) => {
-    const val = body.object == 'page' &&
-            body.entry &&
-            Array.isArray(body.entry) &&
-            body.entry.length > 0 &&
-            body.entry[0] &&
-            body.entry[0].id == FB_PAGE_ID &&
-            body.entry[0].messaging &&
-            Array.isArray(body.entry[0].messaging) &&
-            body.entry[0].messaging.length > 0 &&
-            body.entry[0].messaging[0]
-        ;
-    return val || null;
-};
 
-// This will contain all user sessions.
-// Each session has an entry:
-// sessionId -> {fbid: facebookUserId, context: sessionState}
+const commands={
+    'setting':function()
+    {
+
+    }
+}
 const sessions = {};
 
+// find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
-    console.log("recahed find or create session");
     return new Promise(function(resolve,reject){
         let sessionId;
         // Let's see if we already have a session for the user fbid
@@ -54,27 +44,24 @@ const findOrCreateSession = (fbid) => {
             if (sessions[k].fbid === fbid) {
                 // Yep, got it!
                 sessionId = k;
-                console.log("found session");
                 resolve(sessionId);
             }
         });
         if (!sessionId) {
             // No session found for user fbid, let's create a new one
             sessionId = new Date().toISOString();
-            sessions[sessionId] = {fbid: fbid, context: {}, logged: false};
-            console.log("no session found creating new");
+
             Users.findOne({'facebook.id': fbid}, function (err, res) {
                 if (!res) {
                     let u = new Users({'facebook.id':fbid});
-                    console.log("no user found creating new");
                     u.save(function (err, data) {
-                        console.log("creating new user ", data ,err);
+                        sessions[sessionId] = {fbid: fbid, context: {}, logged: false,muser_id:u._id};
                         if (data) resolve(sessionId);
                         else reject(err);
                     });
                 }
                 else if (res) {
-                    console.log("user found");
+                    sessions[sessionId] = {fbid: fbid, context: {}, logged: false,muser_id:res._id};
                     resolve(sessionId);
                 }
                 else if (err) {
@@ -121,22 +108,22 @@ const actions = {
     },
     saveReminder({sessionId, context, text, entities}) {
         console.log('saveReminder Fired');
-        let data = [];
-        const reminder = firstEntityValue(entities, 'reminder');
+        let rem = [];
+        rem.title = firstEntityValue(entities, 'reminder');
         const datetime = firstEntityValue(entities, 'datetime');
-        let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
+        // let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
+        if(datetime)  rem.date=datetime;
         return new Promise(function (resolve, reject) {
-            if (reminder) {
-                let recipientId = sessions[sessionId].fbid;
-                data = {title: reminder, datetime: datetime, score: date_diff};
-
-                // ReminderModel.create(recipientId, data, function (err, res) {
-                //   console.log("response from model saveReminder: " + res);
-                // });
-                context.reminder_result = "Reminder Saved !";
+            if (rem.title) {
+                rem.user_id=sessions[sessionId].muser_id;
+                Reminder.create(rem).then(function(res){
+                    context.reminder_result = "Reminder Saved !";
+                    resolve(context);
+                },function(err){
+                    console.log("error in saving reminder ",err);
+                    resolve(context);
+                });
                 context.done = true;
-                console.log('save first context');
-                resolve(context);
             }
             else resolve(context);
             console.log('Save reminder context :' + JSON.stringify(context))
