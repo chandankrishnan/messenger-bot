@@ -34,7 +34,30 @@ const commands={
     }
 }
 const sessions = {};
-
+const reminderCreatedReply1= [
+    {
+        "content_type":"text",
+        "title":"Set Notification",
+        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
+    },
+    {
+        "content_type":"text",
+        "title":"Delete",
+        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
+    }
+];
+const reminderCreatedReply2= [
+    {
+        "content_type":"text",
+        "title":"Change Date",
+        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
+    },
+    {
+        "content_type":"text",
+        "title":"Delete",
+        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
+    }
+];
 // find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
     return new Promise(function(resolve,reject){
@@ -71,6 +94,7 @@ const findOrCreateSession = (fbid) => {
         }
     });
 };
+
 
 
 // WIT.AI actions
@@ -118,6 +142,9 @@ const actions = {
                 rem.user_id=sessions[sessionId].muser_id;
                 Reminder.create(rem).then(function(res){
                     context.reminder_result = "Reminder Saved !";
+                    // send quick reply, depends weather date is provided or not
+                    datetime ? messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply2) :
+                        messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply1);
                     resolve(context);
                 },function(err){
                     console.log("error in saving reminder ",err);
