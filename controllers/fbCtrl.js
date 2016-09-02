@@ -252,8 +252,7 @@ function receivedMessage(event)
     if(messageText){
         console.log("finding session ID ", message);
         findOrCreateSession(senderID).then(function(sessionId){
-            console.log("firing wit.ai action " + sessionId);
-            runWitAction(sessionId,text);
+            runWitAction(sessionId,messageText);
         });
     }
     else if(quickReply) {
