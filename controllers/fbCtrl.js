@@ -95,8 +95,6 @@ const findOrCreateSession = (fbid) => {
     });
 };
 
-
-
 // WIT.AI actions
 const actions = {
     send(request, response) {
@@ -142,6 +140,7 @@ const actions = {
                 rem.user_id=sessions[sessionId].muser_id;
                 Reminder.create(rem).then(function(res){
                     context.reminder_result = "Reminder Saved !";
+                    console.log(reminderCreatedReply1);
                     // send quick reply, depends weather date is provided or not
                     // datetime ? messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply2) :
                    messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply1,function(err,data){
