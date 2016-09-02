@@ -200,38 +200,93 @@ router.get('/webhook', function (req, res) {
     }
 });
 
-router.post('/webhook', (req, res) => {
-    console.log("reached webhook");
-const data = req.body;
+app.post('/webhook', function (req, res) {
+    var data = req.body;
 
-if (data.object === 'page') {
-    data.entry.forEach(entry => {
-        entry.messaging.forEach(event => {
-            if (event.message) {
-                const sender = event.sender.id;  //get sender id
-                // const sessionId = findOrCreateSession(sender);  //get user current session
-                const {text, attachments} = event.message;
-                if(text)
-                {
-                    // create session and user if does not exist
-                    findOrCreateSession(sender).then(function(sessionId){
-                            runWitAction(sessionId,text);
-                    });
-                }
-                else if(attachments)
-                {
+    // Make sure this is a page subscription
+    if (data.object == 'page') {
+        // Iterate over each entry
+        // There may be multiple if batched
+        data.entry.forEach(function(pageEntry) {
+            var pageID = pageEntry.id;
+            var timeOfEvent = pageEntry.time;
 
+            // Iterate over each messaging event
+            pageEntry.messaging.forEach(function(messagingEvent) {
+                if(messagingEvent.message){
+                    receivedMessage(messagingEvent);
                 }
-            } else {
-                console.log('received event', JSON.stringify(event));
-            }
+
+                else if(messagingEvent.postback){
+                    receivedPostback(messagingEvent);
+                }
+            });
         });
-    });
-}
-res.sendStatus(200);
+        res.sendStatus(200);
+    }
 });
 
+/*
+ * Message Event
+ *
+ * This event is called when a message is sent to your page. The 'message'
+ * object format can vary depending on the kind of message that was received.
+ * Read more at https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received
+*/
 
+function receivedMessage(event)
+{
+    var senderID = event.sender.id;
+    var recipientID = event.recipient.id;
+    var timeOfMessage = event.timestamp;
+    var message = event.message;
+
+    // You may get a text or attachment but not both
+    var messageText = message.text;
+    var messageAttachments = message.attachments;
+    var quickReply = message.quick_reply;
+
+    if(messageText){
+        findOrCreateSession(senderID).then(function(sessionId){
+            runWitAction(sessionId,text);
+        });
+    }
+    else if(quickReply) {
+        console.log("Quick Reply recived ", quickReply);
+    }
+    else if(messageAttachments){
+        messenger.sendTextMessage(senderID,"Sorry, I can only process text messages for now.");
+    }
+}
+
+/*
+ * Postback Event
+ *
+ * This event is called when a postback is tapped on a Structured Message.
+ * https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback-received
+ *
+ */
+function receivedPostback(event) {
+    var senderID = event.sender.id;
+    var recipientID = event.recipient.id;
+    var timeOfPostback = event.timestamp;
+
+    // The 'payload' param is a developer-defined field which is set in a postback
+    // button for Structured Messages.
+    var payload = event.postback.payload;
+
+    console.log("Received postback for user %d and page %d with payload '%s' " +
+        "at %d", senderID, recipientID, payload, timeOfPostback);
+
+}
+
+/*
+* Wit.ai Actions
+*
+* This event is fired when you receive text message from messenger
+* and pass it to wit.ai
+* Read more at https://github.com/wit-ai/node-wit
+* */
 function runWitAction(sessionId, msg) {
     wit.runActions(
         sessionId, // the user's current session
