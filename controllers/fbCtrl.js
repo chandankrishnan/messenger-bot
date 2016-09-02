@@ -200,7 +200,8 @@ router.get('/webhook', function (req, res) {
     }
 });
 
-app.post('/webhook', function (req, res) {
+router.post('/webhook', function (req, res) {
+    console.log("reached webhook");
     var data = req.body;
 
     // Make sure this is a page subscription
@@ -214,6 +215,7 @@ app.post('/webhook', function (req, res) {
             // Iterate over each messaging event
             pageEntry.messaging.forEach(function(messagingEvent) {
                 if(messagingEvent.message){
+                    console.log("detected text message");
                     receivedMessage(messagingEvent);
                 }
 
