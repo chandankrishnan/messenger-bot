@@ -224,7 +224,7 @@ router.post('/webhook', function (req, res) {
             pageEntry.messaging.forEach(function (messagingEvent) {
                 var senderID = messagingEvent.sender.id;
                 var recipientID = messagingEvent.recipient.id;
-                var message = event.message;
+                var message = messagingEvent.message;
 
                 // You may get a text or attachment but not both
                 var messageText = message.text;
