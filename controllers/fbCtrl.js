@@ -218,8 +218,8 @@ router.post('/webhook', function (req, res) {
 
             // Iterate over each messaging event
             pageEntry.messaging.forEach(function(messagingEvent) {
-                 var senderID = event.sender.id;
-                 var recipientID = event.recipient.id;
+                 var senderID = messagingEvent.sender.id;
+                 var recipientID = messagingEvent.recipient.id;
                 findOrCreateSession(senderID).then(function(sessionId){
                     console.log('Session created for session id ', senderID,messagingEvent);
                     if(messagingEvent.message){
