@@ -100,7 +100,7 @@ const findOrCreateSession = (fbid) => {
 // WIT.AI actions
 const actions = {
     send(request, response) {
-
+        console.log('runiing wit say action');
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = sessions[sessionId].fbid;
@@ -112,17 +112,22 @@ const actions = {
                 if(quickreplies){
                     messenger.sendQuickRepliesMessage(recipientId,text,quickreplies,function(err,body){
                         if(err) console.error("in sending quick reply ",err);
+                        resolve();
                     });
                 }
                 else{
                     messenger.sendTextMessage(recipientId, text, function (err, body) {
                     if (err) console.error('in sending text message ', err);
                     console.log('response ',response);
-                    console.log('Message sent',body)
+                    console.log('Message sent',body);
+                    resolve();
                 });
                 }
             }
-            resolve();
+            else{
+                console.log('inside say without id');
+                resolve();
+            }
         });
     },
     merge(request) {
