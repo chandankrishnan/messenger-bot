@@ -104,11 +104,10 @@ const actions = {
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = sessions[sessionId].fbid;
-        console.log('request  ',request);
-        console.log("recipint did ",recipientId);
         if(quickreplies) console.log('quick reply detected ',response);
+        
         return new Promise(function (resolve, reject) {
-            console.log(" sending :" + JSON.stringify(request));
+            console.log(" sending :" + JSON.stringify(response));
             if (recipientId) {
                 if(quickreplies){
                     messenger.sendQuickRepliesMessage(recipientId,text,quickreplies,function(err,body){
@@ -118,7 +117,8 @@ const actions = {
                 else{
                     messenger.sendTextMessage(recipientId, text, function (err, body) {
                     if (err) console.error('in sending text message ', err);
-                    console.log(body)
+                    console.log('response ',response);
+                    console.log('Message sent',body)
                 });
                 }
             }
@@ -221,14 +221,11 @@ router.post('/webhook', function (req, res) {
                  var senderID = messagingEvent.sender.id;
                  var recipientID = messagingEvent.recipient.id;
                 findOrCreateSession(senderID).then(function(sessionId){
-                    console.log('Session created for session id ', senderID,messagingEvent);
                     if(messagingEvent.message){
                         console.log("detected text message");
                         receivedMessage(messagingEvent,sessionId);
                     }
-
                     else if(messagingEvent.postback){
-
                         receivedPostback(messagingEvent,sessionId);
                     }
                 });
@@ -261,8 +258,7 @@ function receivedMessage(event,sessionId)
     if(quickReply) console.log('inside quickreply ',quickReply);
     if(messageText){
         console.log("finding session ID ", senderID);
-    
-            runWitAction(sessions[sessionId].fbid,messageText);
+        runWitAction(sessions[sessionId].fbid,messageText);
     }
     else if(quickReply) {
         console.log("Quick Reply recived ", quickReply);
@@ -301,6 +297,7 @@ function receivedPostback(event,sessionId) {
 * Read more at https://github.com/wit-ai/node-wit
 * */
 function runWitAction(sessionId, msg) {
+    console.log("reached runWitAction");
     wit.runActions(
         sessionId, // the user's current session
         msg, // the user's message
