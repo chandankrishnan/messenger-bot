@@ -16,7 +16,7 @@ const FB_PAGE_ID = process.env.FB_PAGE_ID || '1620191058306200';
 const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN || 'EAAHVizlMZBFkBAA6Ltx64kHqPypTgja5B1ez0QjeI2KP0zZCq5WnDvb153c4Ivn7Mk1fwmuR44LhE2XY6T2ZAgnNKC8DZARyxOLZB7AmX9HTohj1TExPZB9uxjsmTxcEkT2IksQNoxLl1p96YCfYGBTLbRU6R6R7DYbPGgxOYpuQZDZD';
 const WIT_TOKEN = process.env.WIT_TOKEN || 'OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG';
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
-
+const interactive = require('node-wit').interactive;
 const firstEntityValue = function (entities, entity) {
     const val = entities && entities[entity]
         && Array.isArray(entities[entity])
@@ -146,6 +146,7 @@ const actions = {
                    messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem.title + " ..saved !",reminderCreatedReply1,function(err,data){
                        console.log(data);
                        console.log(err);
+                       context.done=true;
                    });
                     resolve(context);
                 },function(err){
@@ -188,7 +189,6 @@ const wit = new Wit({
     actions
     // logger: new log.Logger(log.INFO)
 });
-
 
 // Facebook Webhook
 router.get('/webhook', function (req, res) {

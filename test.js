@@ -14,34 +14,43 @@
 // app.use(cookieParser("secretSign#143_!223"));
 
 'use strict';
-router.post('/webhook', (req, res) => {
-    console.log("reached webhook");
-    const data = req.body;
 
-    if (data.object === 'page') {
-        data.entry.forEach(entry => {
-            entry.messaging.forEach(event => {
-                if (event.message) {
-                    const sender = event.sender.id;  //get sender id
-                    // const sessionId = findOrCreateSession(sender);  //get user current session
-                    const {text, attachments} = event.message;
-                    if(text)
-                    {
-                        console.log('text message ' + text);
-                        // create session and user if does not exist
-                        findOrCreateSession(sender).then(function(sessionId){
-                            runWitAction(sessionId,text);
-                        });
-                    }
-                    else if(attachments)
-                    {
+let Wit = null;
+let interactive = null;
+try {
+  // if running from repo
+  Wit = require('../').Wit;
+  interactive = require('../').interactive;
+} catch (e) {
+  Wit = require('node-wit').Wit;
+  interactive = require('node-wit').interactive;
+}
 
-                    }
-                } else {
-                    console.log('received event', JSON.stringify(event));
-                }
-            });
-        });
-    }
-    res.sendStatus(200);
-});
+const accessToken = (() => {
+  if (process.argv.length !== 3) {
+    console.log('usage: node examples/basic.js <wit-access-token>');
+    process.exit(1);
+  }
+  return process.argv[2];
+})();
+
+const actions = {
+  send(request, response) {
+    const {sessionId, context, entities} = request;
+    const {text, quickreplies} = response;
+    return new Promise(function(resolve, reject) {
+      console.log('user said...', request.text);
+      console.log('sending...', JSON.stringify(response));
+      return resolve();
+    });
+  },
+  saveReminder({sessionId, context, text, entities}) {
+      console.log('saveRemidner action fired');
+      return new Promise(function(resolve,reject){
+        resolve(context);
+      });
+  }
+};
+
+const client = new Wit({accessToken, actions});
+interactive(client);
