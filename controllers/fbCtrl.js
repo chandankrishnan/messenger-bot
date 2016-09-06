@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 const app = express();
 const FBMessenger = require('fb-messenger');
-// const Session = require('./../session');
 const Func = require('./../class/func');
 // const redis = require("./../redisDB");
 const Users = require('./../model/UserModel').userModel;
@@ -102,6 +101,8 @@ const actions = {
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = sessions[sessionId].fbid;
+        console.log('request  ',request);
+        console.log("recipint did ",recipientId);
         if(quickreplies) console.log('quick reply detected ',response);
         return new Promise(function (resolve, reject) {
             console.log(" sending :" + JSON.stringify(request));
@@ -157,7 +158,6 @@ const actions = {
                 
             }
             else resolve(context);
-            console.log('Save reminder context :' + JSON.stringify(context))
         });
     },
     getForecast({sessionId, context, text, entities}) {
