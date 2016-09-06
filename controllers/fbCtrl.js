@@ -7,7 +7,7 @@ const Func = require('./../class/func');
 // const redis = require("./../redisDB");
 const Users = require('./../model/UserModel').userModel;
 const ReminderModel = require('./../model/ReminderModel').reminderModel;
-const Reminder=new ReminderModel();
+const Reminder = new ReminderModel();
 const moment = require('moment');
 const Wit = require('node-wit').Wit;
 const log = require('node-wit').log;
@@ -26,35 +26,34 @@ const firstEntityValue = function (entities, entity) {
 
 };
 
-const commands={
-    'setting':function()
-    {
+const commands = {
+    'setting': function () {
 
     }
 }
 const sessions = {};
-const reminderCreatedReply1= [
+const reminderCreatedReply1 = [
     {
-        "content_type":"text",
-        "title":"Set Notification",
-        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
+        "content_type": "text",
+        "title": "Set Notification",
+        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
     },
     {
-        "content_type":"text",
-        "title":"Delete",
-        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
+        "content_type": "text",
+        "title": "Delete",
+        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
     }
 ];
-const reminderCreatedReply2= [
+const reminderCreatedReply2 = [
     {
-        "content_type":"text",
-        "title":"Change Date",
-        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
+        "content_type": "text",
+        "title": "Change Date",
+        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
     },
     {
-        "content_type":"text",
-        "title":"Delete",
-        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
+        "content_type": "text",
+        "title": "Delete",
+        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
     }
 ];
 
@@ -62,7 +61,7 @@ const reminderCreatedReply2= [
 
 // find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
-    return new Promise(function(resolve,reject){
+    return new Promise(function (resolve, reject) {
         let sessionId;
         // Let's see if we already have a session for the user fbid
         Object.keys(sessions).forEach(k => {
@@ -76,17 +75,17 @@ const findOrCreateSession = (fbid) => {
             // No session found for user fbid, let's create a new one
             sessionId = new Date().toISOString();
 
-            Users.findOne({'facebook.id': fbid}, function (err, res) {
+            Users.findOne({ 'facebook.id': fbid }, function (err, res) {
                 if (!res) {
-                    let u = new Users({'facebook.id':fbid});
+                    let u = new Users({ 'facebook.id': fbid });
                     u.save(function (err, data) {
-                        sessions[sessionId] = {fbid: fbid, context: {}, logged: false,muser_id:u._id};
+                        sessions[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: u._id };
                         if (data) resolve(sessionId);
                         else reject(err);
                     });
                 }
                 else if (res) {
-                    sessions[sessionId] = {fbid: fbid, context: {}, logged: false,muser_id:res._id};
+                    sessions[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: res._id };
                     resolve(sessionId);
                 }
                 else if (err) {
@@ -104,27 +103,27 @@ const actions = {
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = sessions[sessionId].fbid;
-        if(quickreplies) console.log('quick reply detected ',response);
-        
+        if (quickreplies) console.log('quick reply detected ', response);
+
         return new Promise(function (resolve, reject) {
             console.log(" sending :" + JSON.stringify(response));
             if (recipientId) {
-                if(quickreplies){
-                    messenger.sendQuickRepliesMessage(recipientId,text,quickreplies,function(err,body){
-                        if(err) console.error("in sending quick reply ",err);
+                if (quickreplies) {
+                    messenger.sendQuickRepliesMessage(recipientId, text, quickreplies, function (err, body) {
+                        if (err) console.error("in sending quick reply ", err);
                         resolve();
                     });
                 }
-                else{
+                else {
                     messenger.sendTextMessage(recipientId, text, function (err, body) {
-                    if (err) console.error('in sending text message ', err);
-                    console.log('response ',response);
-                    console.log('Message sent',body);
-                    resolve();
-                });
+                        if (err) console.error('in sending text message ', err);
+                        console.log('response ', response);
+                        console.log('Message sent', body);
+                        resolve();
+                    });
                 }
             }
-            else{
+            else {
                 console.log('inside say without id');
                 resolve();
             }
@@ -150,20 +149,20 @@ const actions = {
         rem.title = firstEntityValue(entities, 'reminder');
         const datetime = firstEntityValue(entities, 'datetime');
         // let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
-        if(datetime)  rem.date=datetime;
+        if (datetime) rem.date = datetime;
         return new Promise(function (resolve, reject) {
             if (rem.title) {
-                rem.user_id=sessions[sessionId].muser_id;
-                Reminder.create(rem).then(function(res){
+                rem.user_id = sessions[sessionId].muser_id;
+                Reminder.create(rem).then(function (res) {
                     console.log('reminder created');
                     context.done = true;
                     resolve(context);
-                },function(err){
-                    console.log("error in saving reminder ",err);
+                }, function (err) {
+                    console.log("error in saving reminder ", err);
                     context.done = true;
                     resolve(context);
                 });
-                
+
             }
             else resolve(context);
         });
@@ -217,21 +216,40 @@ router.post('/webhook', function (req, res) {
     if (data.object == 'page') {
         // Iterate over each entry
         // There may be multiple if batched
-        data.entry.forEach(function(pageEntry) {
+        data.entry.forEach(function (pageEntry) {
             var pageID = pageEntry.id;
             var timeOfEvent = pageEntry.time;
 
             // Iterate over each messaging event
-            pageEntry.messaging.forEach(function(messagingEvent) {
-                 var senderID = messagingEvent.sender.id;
-                 var recipientID = messagingEvent.recipient.id;
-                findOrCreateSession(senderID).then(function(sessionId){
-                    if(messagingEvent.message){
-                        console.log("detected text message");
-                        receivedMessage(messagingEvent,sessionId);
-                    }
-                    else if(messagingEvent.postback){
-                        receivedPostback(messagingEvent,sessionId);
+            pageEntry.messaging.forEach(function (messagingEvent) {
+                var senderID = messagingEvent.sender.id;
+                var recipientID = messagingEvent.recipient.id;
+                var message = event.message;
+
+                // You may get a text or attachment but not both
+                var messageText = message.text;
+                var messageAttachments = message.attachments;
+                var quickReply = message.quick_reply;
+                findOrCreateSession(senderID).then(function (sessionId) {
+                    if (messagingEvent.message) {
+                        wit.runActions(
+                            sessionId, // the user's current session
+                            messageText, // the user's message
+                            sessions[sessionId].context // the user's current session state
+                        ).then((context) => {
+                            console.log('Wit Bot haS completed its action');
+                            if (context['done']) {
+                                console.log("clearing session data" + JSON.stringify(sessions));
+                                delete sessions[sessionId];
+                            }
+                            else {
+                                console.log("updating session data");
+                                // Updating the user's current session state
+                                sessions[sessionId].context = context;
+                            }
+                        }).catch((err) => {
+                            console.error('Oops! Got an error from Wit: ', err.stack || err);
+                        });
                     }
                 });
             });
@@ -248,9 +266,8 @@ router.post('/webhook', function (req, res) {
  * Read more at https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received
 */
 
-function receivedMessage(event,sessionId)
-{
-    console.log('Event ' , event);
+function receivedMessage(event, sessionId) {
+    console.log('Event ', event);
     var senderID = event.sender.id;
     var recipientID = event.recipient.id;
     var timeOfMessage = event.timestamp;
@@ -260,34 +277,34 @@ function receivedMessage(event,sessionId)
     var messageText = message.text;
     var messageAttachments = message.attachments;
     var quickReply = message.quick_reply;
-    if(quickReply) console.log('inside quickreply ',quickReply);
-    if(messageText){
+    if (quickReply) console.log('inside quickreply ', quickReply);
+    if (messageText) {
         console.log("finding session ID ", senderID);
         console.log("reached runWitAction");
-            wit.runActions(
-                sessionId, // the user's current session
-                msg, // the user's message
-                sessions[sessionId].context // the user's current session state
-            ).then((context) => {
-                console.log('Wit Bot haS completed its action');
-                if (context['done']) {
-                    console.log("clearing session data" + JSON.stringify(sessions));
-                    delete sessions[sessionId];
-                }
-                else {
-                    console.log("updating session data");
-                    // Updating the user's current session state
-                    sessions[sessionId].context = context;
-                }
-            }).catch((err) => {
-                console.error('Oops! Got an error from Wit: ', err.stack || err);
-            });
+        wit.runActions(
+            sessionId, // the user's current session
+            msg, // the user's message
+            sessions[sessionId].context // the user's current session state
+        ).then((context) => {
+            console.log('Wit Bot haS completed its action');
+            if (context['done']) {
+                console.log("clearing session data" + JSON.stringify(sessions));
+                delete sessions[sessionId];
+            }
+            else {
+                console.log("updating session data");
+                // Updating the user's current session state
+                sessions[sessionId].context = context;
+            }
+        }).catch((err) => {
+            console.error('Oops! Got an error from Wit: ', err.stack || err);
+        });
     }
-    else if(quickReply) {
+    else if (quickReply) {
         console.log("Quick Reply recived ", quickReply);
     }
-    else if(messageAttachments){
-        messenger.sendTextMessage(senderID,"Sorry, I can only process text messages for now.");
+    else if (messageAttachments) {
+        messenger.sendTextMessage(senderID, "Sorry, I can only process text messages for now.");
     }
 }
 
@@ -298,7 +315,7 @@ function receivedMessage(event,sessionId)
  * https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback-received
  *
  */
-function receivedPostback(event,sessionId) {
+function receivedPostback(event, sessionId) {
     var senderID = event.sender.id;
     var recipientID = event.recipient.id;
     var timeOfPostback = event.timestamp;
