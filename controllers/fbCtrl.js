@@ -57,6 +57,9 @@ const reminderCreatedReply2= [
         "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
     }
 ];
+
+
+
 // find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
     return new Promise(function(resolve,reject){
@@ -252,7 +255,7 @@ function receivedMessage(event)
 
     if(messageText){
         console.log("finding session ID ", message);
-        findOrCreateSession(senderID).then(function(sessionId){
+        findOrCreateSession(recipientID).then(function(sessionId){
             runWitAction(sessionId,messageText);
         });
     }
