@@ -263,7 +263,25 @@ function receivedMessage(event,sessionId)
     if(quickReply) console.log('inside quickreply ',quickReply);
     if(messageText){
         console.log("finding session ID ", senderID);
-        runWitAction(sessions[sessionId].fbid,messageText);
+        console.log("reached runWitAction");
+            wit.runActions(
+                sessionId, // the user's current session
+                msg, // the user's message
+                sessions[sessionId].context // the user's current session state
+            ).then((context) => {
+                console.log('Wit Bot haS completed its action');
+                if (context['done']) {
+                    console.log("clearing session data" + JSON.stringify(sessions));
+                    delete sessions[sessionId];
+                }
+                else {
+                    console.log("updating session data");
+                    // Updating the user's current session state
+                    sessions[sessionId].context = context;
+                }
+            }).catch((err) => {
+                console.error('Oops! Got an error from Wit: ', err.stack || err);
+            });
     }
     else if(quickReply) {
         console.log("Quick Reply recived ", quickReply);
