@@ -218,14 +218,20 @@ router.post('/webhook', function (req, res) {
 
             // Iterate over each messaging event
             pageEntry.messaging.forEach(function(messagingEvent) {
-                if(messagingEvent.message){
-                    console.log("detected text message");
-                    receivedMessage(messagingEvent);
-                }
+                 var senderID = event.sender.id;
+                 var recipientID = event.recipient.id;
+                findOrCreateSession(senderID).then(function(sessionId){
+                    console.log('Session created for session id ', senderID,messagingEvent);
+                    if(messagingEvent.message){
+                        console.log("detected text message");
+                        receivedMessage(messagingEvent,sessionId);
+                    }
 
-                else if(messagingEvent.postback){
-                    receivedPostback(messagingEvent);
-                }
+                    else if(messagingEvent.postback){
+
+                        receivedPostback(messagingEvent,sessionId);
+                    }
+                });
             });
         });
         res.sendStatus(200);
@@ -240,7 +246,7 @@ router.post('/webhook', function (req, res) {
  * Read more at https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received
 */
 
-function receivedMessage(event)
+function receivedMessage(event,sessionId)
 {
     console.log('Event ' , event);
     var senderID = event.sender.id;
@@ -252,12 +258,11 @@ function receivedMessage(event)
     var messageText = message.text;
     var messageAttachments = message.attachments;
     var quickReply = message.quick_reply;
-
+    if(quickReply) console.log('inside quickreply ',quickReply);
     if(messageText){
-        console.log("finding session ID ", message);
-        findOrCreateSession(recipientID).then(function(sessionId){
-            runWitAction(sessionId,messageText);
-        });
+        console.log("finding session ID ", senderID);
+    
+            runWitAction(sessions[sessionId].fbid,messageText);
     }
     else if(quickReply) {
         console.log("Quick Reply recived ", quickReply);
@@ -274,7 +279,7 @@ function receivedMessage(event)
  * https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback-received
  *
  */
-function receivedPostback(event) {
+function receivedPostback(event,sessionId) {
     var senderID = event.sender.id;
     var recipientID = event.recipient.id;
     var timeOfPostback = event.timestamp;
