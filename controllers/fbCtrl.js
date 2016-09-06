@@ -102,14 +102,21 @@ const actions = {
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = sessions[sessionId].fbid;
-
+        if(quickreplies) console.log('quick reply detected ',response);
         return new Promise(function (resolve, reject) {
             console.log(" sending :" + JSON.stringify(request));
             if (recipientId) {
-                messenger.sendTextMessage(recipientId, text, function (err, body) {
-                    if (err) return console.error(err);
+                if(quickreplies){
+                    messenger.sendQuickRepliesMessage(recipientId,text,quickreplies,function(err,body){
+                        if(err) console.error("in sending quick reply ",err);
+                    });
+                }
+                else{
+                    messenger.sendTextMessage(recipientId, text, function (err, body) {
+                    if (err) console.error('in sending text message ', err);
                     console.log(body)
                 });
+                }
             }
             resolve();
         });
@@ -139,21 +146,15 @@ const actions = {
             if (rem.title) {
                 rem.user_id=sessions[sessionId].muser_id;
                 Reminder.create(rem).then(function(res){
-                    // context.reminder_result = "Reminder Saved !";
-                    console.log(reminderCreatedReply1);
-                    // send quick reply, depends weather date is provided or not
-                    // datetime ? messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem + " ..saved !",reminderCreatedReply2) :
-                   messenger.sendQuickRepliesMessage(sessions[sessionId].fbid,rem.title + " ..saved !",reminderCreatedReply1,function(err,data){
-                       console.log(data);
-                       console.log(err);
-                       context.done=true;
-                   });
+                    console.log('reminder created');
+                    context.done = true;
                     resolve(context);
                 },function(err){
                     console.log("error in saving reminder ",err);
+                    context.done = true;
                     resolve(context);
                 });
-                context.done = true;
+                
             }
             else resolve(context);
             console.log('Save reminder context :' + JSON.stringify(context))
