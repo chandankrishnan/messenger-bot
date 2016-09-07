@@ -222,6 +222,7 @@ router.post('/webhook', function (req, res) {
 
             // Iterate over each messaging event
             pageEntry.messaging.forEach(function (messagingEvent) {
+                console.log("message Event",messagingEvent);
                 var senderID = messagingEvent.sender.id;
                 var recipientID = messagingEvent.recipient.id;
                 var message = messagingEvent.message;
