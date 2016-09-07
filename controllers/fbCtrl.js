@@ -61,10 +61,9 @@ const createQuickReply=function(quickreply){
     let result=[];
     quickreply.forEach(function(value,index){
             
-            let temp={"content_type": "text","title": value};
+            let temp={"content_type": "text","title": value, "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"};
             result.push(temp);
     });
-
     return result;
 }
 
