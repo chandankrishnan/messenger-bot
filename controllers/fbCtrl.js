@@ -58,8 +58,9 @@ const reminderCreatedReply2 = [
 ];
 
 const createQuickReply=function(quickreply){
+    let result=[];
     quickreply.forEach(function(value,index){
-            let result=[];
+            
             let temp={"content_type": "text","title": value};
             result.push(temp);
     });
