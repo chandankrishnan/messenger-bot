@@ -57,7 +57,15 @@ const reminderCreatedReply2 = [
     }
 ];
 
+const createQuickReply=function(quickreply){
+    quickreply.forEach(function(value,index){
+            let result=[];
+            let temp={"content_type": "text","title": value};
+            result.push(temp);
+    });
 
+    return result;
+}
 
 // find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
@@ -109,7 +117,7 @@ const actions = {
             console.log(" sending :" + JSON.stringify(response));
             if (recipientId) {
                 if (quickreplies) {
-                    messenger.sendQuickRepliesMessage(recipientId, text, quickreplies, function (err, body) {
+                    messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
                         if (err) console.error("in sending quick reply ", err);
                         resolve();
                     });
@@ -232,7 +240,7 @@ router.post('/webhook', function (req, res) {
                 var messageText = message.text;
                 var messageAttachments = message.attachments;
                 var quickReply = message.quick_reply;
-                
+
                    findOrCreateSession(senderID).then(function (sessionId) {
                     if (messagingEvent.message) {
                         wit.runActions(
