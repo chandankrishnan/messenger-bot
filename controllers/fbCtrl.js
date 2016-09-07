@@ -223,36 +223,39 @@ router.post('/webhook', function (req, res) {
             // Iterate over each messaging event
             pageEntry.messaging.forEach(function (messagingEvent) {
                 console.log("message Event",messagingEvent);
-                // var senderID = messagingEvent.sender.id;
-                // var recipientID = messagingEvent.recipient.id;
-                // var message = messagingEvent.message;
-
-                // // You may get a text or attachment but not both
-                // var messageText = message.text;
-                // var messageAttachments = message.attachments;
-                // var quickReply = message.quick_reply;
-                // findOrCreateSession(senderID).then(function (sessionId) {
-                //     if (messagingEvent.message) {
-                //         wit.runActions(
-                //             sessionId, // the user's current session
-                //             messageText, // the user's message
-                //             sessions[sessionId].context // the user's current session state
-                //         ).then((context) => {
-                //             console.log('Wit Bot haS completed its action');
-                //             if (context['done']) {
-                //                 console.log("clearing session data" + JSON.stringify(sessions));
-                //                 delete sessions[sessionId];
-                //             }
-                //             else {
-                //                 console.log("updating session data");
-                //                 // Updating the user's current session state
-                //                 sessions[sessionId].context = context;
-                //             }
-                //         }).catch((err) => {
-                //             console.error('Oops! Got an error from Wit: ', err.stack || err);
-                //         });
-                //     }
-                // });
+                var senderID = messagingEvent.sender.id;
+                var recipientID = messagingEvent.recipient.id;
+                var message = messagingEvent.message;
+                
+                if(messagingEvent.message){
+                    // You may get a text or attachment but not both
+                var messageText = message.text;
+                var messageAttachments = message.attachments;
+                var quickReply = message.quick_reply;
+                
+                   findOrCreateSession(senderID).then(function (sessionId) {
+                    if (messagingEvent.message) {
+                        wit.runActions(
+                            sessionId, // the user's current session
+                            messageText, // the user's message
+                            sessions[sessionId].context // the user's current session state
+                        ).then((context) => {
+                            console.log('Wit Bot haS completed its action');
+                            if (context['done']) {
+                                console.log("clearing session data" + JSON.stringify(sessions));
+                                delete sessions[sessionId];
+                            }
+                            else {
+                                console.log("updating session data");
+                                // Updating the user's current session state
+                                sessions[sessionId].context = context;
+                            }
+                        }).catch((err) => {
+                            console.error('Oops! Got an error from Wit: ', err.stack || err);
+                        });
+                    }
+                });
+                }
             });
         });
         res.sendStatus(200);
