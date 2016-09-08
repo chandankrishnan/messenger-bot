@@ -218,33 +218,32 @@ router.get('/webhook', function (req, res) {
     }
 });
 
-router.post('/webhook', function (req, res) {
-    console.log("reached webhook");
-    var data = req.body;
+app.post('/webhook', (req, res) => {
+    // Parse the Messenger payload
+    // See the Webhook reference
+    // https://developers.facebook.com/docs/messenger-platform/webhook-reference
 
-    // Make sure this is a page subscription
-    if (data.object == 'page') {
-        // Iterate over each entry
-        // There may be multiple if batched
-        data.entry.forEach(function (pageEntry) {
-            var pageID = pageEntry.id;
-            var timeOfEvent = pageEntry.time;
+    console.log('webhook reached');
 
-            // Iterate over each messaging event
-            pageEntry.messaging.forEach(function (messagingEvent) {
-                console.log("message Event", messagingEvent);
+    const data = req.body;
 
-                if (messagingEvent.message) {
-                    var senderID = messagingEvent.sender.id;
-                    var recipientID = messagingEvent.recipient.id;
-                    var message = messagingEvent.message;
-                    var isEcho = message.is_echo;
-                    // You may get a text or attachment but not both
-                    var messageText = message.text;
-                    var messageAttachments = message.attachments;
-                    var quickReply = message.quick_reply;
-                    if (isEcho) {
-                        findOrCreateSession(recipientID).then(function (sessionId) {
+    if (data.object === 'page') {
+        data.entry.forEach(entry => {
+            entry.messaging.forEach(event => {
+                if (event.message) {
+                    // Yay! We got a new message!
+                    // We retrieve the Facebook user ID of the sender
+                    const sender = event.sender.id;
+                    // We retrieve the message content
+                    const {text, attachments} = event.message;
+
+                    if (attachments) {
+
+                    } else if (text) {
+                        console.log("REcived text message ",event);
+                        // We retrieve the user's current session, or create one if it doesn't exist
+                        // This is needed for our bot to figure out the conversation history
+                        findOrCreateSession(sender).then(function (sessionId) {
                             console.log('creating session for ', senderID);
                             if (messagingEvent.message) {
                                 wit.runActions(
@@ -268,11 +267,13 @@ router.post('/webhook', function (req, res) {
                             }
                         });
                     }
+                } else {
+                    console.log('received event', JSON.stringify(event));
                 }
             });
         });
-        res.sendStatus(200);
     }
+    res.sendStatus(200);
 });
 
 /*
@@ -283,47 +284,47 @@ router.post('/webhook', function (req, res) {
  * Read more at https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received
 */
 
-function receivedMessage(event, sessionId) {
-    console.log('Event ', event);
-    var senderID = event.sender.id;
-    var recipientID = event.recipient.id;
-    var timeOfMessage = event.timestamp;
-    var message = event.message;
+// function receivedMessage(event, sessionId) {
+//     console.log('Event ', event);
+//     var senderID = event.sender.id;
+//     var recipientID = event.recipient.id;
+//     var timeOfMessage = event.timestamp;
+//     var message = event.message;
 
-    // You may get a text or attachment but not both
-    var messageText = message.text;
-    var messageAttachments = message.attachments;
-    var quickReply = message.quick_reply;
-    if (quickReply) console.log('inside quickreply ', quickReply);
-    if (messageText) {
-        console.log("finding session ID ", senderID);
-        console.log("reached runWitAction");
-        wit.runActions(
-            sessionId, // the user's current session
-            msg, // the user's message
-            sessions[sessionId].context // the user's current session state
-        ).then((context) => {
-            console.log('Wit Bot haS completed its action');
-            if (context['done']) {
-                console.log("clearing session data" + JSON.stringify(sessions));
-                delete sessions[sessionId];
-            }
-            else {
-                console.log("updating session data");
-                // Updating the user's current session state
-                sessions[sessionId].context = context;
-            }
-        }).catch((err) => {
-            console.error('Oops! Got an error from Wit: ', err.stack || err);
-        });
-    }
-    else if (quickReply) {
-        console.log("Quick Reply recived ", quickReply);
-    }
-    else if (messageAttachments) {
-        messenger.sendTextMessage(senderID, "Sorry, I can only process text messages for now.");
-    }
-}
+//     // You may get a text or attachment but not both
+//     var messageText = message.text;
+//     var messageAttachments = message.attachments;
+//     var quickReply = message.quick_reply;
+//     if (quickReply) console.log('inside quickreply ', quickReply);
+//     if (messageText) {
+//         console.log("finding session ID ", senderID);
+//         console.log("reached runWitAction");
+//         wit.runActions(
+//             sessionId, // the user's current session
+//             msg, // the user's message
+//             sessions[sessionId].context // the user's current session state
+//         ).then((context) => {
+//             console.log('Wit Bot haS completed its action');
+//             if (context['done']) {
+//                 console.log("clearing session data" + JSON.stringify(sessions));
+//                 delete sessions[sessionId];
+//             }
+//             else {
+//                 console.log("updating session data");
+//                 // Updating the user's current session state
+//                 sessions[sessionId].context = context;
+//             }
+//         }).catch((err) => {
+//             console.error('Oops! Got an error from Wit: ', err.stack || err);
+//         });
+//     }
+//     else if (quickReply) {
+//         console.log("Quick Reply recived ", quickReply);
+//     }
+//     else if (messageAttachments) {
+//         messenger.sendTextMessage(senderID, "Sorry, I can only process text messages for now.");
+//     }
+// }
 
 /*
  * Postback Event
