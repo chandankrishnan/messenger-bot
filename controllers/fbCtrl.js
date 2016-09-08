@@ -244,7 +244,7 @@ router.post('/webhook', function (req, res) {
                     var messageAttachments = message.attachments;
                     var quickReply = message.quick_reply;
                     if (isEcho) {
-                        findOrCreateSession(senderID).then(function (sessionId) {
+                        findOrCreateSession(recipientID).then(function (sessionId) {
                             console.log('creating session for ', senderID);
                             if (messagingEvent.message) {
                                 wit.runActions(
