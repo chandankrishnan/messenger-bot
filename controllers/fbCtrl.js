@@ -235,19 +235,18 @@ router.post('/webhook', (req, res) => {
                     // We retrieve the Facebook user ID of the sender
                     const sender = event.sender.id;
                     // We retrieve the message content
-                    const {messageText, attachments} = event.message;
+                    const message = event.message;
+                    console.log("REcived text message ",event);
+                    if (message.attachments) {
 
-                    if (attachments) {
-
-                    } else if (messageText) {
+                    } else if (message.text) {
                         console.log("REcived text message ",event);
                         // We retrieve the user's current session, or create one if it doesn't exist
                         // This is needed for our bot to figure out the conversation history
                         findOrCreateSession(sender).then(function (sessionId) {
                             console.log('creating session for ', senderID);
                                 wit.runActions(
-                                    sessionId, // the user's current session
-                                    messageText, // the user's message
+                                    message.text, // the user's message
                                     sessions[sessionId].context // the user's current session state
                                 ).then((context) => {
                                     console.log('Wit Bot haS completed its action');
@@ -264,6 +263,9 @@ router.post('/webhook', (req, res) => {
                                     console.error('Oops! Got an error from Wit: ', err.stack || err);
                                 });
                         });
+                    }
+                    else if(message.quick_reply){
+                        console.log("Quick reply received ",message);
                     }
                 } else {
                     console.log('received event', JSON.stringify(event));
