@@ -104,6 +104,7 @@ const findOrCreateSession = (fbid) => {
                 else if (res) {
                     console.log("existing user ");
                     userSession[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: res._id };
+                    console.log("new sesison created " ,userSession);
                     resolve(sessionId);
                 }
                 else if (err) {
@@ -258,7 +259,7 @@ router.post('/webhook', (req, res) => {
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
                             findOrCreateSession(sender).then(function (sessionId) {
-                                console.log('creating session for ', senderID);
+                                console.log('creating session for ',sessionId, senderID);
                                 wit.runActions(
                                     message.text, // the user's message
                                     sessions[sessionId].context // the user's current session state
