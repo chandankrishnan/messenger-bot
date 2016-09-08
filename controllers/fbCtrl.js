@@ -85,10 +85,10 @@ const findOrCreateSession = (fbid) => {
                 sessionId = k;
                 resolve(sessionId);
             }
-            console.log("new session created ", sessions);
+            console.log("new session created ", userSession);
         });
         if (!sessionId) {
-            console.log("old ssession " ,sessions);
+            console.log("old ssession " ,userSession);
             // No session found for user fbid, let's create a new one
             sessionId = new Date().toISOString();
 
