@@ -236,15 +236,17 @@ router.post('/webhook', (req, res) => {
                     const sender = event.sender.id;
                     // We retrieve the message content
                     const message = event.message;
-                    console.log("REcived text message ",event);
-                    if (message.attachments) {
+                    if (message.is_echo) {
+                        console.log("Recived echo", event);
 
-                    } else if (message.text) {
-                        console.log("REcived text message ",event);
-                        // We retrieve the user's current session, or create one if it doesn't exist
-                        // This is needed for our bot to figure out the conversation history
-                        findOrCreateSession(sender).then(function (sessionId) {
-                            console.log('creating session for ', senderID);
+                        if (message.attachments) {
+
+                        } else if (message.text) {
+                            console.log("REcived echo text message ", event);
+                            // We retrieve the user's current session, or create one if it doesn't exist
+                            // This is needed for our bot to figure out the conversation history
+                            findOrCreateSession(sender).then(function (sessionId) {
+                                console.log('creating session for ', senderID);
                                 wit.runActions(
                                     message.text, // the user's message
                                     sessions[sessionId].context // the user's current session state
@@ -262,10 +264,11 @@ router.post('/webhook', (req, res) => {
                                 }).catch((err) => {
                                     console.error('Oops! Got an error from Wit: ', err.stack || err);
                                 });
-                        });
-                    }
-                    else if(message.quick_reply){
-                        console.log("Quick reply received ",message);
+                            });
+                        }
+                        else if (message.quick_reply) {
+                            console.log("Quick reply received ", message);
+                        }
                     }
                 } else {
                     console.log('received event', JSON.stringify(event));
