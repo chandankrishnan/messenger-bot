@@ -76,6 +76,7 @@ const findOrCreateSession = (fbid) => {
     return new Promise(function (resolve, reject) {
         let sessionId;
         // Let's see if we already have a session for the user fbid
+        console.log("creating new session");
         Object.keys(sessions).forEach(k => {
             if (sessions[k].fbid === fbid) {
                 // Yep, got it!
@@ -85,11 +86,13 @@ const findOrCreateSession = (fbid) => {
             console.log("new session created ", sessions);
         });
         if (!sessionId) {
+            console.log("old ssession");
             // No session found for user fbid, let's create a new one
             sessionId = new Date().toISOString();
 
             Users.findOne({ 'facebook.id': fbid }, function (err, res) {
                 if (!res) {
+                    console.log('creating new user');
                     let u = new Users({ 'facebook.id': fbid });
                     u.save(function (err, data) {
                         sessions[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: u._id };
@@ -268,6 +271,8 @@ router.post('/webhook', (req, res) => {
                                 }).catch((err) => {
                                     console.error('Oops! Got an error from Wit: ', err.stack || err);
                                 });
+                            },function(err){
+                                console.log("error form mongo ",err);
                             });
                         }
                         else if (message.quick_reply) {
