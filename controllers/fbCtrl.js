@@ -218,7 +218,7 @@ router.get('/webhook', function (req, res) {
     }
 });
 
-app.post('/webhook', (req, res) => {
+router.post('/webhook', (req, res) => {
     // Parse the Messenger payload
     // See the Webhook reference
     // https://developers.facebook.com/docs/messenger-platform/webhook-reference
