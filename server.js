@@ -8,7 +8,7 @@ const Func = require('./class/func');
 const db = require('./db');
 const Users=require('./model/UserModel').userModel;
 const reminder=require('./model/ReminderModel').reminderModel;
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8386;
 const HOST = process.env.IP;
 const app = express();
 

@@ -15,7 +15,7 @@ const log = require('node-wit').log;
 const FB_PAGE_ID = process.env.FB_PAGE_ID || '1620191058306200';
 const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN || 'EAAHVizlMZBFkBAA6Ltx64kHqPypTgja5B1ez0QjeI2KP0zZCq5WnDvb153c4Ivn7Mk1fwmuR44LhE2XY6T2ZAgnNKC8DZARyxOLZB7AmX9HTohj1TExPZB9uxjsmTxcEkT2IksQNoxLl1p96YCfYGBTLbRU6R6R7DYbPGgxOYpuQZDZD';
 const WIT_TOKEN = process.env.WIT_TOKEN || 'OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG';
-const APP_SECRET='2c38ab8c7cd662fbafa6c4e75016f4c4';
+const APP_SECRET = '2c38ab8c7cd662fbafa6c4e75016f4c4';
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 const interactive = require('node-wit').interactive;
 const firstEntityValue = function (entities, entity) {
@@ -27,7 +27,7 @@ const firstEntityValue = function (entities, entity) {
     else return false;
 
 };
-app.use(bodyParser.json({ verify: verifyRequestSignature }));
+app.use(bodyParser.json({verify: verifyRequestSignature}));
 
 const commands = {
     'setting': function () {
@@ -35,7 +35,7 @@ const commands = {
     }
 }
 const sessions = {};
-const userSession=[];
+const userSession = [];
 const reminderCreatedReply1 = [
     {
         "content_type": "text",
@@ -65,7 +65,7 @@ const createQuickReply = function (quickreply) {
     let result = [];
     quickreply.forEach(function (value, index) {
 
-        let temp = { "content_type": "text", "title": value, "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN" };
+        let temp = {"content_type": "text", "title": value, "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"};
         result.push(temp);
     });
     return result;
@@ -74,9 +74,9 @@ const createQuickReply = function (quickreply) {
 
 // find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
-    // console.log("findOrCreateSession called");
+    console.log("findOrCreateSession called");
     return new Promise(function (resolve, reject) {
-        let sessionId=0;
+        let sessionId = 0;
         // Let's see if we already have a session for the user fbid
         // console.log("creating new session");
         Object.keys(userSession).forEach(k => {
@@ -91,20 +91,23 @@ const findOrCreateSession = (fbid) => {
             // No session found for user fbid, let's create a new one
             sessionId = new Date().toISOString();
 
-            Users.findOne({ 'facebook.id': fbid }, function (err, res) {
-                if (!res) {
+            Users.findOne({'facebook.id': fbid}, function (err, res) {
+                console.log('res:', res);
+                if (!res && !err) {
                     console.log('creating new user');
-                    let u = new Users({ 'facebook.id': fbid });
+                    let u = new Users({'facebook.id': fbid});
                     u.save(function (err, data) {
-                        userSession[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: u._id };
+                        userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: u._id};
+                        console.log("user saved2 ", userSession);
+
                         if (data) resolve(sessionId);
                         else reject(err);
                     });
                 }
                 else if (res) {
                     // console.log("existing user ");
-                    userSession[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: res._id };
-                    // console.log("new sesison created " ,userSession);
+                    userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: res._id};
+                    console.log("new sesison created 2 ", userSession);
                     resolve(sessionId);
                 }
                 else if (err) {
@@ -113,7 +116,11 @@ const findOrCreateSession = (fbid) => {
                 }
             });
         }
-    });
+    }); //promise end
+    // let sessionId = new Date().toISOString();
+    // var res=[];
+    // sessions[sessionId]={'fbid':fbid,'context':{}};
+    // return sessionId;
 };
 
 // WIT.AI actions
@@ -122,13 +129,14 @@ const actions = {
         console.log('---------runiing wit say action---------');
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
-        const recipientId = sessions[sessionId].fbid;
+        const recipientId = userSession[sessionId].fbid;
         console.log('recipient id ', recipientId);
         if (quickreplies) console.log('quick reply detected ', response);
 
         return new Promise(function (resolve, reject) {
             console.log(" sending :" + JSON.stringify(response));
             if (recipientId) {
+
                 if (quickreplies) {
                     messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
                         if (err) console.error("in sending quick reply ", err);
@@ -148,6 +156,7 @@ const actions = {
                 console.log('inside say without id');
                 resolve();
             }
+
         });
     },
     merge(request) {
@@ -240,45 +249,47 @@ router.post('/webhook', (req, res) => {
 
     if (data.object === 'page') {
         data.entry.forEach(entry => {
+            console.log("running loop 1");
             entry.messaging.forEach(event => {
+            console.log("running loop 2");
                 if (event.message) {
+                    console.log("event message", event);
                     // Yay! We got a new message!
                     // We retrieve the Facebook user ID of the sender
                     const sender = event.sender.id;
+
+                    const recipient=event.recipient.id;
+
                     // We retrieve the message content
                     const message = event.message;
                     if (message.is_echo) {
-                        console.log("Recived echo", event);
-
                         if (message.attachments) {
 
                         } else if (message.text) {
-                            console.log("REcived echo text message ", event);
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
-                            findOrCreateSession(sender).then(function (sessionId) {
-                                console.log('creating session for ',sessionId, senderID);
+                            findOrCreateSession(recipient).then(function (sessionId) {
+                                console.log('creating session for ', sessionId, recipient);
+                                console.log("222");
                                 wit.runActions(
+                                    sessionId,
                                     message.text, // the user's message
-                                    sessions[sessionId].context // the user's current session state
+                                    userSession[sessionId].context // the user's current session state
                                 ).then((context) => {
                                     console.log('Wit Bot haS completed its action');
                                     if (context['done']) {
-                                        console.log("clearing session data" + JSON.stringify(sessions));
-                                        delete sessions[sessionId];
+                                        console.log("clearing session data" + JSON.stringify(userSession));
+                                        delete userSession[sessionId];
                                     }
                                     else {
                                         console.log("updating session data");
                                         // Updating the user's current session state
-                                        sessions[sessionId].context = context;
+                                        userSession[sessionId].context = context;
                                     }
-                                }).catch((err) => {
-                                    console.error('Oops! Got an error from Wit: ', err.stack || err);
                                 });
-                            },function(err){
-                                console.log("error form mongo ",err);
+                            }).catch((err)=>{
+                                console.log('Oops! Got an error from Wit: ', err.stack || err);
                             });
-                            console.log("outside promise");
                         }
                         else if (message.quick_reply) {
                             console.log("Quick reply received ", message);
@@ -299,7 +310,7 @@ router.post('/webhook', (req, res) => {
  * This event is called when a message is sent to your page. The 'message'
  * object format can vary depending on the kind of message that was received.
  * Read more at https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received
-*/
+ */
 
 // function receivedMessage(event, sessionId) {
 //     console.log('Event ', event);
@@ -365,12 +376,12 @@ function receivedPostback(event, sessionId) {
 }
 
 /*
-* Wit.ai Actions
-*
-* This event is fired when you receive text message from messenger
-* and pass it to wit.ai
-* Read more at https://github.com/wit-ai/node-wit
-* */
+ * Wit.ai Actions
+ *
+ * This event is fired when you receive text message from messenger
+ * and pass it to wit.ai
+ * Read more at https://github.com/wit-ai/node-wit
+ * */
 function runWitAction(sessionId, msg) {
     console.log("reached runWitAction");
     wit.runActions(
@@ -393,24 +404,24 @@ function runWitAction(sessionId, msg) {
     });
 }
 function verifyRequestSignature(req, res, buf) {
-  var signature = req.headers["x-hub-signature"];
+    var signature = req.headers["x-hub-signature"];
 
-  if (!signature) {
-    // For testing, let's log an error. In production, you should throw an 
-    // error.
-    console.error("Couldn't validate the signature.");
-  } else {
-    var elements = signature.split('=');
-    var method = elements[0];
-    var signatureHash = elements[1];
+    if (!signature) {
+        // For testing, let's log an error. In production, you should throw an
+        // error.
+        console.error("Couldn't validate the signature.");
+    } else {
+        var elements = signature.split('=');
+        var method = elements[0];
+        var signatureHash = elements[1];
 
-    var expectedHash = crypto.createHmac('sha1', APP_SECRET)
-                        .update(buf)
-                        .digest('hex');
+        var expectedHash = crypto.createHmac('sha1', APP_SECRET)
+            .update(buf)
+            .digest('hex');
 
-    if (signatureHash != expectedHash) {
-      throw new Error("Couldn't validate the request signature.");
+        if (signatureHash != expectedHash) {
+            throw new Error("Couldn't validate the request signature.");
+        }
     }
-  }
 }
 module.exports = router;
