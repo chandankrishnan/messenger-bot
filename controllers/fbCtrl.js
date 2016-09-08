@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const app = express();
+const bodyParser = require('body-parser');
 const FBMessenger = require('fb-messenger');
 const Func = require('./../class/func');
 // const redis = require("./../redisDB");
@@ -14,6 +15,7 @@ const log = require('node-wit').log;
 const FB_PAGE_ID = process.env.FB_PAGE_ID || '1620191058306200';
 const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN || 'EAAHVizlMZBFkBAA6Ltx64kHqPypTgja5B1ez0QjeI2KP0zZCq5WnDvb153c4Ivn7Mk1fwmuR44LhE2XY6T2ZAgnNKC8DZARyxOLZB7AmX9HTohj1TExPZB9uxjsmTxcEkT2IksQNoxLl1p96YCfYGBTLbRU6R6R7DYbPGgxOYpuQZDZD';
 const WIT_TOKEN = process.env.WIT_TOKEN || 'OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG';
+const APP_SECRET='2c38ab8c7cd662fbafa6c4e75016f4c4';
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 const interactive = require('node-wit').interactive;
 const firstEntityValue = function (entities, entity) {
@@ -25,6 +27,7 @@ const firstEntityValue = function (entities, entity) {
     else return false;
 
 };
+app.use(bodyParser.json({ verify: verifyRequestSignature }));
 
 const commands = {
     'setting': function () {
@@ -69,6 +72,7 @@ const createQuickReply = function (quickreply) {
 
 // find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
+    console.log("findOrCreateSession called");
     return new Promise(function (resolve, reject) {
         let sessionId;
         // Let's see if we already have a session for the user fbid
@@ -378,5 +382,25 @@ function runWitAction(sessionId, msg) {
         console.error('Oops! Got an error from Wit: ', err.stack || err);
     });
 }
+function verifyRequestSignature(req, res, buf) {
+  var signature = req.headers["x-hub-signature"];
 
+  if (!signature) {
+    // For testing, let's log an error. In production, you should throw an 
+    // error.
+    console.error("Couldn't validate the signature.");
+  } else {
+    var elements = signature.split('=');
+    var method = elements[0];
+    var signatureHash = elements[1];
+
+    var expectedHash = crypto.createHmac('sha1', APP_SECRET)
+                        .update(buf)
+                        .digest('hex');
+
+    if (signatureHash != expectedHash) {
+      throw new Error("Couldn't validate the request signature.");
+    }
+  }
+}
 module.exports = router;
