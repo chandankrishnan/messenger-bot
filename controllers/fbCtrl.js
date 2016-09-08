@@ -90,16 +90,11 @@ const findOrCreateSession = (fbid) => {
         if (!sessionId) {
             // No session found for user fbid, let's create a new one
             sessionId = new Date().toISOString();
-
             Users.findOne({'facebook.id': fbid}, function (err, res) {
-                console.log('res:', res);
                 if (!res && !err) {
-                    console.log('creating new user');
                     let u = new Users({'facebook.id': fbid});
                     u.save(function (err, data) {
                         userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: u._id};
-                        console.log("user saved2 ", userSession);
-
                         if (data) resolve(sessionId);
                         else reject(err);
                     });
@@ -107,7 +102,6 @@ const findOrCreateSession = (fbid) => {
                 else if (res) {
                     // console.log("existing user ");
                     userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: res._id};
-                    console.log("new sesison created 2 ", userSession);
                     resolve(sessionId);
                 }
                 else if (err) {
@@ -135,27 +129,7 @@ const actions = {
 
         return new Promise(function (resolve, reject) {
             console.log(" sending :" + JSON.stringify(response));
-            if (recipientId) {
-
-                if (quickreplies) {
-                    messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
-                        if (err) console.error("in sending quick reply ", err);
-                        resolve();
-                    });
-                }
-                else {
-                    messenger.sendTextMessage(recipientId, text, function (err, body) {
-                        if (err) console.error('in sending text message ', err);
-                        console.log('response ', response);
-                        console.log('Message sent', body);
-                        resolve();
-                    });
-                }
-            }
-            else {
-                console.log('inside say without id');
-                resolve();
-            }
+            resolve();
 
         });
     },
@@ -269,8 +243,6 @@ router.post('/webhook', (req, res) => {
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
                             findOrCreateSession(recipient).then(function (sessionId) {
-                                console.log('creating session for ', sessionId, recipient);
-                                console.log("222");
                                 wit.runActions(
                                     sessionId,
                                     message.text, // the user's message
