@@ -35,7 +35,7 @@ const commands = {
     }
 }
 const sessions = {};
-const userSession={};
+const userSession=[];
 const reminderCreatedReply1 = [
     {
         "content_type": "text",
@@ -76,7 +76,7 @@ const createQuickReply = function (quickreply) {
 const findOrCreateSession = (fbid) => {
     console.log("findOrCreateSession called");
     return new Promise(function (resolve, reject) {
-        let sessionId;
+        let sessionId=0;
         // Let's see if we already have a session for the user fbid
         console.log("creating new session");
         Object.keys(userSession).forEach(k => {
