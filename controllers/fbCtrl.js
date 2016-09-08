@@ -233,16 +233,17 @@ router.post('/webhook', function (req, res) {
             // Iterate over each messaging event
             pageEntry.messaging.forEach(function (messagingEvent) {
                 console.log("message Event", messagingEvent);
-                var senderID = messagingEvent.sender.id;
-                var recipientID = messagingEvent.recipient.id;
-                var message = messagingEvent.message;
 
                 if (messagingEvent.message) {
+                    var senderID = messagingEvent.sender.id;
+                    var recipientID = messagingEvent.recipient.id;
+                    var message = messagingEvent.message;
+                    var isEcho = message.is_echo;
                     // You may get a text or attachment but not both
                     var messageText = message.text;
                     var messageAttachments = message.attachments;
                     var quickReply = message.quick_reply;
-                    if (senderID) {
+                    if (isEcho) {
                         findOrCreateSession(senderID).then(function (sessionId) {
                             console.log('creating session for ', senderID);
                             if (messagingEvent.message) {
