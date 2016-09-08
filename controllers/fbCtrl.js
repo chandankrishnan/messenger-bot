@@ -35,6 +35,7 @@ const commands = {
     }
 }
 const sessions = {};
+const userSession={};
 const reminderCreatedReply1 = [
     {
         "content_type": "text",
@@ -70,6 +71,7 @@ const createQuickReply = function (quickreply) {
     return result;
 }
 
+
 // find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
     console.log("findOrCreateSession called");
@@ -77,8 +79,8 @@ const findOrCreateSession = (fbid) => {
         let sessionId;
         // Let's see if we already have a session for the user fbid
         console.log("creating new session");
-        Object.keys(sessions).forEach(k => {
-            if (sessions[k].fbid === fbid) {
+        Object.keys(userSession).forEach(k => {
+            if (userSession[k].fbid === fbid) {
                 // Yep, got it!
                 sessionId = k;
                 resolve(sessionId);
@@ -86,7 +88,7 @@ const findOrCreateSession = (fbid) => {
             console.log("new session created ", sessions);
         });
         if (!sessionId) {
-            console.log("old ssession");
+            console.log("old ssession " ,sessions);
             // No session found for user fbid, let's create a new one
             sessionId = new Date().toISOString();
 
@@ -95,16 +97,18 @@ const findOrCreateSession = (fbid) => {
                     console.log('creating new user');
                     let u = new Users({ 'facebook.id': fbid });
                     u.save(function (err, data) {
-                        sessions[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: u._id };
+                        userSession[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: u._id };
                         if (data) resolve(sessionId);
                         else reject(err);
                     });
                 }
                 else if (res) {
-                    sessions[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: res._id };
+                    console.log("existing user ");
+                    userSession[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: res._id };
                     resolve(sessionId);
                 }
                 else if (err) {
+                    console.log("error in creating user");
                     reject(err);
                 }
             })
