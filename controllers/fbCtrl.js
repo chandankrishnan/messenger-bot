@@ -74,18 +74,18 @@ const createQuickReply = function (quickreply) {
 
 // find or create user session and user in dataabse
 const findOrCreateSession = (fbid) => {
-    console.log("findOrCreateSession called");
+    // console.log("findOrCreateSession called");
     return new Promise(function (resolve, reject) {
         let sessionId=0;
         // Let's see if we already have a session for the user fbid
-        console.log("creating new session");
+        // console.log("creating new session");
         Object.keys(userSession).forEach(k => {
             if (userSession[k].fbid === fbid) {
                 // Yep, got it!
                 sessionId = k;
                 resolve(sessionId);
             }
-            console.log("old session ", userSession);
+            // console.log("old session ", userSession);
         });
         if (!sessionId) {
             // No session found for user fbid, let's create a new one
@@ -102,9 +102,9 @@ const findOrCreateSession = (fbid) => {
                     });
                 }
                 else if (res) {
-                    console.log("existing user ");
+                    // console.log("existing user ");
                     userSession[sessionId] = { fbid: fbid, context: {}, logged: false, muser_id: res._id };
-                    console.log("new sesison created " ,userSession);
+                    // console.log("new sesison created " ,userSession);
                     resolve(sessionId);
                 }
                 else if (err) {
@@ -112,8 +112,6 @@ const findOrCreateSession = (fbid) => {
                     reject(err);
                 }
             });
-            console.log("new sesison created " ,userSession);
-
         }
     });
 };
@@ -280,6 +278,7 @@ router.post('/webhook', (req, res) => {
                             },function(err){
                                 console.log("error form mongo ",err);
                             });
+                            console.log("outside promise");
                         }
                         else if (message.quick_reply) {
                             console.log("Quick reply received ", message);
