@@ -57,12 +57,12 @@ const reminderCreatedReply2 = [
     }
 ];
 
-const createQuickReply=function(quickreply){
-    let result=[];
-    quickreply.forEach(function(value,index){
-            
-            let temp={"content_type": "text","title": value, "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"};
-            result.push(temp);
+const createQuickReply = function (quickreply) {
+    let result = [];
+    quickreply.forEach(function (value, index) {
+
+        let temp = { "content_type": "text", "title": value, "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN" };
+        result.push(temp);
     });
     return result;
 }
@@ -78,6 +78,7 @@ const findOrCreateSession = (fbid) => {
                 sessionId = k;
                 resolve(sessionId);
             }
+            console.log("new session created ", sessions);
         });
         if (!sessionId) {
             // No session found for user fbid, let's create a new one
@@ -107,10 +108,11 @@ const findOrCreateSession = (fbid) => {
 // WIT.AI actions
 const actions = {
     send(request, response) {
-        console.log('runiing wit say action');
+        console.log('---------runiing wit say action---------');
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = sessions[sessionId].fbid;
+        console.log('recipient id ', recipientId);
         if (quickreplies) console.log('quick reply detected ', response);
 
         return new Promise(function (resolve, reject) {
@@ -230,39 +232,41 @@ router.post('/webhook', function (req, res) {
 
             // Iterate over each messaging event
             pageEntry.messaging.forEach(function (messagingEvent) {
-                console.log("message Event",messagingEvent);
+                console.log("message Event", messagingEvent);
                 var senderID = messagingEvent.sender.id;
                 var recipientID = messagingEvent.recipient.id;
                 var message = messagingEvent.message;
-                
-                if(messagingEvent.message){
-                    // You may get a text or attachment but not both
-                var messageText = message.text;
-                var messageAttachments = message.attachments;
-                var quickReply = message.quick_reply;
 
-                   findOrCreateSession(senderID).then(function (sessionId) {
-                    if (messagingEvent.message) {
-                        wit.runActions(
-                            sessionId, // the user's current session
-                            messageText, // the user's message
-                            sessions[sessionId].context // the user's current session state
-                        ).then((context) => {
-                            console.log('Wit Bot haS completed its action');
-                            if (context['done']) {
-                                console.log("clearing session data" + JSON.stringify(sessions));
-                                delete sessions[sessionId];
+                if (messagingEvent.message) {
+                    // You may get a text or attachment but not both
+                    var messageText = message.text;
+                    var messageAttachments = message.attachments;
+                    var quickReply = message.quick_reply;
+                    if (senderID) {
+                        findOrCreateSession(senderID).then(function (sessionId) {
+                            console.log('creating session for ', senderID);
+                            if (messagingEvent.message) {
+                                wit.runActions(
+                                    sessionId, // the user's current session
+                                    messageText, // the user's message
+                                    sessions[sessionId].context // the user's current session state
+                                ).then((context) => {
+                                    console.log('Wit Bot haS completed its action');
+                                    if (context['done']) {
+                                        console.log("clearing session data" + JSON.stringify(sessions));
+                                        delete sessions[sessionId];
+                                    }
+                                    else {
+                                        console.log("updating session data");
+                                        // Updating the user's current session state
+                                        sessions[sessionId].context = context;
+                                    }
+                                }).catch((err) => {
+                                    console.error('Oops! Got an error from Wit: ', err.stack || err);
+                                });
                             }
-                            else {
-                                console.log("updating session data");
-                                // Updating the user's current session state
-                                sessions[sessionId].context = context;
-                            }
-                        }).catch((err) => {
-                            console.error('Oops! Got an error from Wit: ', err.stack || err);
                         });
                     }
-                });
                 }
             });
         });
