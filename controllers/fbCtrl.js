@@ -130,7 +130,7 @@ const actions = {
         if (quickreplies) console.log('quick reply detected ', response);
 
         return new Promise(function (resolve, reject) {
-            console.log(" sending :" + JSON.stringify(response));
+            console.log(" sending message to :" + JSON.stringify(response));
             if (recipientId) {
                 if (quickreplies) {
                     messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
@@ -250,7 +250,7 @@ router.post('/webhook', (req, res) => {
                     console.log("event message", event);
                     // Yay! We got a new message!
                     // We retrieve the Facebook user ID of the sender
-                    const sender = event.sender.id;
+
 
                     const recipient=event.recipient.id;
 
@@ -262,27 +262,31 @@ router.post('/webhook', (req, res) => {
                             console.log("inside message.text ",event);
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
-                            findOrCreateSession(sender).then(function (sessionId) {
-                                console.log("session created ",userSession);
-                                wit.runActions(
-                                    sessionId,
-                                    message.text, // the user's message
-                                    userSession[sessionId].context // the user's current session state
-                                ).then((context) => {
-                                    console.log('Wit Bot haS completed its action');
-                                    if (context['done']) {
-                                        console.log("clearing session data" + JSON.stringify(userSession));
-                                        delete userSession[sessionId];
-                                    }
-                                    else {
-                                        console.log("updating session data");
-                                        // Updating the user's current session state
-                                        userSession[sessionId].context = context;
-                                    }
-                                });
-                            }).catch((err)=>{
-                                console.log('Oops! Got an error from Wit: ', err.stack || err);
-                            });
+                           if(message.is_echo){
+                               const sender = event.sender.id;
+
+                               findOrCreateSession(sender).then(function (sessionId) {
+                                   console.log("session created ",userSession);
+                                   wit.runActions(
+                                       sessionId,
+                                       message.text, // the user's message
+                                       userSession[sessionId].context // the user's current session state
+                                   ).then((context) => {
+                                       console.log('Wit Bot haS completed its action');
+                                       if (context['done']) {
+                                           console.log("clearing session data" + JSON.stringify(userSession));
+                                           delete userSession[sessionId];
+                                       }
+                                       else {
+                                           console.log("updating session data");
+                                           // Updating the user's current session state
+                                           userSession[sessionId].context = context;
+                                       }
+                                   });
+                               }).catch((err)=>{
+                                   console.log('Oops! Got an error from Wit: ', err.stack || err);
+                               });
+                           }
                         }
                         else if (message.quick_reply) {
                             console.log("Quick reply received ", message);
