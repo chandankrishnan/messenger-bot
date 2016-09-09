@@ -26,7 +26,7 @@
     "showtimes": "^2.1.0",
     "socket.io": "~0.9.14"
   },
-  "script":{
+  "scripts": {
     "start": "node debug main.js"
   },
   "engines": {
