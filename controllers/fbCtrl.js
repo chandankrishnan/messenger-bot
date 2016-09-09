@@ -131,8 +131,26 @@ const actions = {
 
         return new Promise(function (resolve, reject) {
             console.log(" sending :" + JSON.stringify(response));
-            resolve();
-
+            if (recipientId) {
+                if (quickreplies) {
+                    messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
+                        if (err) console.error("in sending quick reply ", err);
+                        resolve();
+                    });
+                }
+                else {
+                    messenger.sendTextMessage(recipientId, text, function (err, body) {
+                        if (err) console.error('in sending text message ', err);
+                        console.log('response ', response);
+                        console.log('Message sent', body);
+                        resolve();
+                    });
+                }
+            }
+            else {
+                console.log('inside say without id');
+                resolve();
+            }
         });
     },
     merge(request) {
