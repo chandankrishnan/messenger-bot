@@ -27,7 +27,7 @@
     "socket.io": "~0.9.14"
   },
   "scripts": {
-    "start": "node debug main.js"
+    "start": "./node_modules/node-inspector/bin/node-debug.js main.js"
   },
   "engines": {
     "node": "6.3.0"
