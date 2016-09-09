@@ -244,26 +244,26 @@ router.post('/webhook', (req, res) => {
                         } else if (message.text) {
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
-                            // findOrCreateSession(recipient).then(function (sessionId) {
-                            //     wit.runActions(
-                            //         sessionId,
-                            //         message.text, // the user's message
-                            //         userSession[sessionId].context // the user's current session state
-                            //     ).then((context) => {
-                            //         console.log('Wit Bot haS completed its action');
-                            //         if (context['done']) {
-                            //             console.log("clearing session data" + JSON.stringify(userSession));
-                            //             delete userSession[sessionId];
-                            //         }
-                            //         else {
-                            //             console.log("updating session data");
-                            //             // Updating the user's current session state
-                            //             userSession[sessionId].context = context;
-                            //         }
-                            //     });
-                            // }).catch((err)=>{
-                            //     console.log('Oops! Got an error from Wit: ', err.stack || err);
-                            // });
+                            findOrCreateSession(recipient).then(function (sessionId) {
+                                wit.runActions(
+                                    sessionId,
+                                    message.text, // the user's message
+                                    userSession[sessionId].context // the user's current session state
+                                ).then((context) => {
+                                    console.log('Wit Bot haS completed its action');
+                                    if (context['done']) {
+                                        console.log("clearing session data" + JSON.stringify(userSession));
+                                        delete userSession[sessionId];
+                                    }
+                                    else {
+                                        console.log("updating session data");
+                                        // Updating the user's current session state
+                                        userSession[sessionId].context = context;
+                                    }
+                                });
+                            }).catch((err)=>{
+                                console.log('Oops! Got an error from Wit: ', err.stack || err);
+                            });
                         }
                         else if (message.quick_reply) {
                             console.log("Quick reply received ", message);
