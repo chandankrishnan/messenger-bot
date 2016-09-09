@@ -12,9 +12,11 @@ const Reminder = new ReminderModel();
 const moment = require('moment');
 const Wit = require('node-wit').Wit;
 const log = require('node-wit').log;
+
+
 const FB_PAGE_ID = process.env.FB_PAGE_ID || '1620191058306200';
 const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN || 'EAAHVizlMZBFkBAA6Ltx64kHqPypTgja5B1ez0QjeI2KP0zZCq5WnDvb153c4Ivn7Mk1fwmuR44LhE2XY6T2ZAgnNKC8DZARyxOLZB7AmX9HTohj1TExPZB9uxjsmTxcEkT2IksQNoxLl1p96YCfYGBTLbRU6R6R7DYbPGgxOYpuQZDZD';
-const WIT_TOKEN = process.env.WIT_TOKEN || 'OZLBH427SKNI7RC6Y6SUWBLDLHVCMUGG';
+const WIT_TOKEN = process.env.WIT_TOKEN || '66UZJUQ5DH4R2RO3GU6HMSM7BBHBZC75';
 const APP_SECRET = '2c38ab8c7cd662fbafa6c4e75016f4c4';
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 const interactive = require('node-wit').interactive;
@@ -156,7 +158,7 @@ const actions = {
         if (datetime) rem.date = datetime;
         return new Promise(function (resolve, reject) {
             if (rem.title) {
-                rem.user_id = sessions[sessionId].muser_id;
+                rem.user_id = userSession[sessionId].muser_id;
                 Reminder.create(rem).then(function (res) {
                     console.log('reminder created');
                     context.done = true;
@@ -242,26 +244,26 @@ router.post('/webhook', (req, res) => {
                         } else if (message.text) {
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
-                            findOrCreateSession(recipient).then(function (sessionId) {
-                                wit.runActions(
-                                    sessionId,
-                                    message.text, // the user's message
-                                    userSession[sessionId].context // the user's current session state
-                                ).then((context) => {
-                                    console.log('Wit Bot haS completed its action');
-                                    if (context['done']) {
-                                        console.log("clearing session data" + JSON.stringify(userSession));
-                                        delete userSession[sessionId];
-                                    }
-                                    else {
-                                        console.log("updating session data");
-                                        // Updating the user's current session state
-                                        userSession[sessionId].context = context;
-                                    }
-                                });
-                            }).catch((err)=>{
-                                console.log('Oops! Got an error from Wit: ', err.stack || err);
-                            });
+                            // findOrCreateSession(recipient).then(function (sessionId) {
+                            //     wit.runActions(
+                            //         sessionId,
+                            //         message.text, // the user's message
+                            //         userSession[sessionId].context // the user's current session state
+                            //     ).then((context) => {
+                            //         console.log('Wit Bot haS completed its action');
+                            //         if (context['done']) {
+                            //             console.log("clearing session data" + JSON.stringify(userSession));
+                            //             delete userSession[sessionId];
+                            //         }
+                            //         else {
+                            //             console.log("updating session data");
+                            //             // Updating the user's current session state
+                            //             userSession[sessionId].context = context;
+                            //         }
+                            //     });
+                            // }).catch((err)=>{
+                            //     console.log('Oops! Got an error from Wit: ', err.stack || err);
+                            // });
                         }
                         else if (message.quick_reply) {
                             console.log("Quick reply received ", message);
@@ -354,27 +356,27 @@ function receivedPostback(event, sessionId) {
  * and pass it to wit.ai
  * Read more at https://github.com/wit-ai/node-wit
  * */
-function runWitAction(sessionId, msg) {
-    console.log("reached runWitAction");
-    wit.runActions(
-        sessionId, // the user's current session
-        msg, // the user's message
-        sessions[sessionId].context // the user's current session state
-    ).then((context) => {
-        console.log('Wit Bot haS completed its action');
-        if (context['done']) {
-            console.log("clearing session data" + JSON.stringify(sessions));
-            delete sessions[sessionId];
-        }
-        else {
-            console.log("updating session data");
-            // Updating the user's current session state
-            sessions[sessionId].context = context;
-        }
-    }).catch((err) => {
-        console.error('Oops! Got an error from Wit: ', err.stack || err);
-    });
-}
+// function runWitAction(sessionId, msg) {
+//     console.log("reached runWitAction");
+//     wit.runActions(
+//         sessionId, // the user's current session
+//         msg, // the user's message
+//         sessions[sessionId].context // the user's current session state
+//     ).then((context) => {
+//         console.log('Wit Bot haS completed its action');
+//         if (context['done']) {
+//             console.log("clearing session data" + JSON.stringify(sessions));
+//             delete sessions[sessionId];
+//         }
+//         else {
+//             console.log("updating session data");
+//             // Updating the user's current session state
+//             sessions[sessionId].context = context;
+//         }
+//     }).catch((err) => {
+//         console.error('Oops! Got an error from Wit: ', err.stack || err);
+//     });
+// }
 function verifyRequestSignature(req, res, buf) {
     var signature = req.headers["x-hub-signature"];
 
