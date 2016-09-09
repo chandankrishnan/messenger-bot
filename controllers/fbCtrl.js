@@ -134,13 +134,13 @@ const actions = {
             if (recipientId) {
                 if (quickreplies) {
                     messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
-                        if (err) console.error("in sending quick reply ", err);
+                        if (err) console.error("in sending quick reply ", err,userSession);
                         resolve();
                     });
                 }
                 else {
                     messenger.sendTextMessage(recipientId, text, function (err, body) {
-                        if (err) console.error('in sending text message ', err);
+                        if (err) console.error('in sending text message ', err ,userSession);
                         console.log('response ', response);
                         console.log('Message sent', body);
                         resolve();
@@ -259,11 +259,11 @@ router.post('/webhook', (req, res) => {
                         if (message.attachments) {
 
                         } else if (message.text) {
-                            console.log("inside message.text");
+                            console.log("inside message.text ",event);
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
                             findOrCreateSession(sender).then(function (sessionId) {
-                                console.log("session created ",sessionId);
+                                console.log("session created ",userSession);
                                 wit.runActions(
                                     sessionId,
                                     message.text, // the user's message
