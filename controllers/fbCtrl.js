@@ -81,36 +81,43 @@ const findOrCreateSession = (fbid) => {
         let sessionId = 0;
         // Let's see if we already have a session for the user fbid
         // console.log("creating new session");
-        Object.keys(userSession).forEach(k => {
-            if (userSession[k].fbid === fbid) {
-                // Yep, got it!
-                sessionId = k;
-                resolve(sessionId);
-            }
-            // console.log("old session ", userSession);
-        });
-        if (!sessionId) {
-            // No session found for user fbid, let's create a new one
-            sessionId = new Date().toISOString();
-            Users.findOne({'facebook.id': fbid}, function (err, res) {
-                if (!res && !err) {
-                    let u = new Users({'facebook.id': fbid});
-                    u.save(function (err, data) {
-                        userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: u._id};
-                        if (data) resolve(sessionId);
-                        else reject(err);
-                    });
-                }
-                else if (res) {
-                    userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: res._id};
-                    console.log("existing user ",userSession);
+        if(fbid == FB_PAGE_ID){
+            let sessionId = new Date().toISOString();
+            userSession[sessionId] = {fbid: fbid, context: {}, logged: false};
+            resolve(sessionId);
+        }
+        else{
+            Object.keys(userSession).forEach(k => {
+                if (userSession[k].fbid === fbid) {
+                    // Yep, got it!
+                    sessionId = k;
                     resolve(sessionId);
                 }
-                else if (err) {
-                    console.log("error in creating user");
-                    reject(err);
-                }
+                // console.log("old session ", userSession);
             });
+            if (!sessionId) {
+                // No session found for user fbid, let's create a new one
+                sessionId = new Date().toISOString();
+                Users.findOne({'facebook.id': fbid}, function (err, res) {
+                    if (!res && !err) {
+                        let u = new Users({'facebook.id': fbid});
+                        u.save(function (err, data) {
+                            userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: u._id};
+                            if (data) resolve(sessionId);
+                            else reject(err);
+                        });
+                    }
+                    else if (res) {
+                        userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: res._id};
+                        console.log("existing user ",userSession);
+                        resolve(sessionId);
+                    }
+                    else if (err) {
+                        console.log("error in creating user");
+                        reject(err);
+                    }
+                });
+            }
         }
     }); //promise end
     // let sessionId = new Date().toISOString();
@@ -118,6 +125,7 @@ const findOrCreateSession = (fbid) => {
     // sessions[sessionId]={'fbid':fbid,'context':{}};
     // return sessionId;
 };
+
 
 // WIT.AI actions
 const actions = {
@@ -246,7 +254,8 @@ router.post('/webhook', (req, res) => {
             console.log("running loop 1");
             entry.messaging.forEach(event => {
             console.log("running loop 2");
-                if (event.message) {
+                if (event.message)
+                {
                     console.log("event message", event);
                     // Yay! We got a new message!
                     // We retrieve the Facebook user ID of the sender
