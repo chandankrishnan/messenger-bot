@@ -238,7 +238,6 @@ router.post('/webhook', (req, res) => {
 
                     // We retrieve the message content
                     const message = event.message;
-                    if (message.is_echo) {
                         if (message.attachments) {
 
                         } else if (message.text) {
@@ -271,7 +270,7 @@ router.post('/webhook', (req, res) => {
                             console.log("Quick reply received ", message);
                         }
                     }
-                } else {
+                else {
                     console.log('received event', JSON.stringify(event));
                 }
             });
