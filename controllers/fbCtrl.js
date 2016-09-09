@@ -262,7 +262,6 @@ router.post('/webhook', (req, res) => {
                             console.log("inside message.text ",event);
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
-                           if(message.is_echo){
                                const sender = event.sender.id;
 
                                findOrCreateSession(sender).then(function (sessionId) {
@@ -286,7 +285,6 @@ router.post('/webhook', (req, res) => {
                                }).catch((err)=>{
                                    console.log('Oops! Got an error from Wit: ', err.stack || err);
                                });
-                           }
                         }
                         else if (message.quick_reply) {
                             console.log("Quick reply received ", message);
