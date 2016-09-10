@@ -81,11 +81,10 @@ const findOrCreateSession = (fbid) => {
         let sessionId = 0;
         // Let's see if we already have a session for the user fbid
         // console.log("creating new session");
-        if(fbid == FB_PAGE_ID){
+        if(false){
             let sessionId = new Date().toISOString();
             userSession[sessionId] = {fbid: fbid, context: {}, logged: false};
-            console.log("Message from PAGE",userSession);
-
+            console.log("Message from PAGE");
             resolve(sessionId);
         }
         else{
@@ -276,7 +275,7 @@ router.post('/webhook', (req, res) => {
                                const sender = event.sender.id;
 
                                findOrCreateSession(sender).then(function (sessionId) {
-                                   console.log("session created ",userSession);
+                                   console.log("session created with sessionID= ",sessionId);
                                    wit.runActions(
                                        sessionId,
                                        message.text, // the user's message
