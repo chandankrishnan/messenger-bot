@@ -84,6 +84,8 @@ const findOrCreateSession = (fbid) => {
         if(fbid == FB_PAGE_ID){
             let sessionId = new Date().toISOString();
             userSession[sessionId] = {fbid: fbid, context: {}, logged: false};
+            console.log("Message from PAGE",userSession);
+
             resolve(sessionId);
         }
         else{
