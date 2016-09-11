@@ -146,6 +146,7 @@ const actions = {
                 if (quickreplies) {
                     messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
                         if (err) console.error("in sending quick reply ", err,userSession);
+                        console.log(body);
                         resolve();
                     });
                 }
@@ -190,6 +191,7 @@ const actions = {
                 rem.user_id = userSession[sessionId].muser_id;
                 Reminder.create(rem).then(function (res) {
                     console.log('reminder created');
+                    context.reminder_result="Reminder created."
                     context.done = true;
                     resolve(context);
                 }, function (err) {
@@ -265,7 +267,7 @@ router.post('/webhook', (req, res) => {
                     const message = event.message;
                         if (message.attachments) {
 
-                        } else if (message.text && (!message.is_echo)) {
+                        } else if ((message.text && !message.is_echo)) {
 
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
