@@ -256,7 +256,7 @@ router.post('/webhook', (req, res) => {
         data.entry.forEach(entry => {
             console.log("running loop 1");
             entry.messaging.forEach(event => {
-            console.log("running loop 2 event=",event);
+            console.log("running loop 2 event " ,event);
                 if (event.message)
                 {
                   const recipient=event.recipient.id;
@@ -265,8 +265,8 @@ router.post('/webhook', (req, res) => {
                     const message = event.message;
                         if (message.attachments) {
 
-                        } else if (message.text) {
-                            console.log("inside message.text ",event);
+                        } else if (message.text && (!message.is_echo)) {
+
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
                                const sender = (event.sender.id==FB_PAGE_ID) ? event.recipient.id : event.sender.id;
@@ -287,6 +287,7 @@ router.post('/webhook', (req, res) => {
                                            console.log("updating session data");
                                            // Updating the user's current session state
                                            userSession[sessionId].context = context;
+
                                        }
                                    });
                                }).catch((err)=>{
