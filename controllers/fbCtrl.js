@@ -134,6 +134,7 @@ const findOrCreateSession = (fbid) => {
 const actions = {
     send(request, response) {
         console.log('---------runiing wit say action---------');
+        console.log('request :',request);
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = userSession[sessionId].fbid;
@@ -165,8 +166,8 @@ const actions = {
             }
         });
     },
-    merge(request) {
-        console.log("res in merge : " + JSON.stringify(request));
+    merge({entities, context, message, sessionId}) {
+        console.log("res in merge : ",context,entities);
     },
     showReminder({sessionId, context, text, entities}) {
         console.log("showReminder fired");
