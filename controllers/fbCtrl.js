@@ -20,6 +20,8 @@ const WIT_TOKEN = process.env.WIT_TOKEN || '66UZJUQ5DH4R2RO3GU6HMSM7BBHBZC75';
 const APP_SECRET = '2c38ab8c7cd662fbafa6c4e75016f4c4';
 const messenger = new FBMessenger(FB_PAGE_TOKEN);
 const interactive = require('node-wit').interactive;
+
+
 const firstEntityValue = function (entities, entity) {
     const val = entities && entities[entity]
         && Array.isArray(entities[entity])
@@ -254,15 +256,10 @@ router.post('/webhook', (req, res) => {
         data.entry.forEach(entry => {
             console.log("running loop 1");
             entry.messaging.forEach(event => {
-            console.log("running loop 2");
+            console.log("running loop 2 event=",event);
                 if (event.message)
                 {
-                    console.log("event message", event);
-                    // Yay! We got a new message!
-                    // We retrieve the Facebook user ID of the sender
-
-
-                    const recipient=event.recipient.id;
+                  const recipient=event.recipient.id;
 
                     // We retrieve the message content
                     const message = event.message;
@@ -272,7 +269,7 @@ router.post('/webhook', (req, res) => {
                             console.log("inside message.text ",event);
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
-                               const sender = event.sender.id;
+                               const sender = (event.sender.id==FB_PAGE_ID) ? event.recipient.id : event.sender.id;
 
                                findOrCreateSession(sender).then(function (sessionId) {
                                    console.log("session created with sessionID= ",sessionId);
