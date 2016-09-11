@@ -180,7 +180,8 @@ const actions = {
         });
     },
     saveReminder({sessionId, context, text, entities}) {
-        console.log('saveReminder Fired');
+        console.log('saveReminder Fired',context);
+        console.log('Entities ',entities);
         let rem = [];
         rem.title = firstEntityValue(entities, 'reminder');
         const datetime = firstEntityValue(entities, 'datetime');
