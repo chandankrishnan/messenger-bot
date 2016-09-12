@@ -207,14 +207,18 @@ const actions = {
                             "title": "Delete",
                             "payload": "reminder_delete_"+res._id},
                     ];
-                    messenger.sendQuickRepliesMessage(userSession[sessionId],"Reminder Created !",temp,function(err,body){
-                        context.done = true;
-                        context.reminder_result=true;
-                        if(err) console.log(err);
-                        console.log(body);
-                        resolve(context);
-
-                    });
+                    console.log(temp);
+                    // messenger.sendQuickRepliesMessage(userSession[sessionId],"Reminder Created !",temp,function(err,body){
+                    //     context.done = true;
+                    //     context.reminder_result=true;
+                    //     if(err) console.log(err);
+                    //     console.log(body);
+                    //     resolve(context);
+                    //
+                    // });
+                    context.done = true;
+                    context.reminder_result="dedw";
+                    resolve(context);
 
                 }, function (err) {
                     console.log("error in saving reminder ", err);

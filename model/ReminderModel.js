@@ -101,6 +101,7 @@ let ReminderModel = mongoose.model('Reminders', reminderSchema);
 function Reminder(){}
 
 Reminder.prototype.create=function(data){
+    console.log("reminderModel called");
    return new Promise(function(resolve,reject){
         var result=new ReminderModel({"title":data.title,"user_id":data.user_id});
        result.save(function(err,data){
