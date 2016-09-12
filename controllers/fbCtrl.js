@@ -94,11 +94,16 @@ const findOrCreateSession = (fbid) => {
 const actions = {
     send(request, response) {
         console.log('---------runiing wit say action---------');
-        console.log('request :', request);
+
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = userSession[sessionId].fbid;
-        console.log('recipient id ', recipientId);
+        const notification=firstEntityValue(entities, 'notification');
+        if(notification){
+            context.notification=notification;
+            context.reminder_id=firstEntityValue(entities, 'number');
+        }
+        console.log('request :', request);
         if (quickreplies) console.log('quick reply detected ', response);
 
         return new Promise(function (resolve, reject) {
