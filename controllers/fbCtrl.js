@@ -162,8 +162,8 @@ const actions = {
                 // It depends on weather date is present in entities or not
                 const quick_reply = [{
                     "content_type": "text",
-                    "title": (datetime) ? "Change Notification" : "Set Notification",
-                    "payload": (datetime) ? "reminder#change_notification#" : "reminder#set_notification#" + res._id
+                    "title": "Set Notification",
+                    "payload": "reminder#set_notification#" + res._id
                 },
                     {
                         "content_type": "text",
