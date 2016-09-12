@@ -188,8 +188,7 @@ const actions = {
         const datetime = firstEntityValue(entities, 'datetime');
 
         if(datetime){
-            console.log("setting datetime");
-
+            console.log("setting datetime and deleting missingDate");
             rem.date=datetime;
             context.date=datetime;
         }
@@ -201,16 +200,12 @@ const actions = {
 
         // let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
         return new Promise(function (resolve, reject) {
-            if(!datetime) {
-                console.log("setting missingDate");
-                context.missingDate = true;
-                resolve(context);
-            }
+            if(context.missingDate) delete context.missingDate;
             else if(reminder) {
                 console("saving reminder");
                 rem.user_id = userSession[sessionId].muser_id;
                 Reminder.create(rem).then(function (res) {
-                    console.log('reminder created');
+                    console.log('reminder created',context);
                     context.reminder_result="Reminder created."
                     context.done = true;
                     resolve(context);
