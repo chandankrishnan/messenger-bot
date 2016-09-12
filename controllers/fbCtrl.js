@@ -128,11 +128,6 @@ const findOrCreateSession = (fbid) => {
     // sessions[sessionId]={'fbid':fbid,'context':{}};
     // return sessionId;
 };
-messenger.sendQuickRepliesMessage( '10209313623095789',"aa",reminderCreatedReply1, function (err, body) {
-    if (err) console.error('in sending text message ', err ,userSession);
-    console.log('response ', response);
-    console.log('Message sent', body);
-});
 // WIT.AI actions
 const actions = {
     send(request, response) {
