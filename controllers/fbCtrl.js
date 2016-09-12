@@ -33,37 +33,7 @@ const firstEntityValue = function (entities, entity) {
 };
 app.use(bodyParser.json({verify: verifyRequestSignature}));
 
-const commands = {
-    'setting': function () {
-
-    }
-}
-const sessions = {};
 const userSession = [];
-const reminderCreatedReply1 = [
-    {
-        "content_type": "text",
-        "title": "Set Notification",
-        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
-    },
-    {
-        "content_type": "text",
-        "title": "Delete",
-        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
-    }
-];
-const reminderCreatedReply2 = [
-    {
-        "content_type": "text",
-        "title": "Change Date",
-        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
-    },
-    {
-        "content_type": "text",
-        "title": "Delete",
-        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
-    }
-];
 
 const createQuickReply = function (quickreply) {
     let result = [];
@@ -82,45 +52,37 @@ const findOrCreateSession = (fbid) => {
     return new Promise(function (resolve, reject) {
         let sessionId = 0;
         // Let's see if we already have a session for the user fbid
-        // console.log("creating new session");
-        if(false){
-            let sessionId = new Date().toISOString();
-            userSession[sessionId] = {fbid: fbid, context: {}, logged: false};
-            console.log("Message from PAGE");
-            resolve(sessionId);
-        }
-        else{
-            Object.keys(userSession).forEach(k => {
-                if (userSession[k].fbid === fbid) {
-                    // Yep, got it!
-                    sessionId = k;
+
+        Object.keys(userSession).forEach(k => {
+            if (userSession[k].fbid === fbid) {
+                // Yep, got it!
+                sessionId = k;
+                resolve(sessionId);
+            }
+            // console.log("old session ", userSession);
+        });
+        if (!sessionId) {
+            // No session found for user fbid, let's create a new one
+            sessionId = new Date().toISOString();
+            Users.findOne({'facebook.id': fbid}, function (err, res) {
+                if (!res && !err) {
+                    let u = new Users({'facebook.id': fbid});
+                    u.save(function (err, data) {
+                        userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: u._id};
+                        if (data) resolve(sessionId);
+                        else reject(err);
+                    });
+                }
+                else if (res) {
+                    userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: res._id};
+                    console.log("existing user ", userSession);
                     resolve(sessionId);
                 }
-                // console.log("old session ", userSession);
+                else if (err) {
+                    console.log("error in creating user");
+                    reject(err);
+                }
             });
-            if (!sessionId) {
-                // No session found for user fbid, let's create a new one
-                sessionId = new Date().toISOString();
-                Users.findOne({'facebook.id': fbid}, function (err, res) {
-                    if (!res && !err) {
-                        let u = new Users({'facebook.id': fbid});
-                        u.save(function (err, data) {
-                            userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: u._id};
-                            if (data) resolve(sessionId);
-                            else reject(err);
-                        });
-                    }
-                    else if (res) {
-                        userSession[sessionId] = {fbid: fbid, context: {}, logged: false, muser_id: res._id};
-                        console.log("existing user ",userSession);
-                        resolve(sessionId);
-                    }
-                    else if (err) {
-                        console.log("error in creating user");
-                        reject(err);
-                    }
-                });
-            }
         }
     }); //promise end
     // let sessionId = new Date().toISOString();
@@ -132,7 +94,7 @@ const findOrCreateSession = (fbid) => {
 const actions = {
     send(request, response) {
         console.log('---------runiing wit say action---------');
-        console.log('request :',request);
+        console.log('request :', request);
         const {sessionId, context, entities} = request;
         const {text, quickreplies} = response;
         const recipientId = userSession[sessionId].fbid;
@@ -144,13 +106,13 @@ const actions = {
             if (recipientId) {
                 if (quickreplies) {
                     messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
-                        if (err) console.error("in sending quick reply ", err,userSession);
+                        if (err) console.error("in sending quick reply ", err, userSession);
                         resolve();
                     });
                 }
                 else {
                     messenger.sendTextMessage(recipientId, text, function (err, body) {
-                        if (err) console.error('in sending text message ', err ,userSession);
+                        if (err) console.error('in sending text message ', err, userSession);
                         console.log('response ', response);
                         resolve();
                     });
@@ -163,7 +125,7 @@ const actions = {
         });
     },
     merge({entities, context, message, sessionId}) {
-        console.log("res in merge : ",context,entities);
+        console.log("res in merge : ", context, entities);
     },
     showReminder({sessionId, context, text, entities}) {
         console.log("showReminder fired");
@@ -177,38 +139,47 @@ const actions = {
         });
     },
     saveReminder({sessionId, context, text, entities}) {
-        console.log('saveReminder Fired',context);
-        console.log('Entities ',entities);
+        console.log('saveReminder Fired', context);
+        console.log('Entities ', entities);
         let rem = [];
-        const reminder= firstEntityValue(entities, 'reminder');
+        const reminder = firstEntityValue(entities, 'reminder');
         const datetime = firstEntityValue(entities, 'datetime');
 
-        if(datetime){
+        if (datetime) {
             console.log("setting datetime and deleting missingDate");
-            rem.date=datetime;
+            rem.date = datetime;
+
         }
 
         // let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
         return new Promise(function (resolve, reject) {
             console.log("inside promise");
-            if(reminder) {
-                rem.title=reminder;
+            if (reminder) {
+                rem.title = reminder;
                 rem.user_id = userSession[sessionId].muser_id;
+
+                // We will format quick reply to be sent
+                // It depends on weather date is present in entities or not
+                const quick_reply = [{
+                    "content_type": "text",
+                    "title": (datetime) ? "Change Notification" : "Set Notification",
+                    "payload": (datetime) ? "reminder#change_notification#" : "reminder#set_notification#" + res._id
+                },
+                    {
+                        "content_type": "text",
+                        "title": "Delete",
+                        "payload": "reminder#delete#" + res._id
+                    },
+                ];
+                // Save reminder
                 Reminder.create(rem).then(function (res) {
                     console.log("**User Created**");
-                    context.reminder_result="created";
-                    const temp=[{"content_type": "text",
-                        "title": "Set Notification",
-                        "payload": "reminder#set_notification#"+res._id},
-                        {"content_type": "text",
-                            "title": "Delete",
-                            "payload": "reminder#delete#"+res._id},
-                    ];
-                    messenger.sendQuickRepliesMessage(userSession[sessionId].fbid,"Reminder Created !",temp,function(err,body){
+                    context.reminder_result = "created";
+                    //Send Quick Reply Message
+                    messenger.sendQuickRepliesMessage(userSession[sessionId].fbid, "Reminder Created !", quick_reply, function (err, body) {
                         context.done = true;
-                        if(err) console.log(err);
+                        if (err) console.log(err);
                         resolve(context);
-
                     });
                 }, function (err) {
                     console.log("error in saving reminder ", err);
@@ -220,14 +191,14 @@ const actions = {
         });
     },
     modifyNotification({sessionId, context, text, entities}) {
-        console.log('setNotification Fired',context);
+        console.log('setNotification Fired', context);
         console.log("entities " + JSON.stringify(entities));
         const action = firstEntityValue(entities, 'notification');
         const user_id = firstEntityValue(entities, 'number');
         return new Promise(function (resolve, reject) {
             console.log(action);
             console.log(user_id);
-            context.notification_result="Notication set !";
+            context.notification_result = "Notication set !";
             resolve(context);
         });
     }
@@ -263,63 +234,65 @@ router.post('/webhook', (req, res) => {
         data.entry.forEach(entry => {
             console.log("running loop 1");
             entry.messaging.forEach(event => {
-            console.log("running loop 2 event " ,event);
-                if (event.message)
-                {
-                  const recipient=event.recipient.id;
+                console.log("running loop 2 event ", event);
+                if (event.message) {
+                    const recipient = event.recipient.id;
 
                     // We retrieve the message content
                     const message = event.message;
-                        if (message.attachments) {
+                    if (message.attachments) {
 
-                        } else if ((message.text && !message.is_echo)) {
+                    } else if ((message.text && !message.is_echo)) {
 
-                            // We retrieve the user's current session, or create one if it doesn't exist
-                            // This is needed for our bot to figure out the conversation history
-                               const sender = (event.sender.id==FB_PAGE_ID) ? event.recipient.id : event.sender.id;
-                               let text=message.text;
-                               // We check if replay is of type quick_reply
-                               // Payload has a syntax reminder#{command}#reminder_id
-                               // command can be delete,set notification
-                                // reminder_id mongo id;
-                               if(message.quick_reply){
-                                   let payload=message.quick_reply.payload.split("#");
-                                    switch(payload[1]){
-                                        case 'delete':
-                                            text="delete notification for " + payload[2];
-                                            break;
-                                        case 'set_notification':
-                                            text="set alarm for " + payload[2];
-                                            break;
-                                   }
-                               }
-                               findOrCreateSession(sender).then(function (sessionId) {
-                                   console.log("session created with sessionID= ",sessionId);
-                                   wit.runActions(
-                                       sessionId,
-                                       text, // the user's message
-                                       userSession[sessionId].context // the user's current session state
-                                   ).then((context) => {
-                                       console.log('Wit Bot haS completed its action' ,context);
-                                       if (context['done']) {
-                                           console.log("clearing session data" + JSON.stringify(userSession));
-                                           delete userSession[sessionId];
-                                       }
-                                       else {
-                                           console.log("updating session data");
-                                           // Updating the user's current session state
-                                           userSession[sessionId].context = context;
-
-                                       }
-                                   });
-                               }).catch((err)=>{
-                                   console.log('Oops! Got an error from Wit: ', err.stack || err);
-                               });
+                        // We retrieve the user's current session, or create one if it doesn't exist
+                        // This is needed for our bot to figure out the conversation history
+                        const sender = (event.sender.id == FB_PAGE_ID) ? event.recipient.id : event.sender.id;
+                        let text = message.text;
+                        // We check if replay is of type quick_reply
+                        // Payload has a syntax reminder#{command}#reminder_id
+                        // command can be delete,set notification
+                        // reminder_id mongo id;
+                        if (message.quick_reply) {
+                            let payload = message.quick_reply.payload.split("#");
+                            switch (payload[1]) {
+                                case 'delete':
+                                    text = "delete notification for " + payload[2];
+                                    break;
+                                case 'set_notification':
+                                    text = "set alarm for " + payload[2];
+                                    break;
+                                case 'change_notification':
+                                    text = "change notification for " + payload[2];
+                                    break;
+                            }
                         }
-                        else if (message.quick_reply) {
-                            console.log("Quick reply received ", message);
-                        }
+                        findOrCreateSession(sender).then(function (sessionId) {
+                            console.log("session created with sessionID= ", sessionId);
+                            wit.runActions(
+                                sessionId,
+                                text, // the user's message
+                                userSession[sessionId].context // the user's current session state
+                            ).then((context) => {
+                                console.log('Wit Bot haS completed its action', context);
+                                if (context['done']) {
+                                    console.log("clearing session data" + JSON.stringify(userSession));
+                                    delete userSession[sessionId];
+                                }
+                                else {
+                                    console.log("updating session data");
+                                    // Updating the user's current session state
+                                    userSession[sessionId].context = context;
+
+                                }
+                            });
+                        }).catch((err)=> {
+                            console.log('Oops! Got an error from Wit: ', err.stack || err);
+                        });
                     }
+                    else if (message.quick_reply) {
+                        console.log("Quick reply received ", message);
+                    }
+                }
                 else {
                     console.log('received event', JSON.stringify(event));
                 }
