@@ -155,6 +155,7 @@ const actions = {
         return new Promise(function (resolve, reject) {
             console.log("inside promise");
             if (reminder) {
+                console.log("reminder detected");
                 rem.title = reminder;
                 rem.user_id = userSession[sessionId].muser_id;
 
@@ -163,14 +164,15 @@ const actions = {
                 const quick_reply = [{
                     "content_type": "text",
                     "title": "Set Notification",
-                    "payload": "reminder#set_notification#" + res._id
+                    "payload": "reminder#set_notification#" + rem.user_id
                 },
                     {
                         "content_type": "text",
                         "title": "Delete",
-                        "payload": "reminder#delete#" + res._id
+                        "payload": "reminder#delete#" + rem.user_id
                     },
                 ];
+                console.log(quick_reply);
                 // Save reminder
                 Reminder.create(rem).then(function (res) {
                     console.log("**User Created**");
