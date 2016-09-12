@@ -180,7 +180,7 @@ const actions = {
     },
     saveReminder({sessionId, context, text, entities}) {
         console.log('saveReminder Fired',context);
-        // console.log('Entities ',entities);
+        console.log('Entities ',entities);
         let rem = [];
         const reminder= firstEntityValue(entities, 'reminder');
         const datetime = firstEntityValue(entities, 'datetime');
@@ -192,8 +192,9 @@ const actions = {
 
         // let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
         return new Promise(function (resolve, reject) {
-            // if(context.missingDate) delete context.missingDate;
+            console.log("inside promise");
             if(reminder) {
+                console.log('reminder detected');
                 rem.title=reminder;
                 console("saving reminder");
                 rem.user_id = userSession[sessionId].muser_id;
