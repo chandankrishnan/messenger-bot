@@ -182,14 +182,32 @@ const actions = {
     },
     saveReminder({sessionId, context, text, entities}) {
         console.log('saveReminder Fired',context);
-        console.log('Entities ',entities);
+        // console.log('Entities ',entities);
         let rem = [];
-        rem.title = firstEntityValue(entities, 'reminder');
+        const reminder= firstEntityValue(entities, 'reminder');
         const datetime = firstEntityValue(entities, 'datetime');
+
+        if(datetime){
+            console.log("setting datetime");
+
+            rem.date=datetime;
+            context.date=datetime;
+        }
+        if(reminder){
+            console.log("setting reminder");
+            context.reminder=reminder;
+            rem.title=reminder;
+        }
+
         // let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
-        if (datetime) rem.date = datetime;
         return new Promise(function (resolve, reject) {
-            if (rem.title) {
+            if(!datetime) {
+                console.log("setting missingDate");
+                context.missingDate = true;
+                resolve(context);
+            }
+            else if(reminder) {
+                console("saving reminder");
                 rem.user_id = userSession[sessionId].muser_id;
                 Reminder.create(rem).then(function (res) {
                     console.log('reminder created');
@@ -201,7 +219,6 @@ const actions = {
                     context.done = true;
                     resolve(context);
                 });
-
             }
             else resolve(context);
         });
