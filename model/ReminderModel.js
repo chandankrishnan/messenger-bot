@@ -105,12 +105,9 @@ Reminder.prototype.create=function(data){
    return new Promise(function(resolve,reject){
         var result=new ReminderModel({"title":data.title,"user_id":data.user_id,"date":data.date});
        result.save(function(err,data){
-           console.log("err",err);
-           console.log('data',data);
+           if(err) console.log("err",err);
            if(data) resolve(data);
            else reject(err);
-           console.log(err);
-           console.log(data);
        });
    });
 };

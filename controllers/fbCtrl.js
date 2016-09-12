@@ -196,6 +196,7 @@ const actions = {
                 rem.user_id = userSession[sessionId].muser_id;
                 Reminder.create(rem).then(function (res) {
                     console.log("**User Created**");
+                    context.reminder_result="created";
                     const temp=[{"content_type": "text",
                         "title": "Set Notification",
                         "payload": "reminder#set_notification#"+res._id},
