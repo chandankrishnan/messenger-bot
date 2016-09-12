@@ -145,11 +145,7 @@ const actions = {
         const reminder = firstEntityValue(entities, 'reminder');
         const datetime = firstEntityValue(entities, 'datetime');
 
-        if (datetime) {
-            console.log("setting datetime and deleting missingDate");
-            rem.date = datetime;
-
-        }
+        if (datetime) rem.date = datetime;
 
         // let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
         return new Promise(function (resolve, reject) {
@@ -163,8 +159,8 @@ const actions = {
                 // It depends on weather date is present in entities or not
                 const quick_reply = [{
                     "content_type": "text",
-                    "title": "Set Notification",
-                    "payload": "reminder#set_notification#" + rem.user_id
+                    "title": (datetime) ? "Change Notification" : "Set Notification",
+                    "payload": (datetime) ? "reminder#change_notification#" : "reminder#set_notification#" + rem.user_id
                 },
                     {
                         "content_type": "text",
