@@ -18,18 +18,11 @@ const createQuickReply = function (quickreply) {
     return result;
 }
 
-const quickreply=['yes','no'];
+let rem=[];
+rem.a="10";
+rem.c="dewd";
 
-var b=quickreply.map(function(x){
-    return {
-        "content_type": "text",
-        "title": "Delete",
-        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
-    }
-
-});
-
-console.log(b);
+console.log(rem);
 
 
 // console.log(a.length);

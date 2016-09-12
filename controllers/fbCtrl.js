@@ -195,9 +195,10 @@ const actions = {
             console.log("inside promise");
             if(reminder) {
                 console.log('reminder detected');
-                rem.title=reminder;
+
                 console("saving reminder");
                 rem.user_id = userSession[sessionId].muser_id;
+                rem.title=reminder;
                 Reminder.create(rem).then(function (res) {
                     console.log('reminder created',context);
                     const temp=[{"content_type": "text",

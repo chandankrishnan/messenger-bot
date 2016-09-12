@@ -103,7 +103,7 @@ function Reminder(){}
 Reminder.prototype.create=function(data){
     console.log("reminderModel called");
    return new Promise(function(resolve,reject){
-        var result=new ReminderModel({"title":data.title,"user_id":data.user_id});
+        var result=new ReminderModel({"title":data.title,"user_id":data.user_id,"date":data.date});
        result.save(function(err,data){
            console.log("err",err);
            console.log('data',data);
