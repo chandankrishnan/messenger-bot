@@ -49,6 +49,11 @@ const actions = {
   send(request, response) {
     const {sessionId, context, entities} = request;
     const {text, quickreplies} = response;
+    const reminder= firstEntityValue(entities, 'reminder');
+    const datetime = firstEntityValue(entities, 'datetime');
+
+    if(reminder && !context.reminder) context.reminder=reminder;
+    if(datetime && !context.date) context.date=date;
     return new Promise(function(resolve, reject) {
       console.log('user said...', request);
       console.log('sending...', JSON.stringify(response));
@@ -56,23 +61,20 @@ const actions = {
     });
   },
   saveReminder({sessionId, context, text, entities}) {
-      console.log('saveRemidner action fired ',entities);
-      return new Promise(function(resolve,reject){
-        const date=firstEntityValue(entities, 'date');
-        const reminder=firstEntityValue(entities, 'reminder');
-        console.log("1");
-        if(!date && (typeof context.missingDate =='undefined')){
-          console.log("seting missing date");
-          context.missingDate=true;
+      console.log('saveReminder Fired',context);
+    // console.log('Entities ',entities);
+    let rem = [];
+    const reminder= firstEntityValue(entities, 'reminder');
+    const datetime = firstEntityValue(entities, 'datetime');
+
+      return new Promise(function(resolve,reject) {
+
+        if(context.reminder) {
+          console.log("saving reminder " ,rem);
+          context.done=true;
           resolve(context);
         }
-        console.log("2");
-        if(reminder && (typeof context.missingDate !='undefined')){
-          console.log("seting result");
-
-          context.reminder_result="reminder saved";
-        }
-        resolve(context);
+        else resolve(context);
       });
   }
 };

@@ -8,14 +8,28 @@ const Session = require('./session');
 // wit.interactive();
 
 
-// Session.findOrCreate('200',['sessionId','context']).then(function(res){
-// console.log("res " + res);
-// });
+const createQuickReply = function (quickreply) {
+    let result = [];
+    quickreply.forEach(function (value, index) {
 
+        let temp = {"content_type": "text"};
+        result.push(temp);
+    });
+    return result;
+}
 
-reminder.getUncompleted('200')
+const quickreply=['yes','no'];
 
+var b=quickreply.map(function(x){
+    return {
+        "content_type": "text",
+        "title": "Delete",
+        "payload": "DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
+    }
 
+});
+
+console.log(b);
 
 
 // console.log(a.length);

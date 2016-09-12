@@ -128,7 +128,12 @@ const findOrCreateSession = (fbid) => {
     // sessions[sessionId]={'fbid':fbid,'context':{}};
     // return sessionId;
 };
-
+messenger.sendTextMessage(recipientId, text, function (err, body) {
+    if (err) console.error('in sending text message ', err ,userSession);
+    console.log('response ', response);
+    console.log('Message sent', body);
+    resolve();
+});
 
 // WIT.AI actions
 const actions = {
@@ -190,23 +195,25 @@ const actions = {
         if(datetime){
             console.log("setting datetime and deleting missingDate");
             rem.date=datetime;
-            context.date=datetime;
-        }
-        if(reminder){
-            console.log("setting reminder");
-            context.reminder=reminder;
-            rem.title=reminder;
         }
 
         // let date_diff = (datetime) ? moment(datetime).diff(new Date()) : 0;
         return new Promise(function (resolve, reject) {
-            if(context.missingDate) delete context.missingDate;
-            else if(reminder) {
+            // if(context.missingDate) delete context.missingDate;
+            if(reminder) {
+                rem.title=reminder;
                 console("saving reminder");
                 rem.user_id = userSession[sessionId].muser_id;
                 Reminder.create(rem).then(function (res) {
                     console.log('reminder created',context);
-                    context.reminder_result="Reminder created."
+                    const temp=[{"content_type": "text",
+                        "title": "Set Notification",
+                        "payload": "reminder_delete_"+res._id},
+                        {"content_type": "text",
+                            "title": "Delete",
+                            "payload": "reminder_delete_"+res._id},
+                    ];
+                    context.reminder_result=temp;
                     context.done = true;
                     resolve(context);
                 }, function (err) {
@@ -294,7 +301,7 @@ router.post('/webhook', (req, res) => {
                                        message.text, // the user's message
                                        userSession[sessionId].context // the user's current session state
                                    ).then((context) => {
-                                       console.log('Wit Bot haS completed its action');
+                                       console.log('Wit Bot haS completed its action' ,context);
                                        if (context['done']) {
                                            console.log("clearing session data" + JSON.stringify(userSession));
                                            delete userSession[sessionId];
