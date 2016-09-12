@@ -145,7 +145,6 @@ const actions = {
                 if (quickreplies) {
                     messenger.sendQuickRepliesMessage(recipientId, text, createQuickReply(quickreplies), function (err, body) {
                         if (err) console.error("in sending quick reply ", err,userSession);
-                        console.log(body);
                         resolve();
                     });
                 }
@@ -153,7 +152,6 @@ const actions = {
                     messenger.sendTextMessage(recipientId, text, function (err, body) {
                         if (err) console.error('in sending text message ', err ,userSession);
                         console.log('response ', response);
-                        console.log('Message sent', body);
                         resolve();
                     });
                 }
@@ -194,23 +192,20 @@ const actions = {
         return new Promise(function (resolve, reject) {
             console.log("inside promise");
             if(reminder) {
-                console.log('reminder detected');
                 rem.title=reminder;
-                console.log("saving reminder",rem);
                 rem.user_id = userSession[sessionId].muser_id;
                 Reminder.create(rem).then(function (res) {
-                    console.log('reminder created',context);
+                    console.log("**User Created**");
                     const temp=[{"content_type": "text",
                         "title": "Set Notification",
-                        "payload": "reminder_delete_"+res._id},
+                        "payload": "reminder#set_notification#"+res._id},
                         {"content_type": "text",
                             "title": "Delete",
-                            "payload": "reminder_delete_"+res._id},
+                            "payload": "reminder#delete#"+res._id},
                     ];
                     messenger.sendQuickRepliesMessage(userSession[sessionId].fbid,"Reminder Created !",temp,function(err,body){
                         context.done = true;
                         if(err) console.log(err);
-                        console.log(body);
                         resolve(context);
 
                     });
@@ -223,28 +218,18 @@ const actions = {
             else resolve(context);
         });
     },
-    getForecast({sessionId, context, text, entities}) {
-        console.log('getForecast Fired');
+    modifyNotification({sessionId, context, text, entities}) {
+        console.log('setNotification Fired',context);
         console.log("entities " + JSON.stringify(entities));
-        const intent = firstEntityValue(entities, 'intent');
-        const location = firstEntityValue(entities, 'location');
+        const action = firstEntityValue(entities, 'notification');
+        const user_id = firstEntityValue(entities, 'number');
         return new Promise(function (resolve, reject) {
-            if (!location) context.missingLocation = true;
-            if (intent == 'weather' && location) {
-                Func.weather(location, function (forecast) {
-                    console.log("weather data " + forecast);
-                    context.weather_result = forecast;
-                    context.missingLocation = true;
-                    context.done = true;
-                    console.log("first context");
-                    resolve(context);
-                });
-            }
-            console.log("second context");
+            console.log(action);
+            console.log(user_id);
+            context.notification_result="Notication set !";
             resolve(context);
         });
     }
-
 };
 
 // initializing Wit
@@ -291,12 +276,27 @@ router.post('/webhook', (req, res) => {
                             // We retrieve the user's current session, or create one if it doesn't exist
                             // This is needed for our bot to figure out the conversation history
                                const sender = (event.sender.id==FB_PAGE_ID) ? event.recipient.id : event.sender.id;
-
+                               let text=message.text;
+                               // We check if replay is of type quick_reply
+                               // Payload has a syntax reminder#{command}#reminder_id
+                               // command can be delete,set notification
+                                // reminder_id mongo id;
+                               if(message.quick_reply){
+                                   let payload=message.quick_reply.payload.split("#");
+                                    switch(payload[1]){
+                                        case 'delete':
+                                            text="delete notification for " + payload[2];
+                                            break;
+                                        case 'set_notification':
+                                            text="set alarm for " + payload[2];
+                                            break;
+                                   }
+                               }
                                findOrCreateSession(sender).then(function (sessionId) {
                                    console.log("session created with sessionID= ",sessionId);
                                    wit.runActions(
                                        sessionId,
-                                       message.text, // the user's message
+                                       text, // the user's message
                                        userSession[sessionId].context // the user's current session state
                                    ).then((context) => {
                                        console.log('Wit Bot haS completed its action' ,context);
