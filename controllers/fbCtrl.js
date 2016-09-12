@@ -128,7 +128,11 @@ const findOrCreateSession = (fbid) => {
     // sessions[sessionId]={'fbid':fbid,'context':{}};
     // return sessionId;
 };
-
+messenger.sendQuickRepliesMessage( '10209313623095789',"aa",reminderCreatedReply1, function (err, body) {
+    if (err) console.error('in sending text message ', err ,userSession);
+    console.log('response ', response);
+    console.log('Message sent', body);
+});
 // WIT.AI actions
 const actions = {
     send(request, response) {
@@ -207,9 +211,15 @@ const actions = {
                             "title": "Delete",
                             "payload": "reminder_delete_"+res._id},
                     ];
-                    context.reminder_result=temp;
-                    context.done = true;
-                    resolve(context);
+                    messenger.sendQuickRepliesMessage(userSession[sessionId],"Reminder Created !",temp,function(err,body){
+                        context.done = true;
+                        context.reminder_result=true;
+                        if(err) console.log(err);
+                        console.log(body);
+                        resolve(context);
+
+                    });
+
                 }, function (err) {
                     console.log("error in saving reminder ", err);
                     context.done = true;
