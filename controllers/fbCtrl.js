@@ -160,7 +160,7 @@ const actions = {
                 const quick_reply = [{
                     "content_type": "text",
                     "title": (datetime) ? "Change Notification" : "Set Notification",
-                    "payload": (datetime) ? "reminder#change_notification#" : "reminder#set_notification#" + rem.user_id
+                    "payload": ((datetime) ? "reminder#change_notification#" : "reminder#set_notification#") + rem.user_id
                 },
                     {
                         "content_type": "text",
