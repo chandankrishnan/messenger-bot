@@ -195,8 +195,8 @@ const actions = {
             console.log("inside promise");
             if(reminder) {
                 console.log('reminder detected');
-                console.log("saving reminder",rem);
                 rem.title=reminder;
+                console.log("saving reminder",rem);
                 rem.user_id = userSession[sessionId].muser_id;
                 Reminder.create(rem).then(function (res) {
                     console.log('reminder created',context);
@@ -207,18 +207,14 @@ const actions = {
                             "title": "Delete",
                             "payload": "reminder_delete_"+res._id},
                     ];
-                    // messenger.sendQuickRepliesMessage(userSession[sessionId],"Reminder Created !",temp,function(err,body){
-                    //     context.done = true;
-                    //     context.reminder_result=true;
-                    //     if(err) console.log(err);
-                    //     console.log(body);
-                    //     resolve(context);
-                    //
-                    // });
-                    context.done = true;
-                    context.reminder_result="dedw";
-                    resolve(context);
+                    messenger.sendQuickRepliesMessage(userSession[sessionId],"Reminder Created !",temp,function(err,body){
+                        context.done = true;
+                        context.reminder_result=true;
+                        if(err) console.log(err);
+                        console.log(body);
+                        resolve(context);
 
+                    });
                 }, function (err) {
                     console.log("error in saving reminder ", err);
                     context.done = true;
