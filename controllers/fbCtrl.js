@@ -128,12 +128,6 @@ const findOrCreateSession = (fbid) => {
     // sessions[sessionId]={'fbid':fbid,'context':{}};
     // return sessionId;
 };
-messenger.sendTextMessage(recipientId, text, function (err, body) {
-    if (err) console.error('in sending text message ', err ,userSession);
-    console.log('response ', response);
-    console.log('Message sent', body);
-    resolve();
-});
 
 // WIT.AI actions
 const actions = {
