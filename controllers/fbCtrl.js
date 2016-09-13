@@ -99,7 +99,7 @@ const actions = {
         const {text, quickreplies} = response;
         const recipientId = userSession[sessionId].fbid;
         const notification=firstEntityValue(entities, 'notification');
-        const date=firstEntityValue(entities, 'date');
+        const date=firstEntityValue(entities, 'datetime');
         if(notification){
             userSession[sessionId].context.notification=notification;
             userSession[sessionId].context.reminder_id=firstEntityValue(entities, 'reminder_id');
@@ -199,7 +199,7 @@ const actions = {
         });
     },
     modifyNotification({sessionId, context, text, entities}) {
-        const date = firstEntityValue(entities, 'date');
+        const date = firstEntityValue(entities, 'datetime');
         console.log("Entities ",entities);
         //We retrieve reminder ID and notification action
         //from saved context in userSession
