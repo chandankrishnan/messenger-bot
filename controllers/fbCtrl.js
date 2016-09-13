@@ -102,9 +102,10 @@ const actions = {
         const date=firstEntityValue(entities, 'date');
         if(notification){
             userSession[sessionId].context.notification=notification;
-            userSession[sessionId].context.reminder_id=firstEntityValue(entities, 'number');
+            userSession[sessionId].context.reminder_id=firstEntityValue(entities, 'reminder_id');
         }
         if(date){
+            userSession[sessionId].context.date=date;
             console.log("Date detected ",date);
         }
         console.log('request :', request);
@@ -199,13 +200,13 @@ const actions = {
     },
     modifyNotification({sessionId, context, text, entities}) {
         const date = firstEntityValue(entities, 'date');
-
+        console.log("Entities ",entities);
         //We retrieve reminder ID and notification action
         //from saved context in userSession
         const reminder_id=userSession[sessionId].context.reminder_id;
-        const notification=userSession[sessionId].context.notification;
-console.log("Notification =" ,notification);
+        const notification=userSession[sessionId].context.notification.trim();
         return new Promise(function (resolve, reject) {
+            console.log("inside promise reminder,not,date ",reminder_id , notification ,date)
             if(reminder_id && notification && date){
                 // Check for notification action
                 if(notification=='set'){
