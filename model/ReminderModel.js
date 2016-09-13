@@ -113,8 +113,9 @@ Reminder.prototype.create=function(data){
 };
 
 Reminder.prototype.updateNotification=function(data){
+    console.log("update notifiction model called ");
     return new Promise(function(resolve,reject){
-        var a=ReminderModel.findOneAndUpdate({_id:data.id},{$set:{date:data.date}},function(err,body){
+        ReminderModel.findOneAndUpdate({_id:data.id},{$set:{date:data.date}},function(err,body){
             if(body) resolve(body);
             if(err){
                 console.log(err);

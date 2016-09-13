@@ -210,6 +210,7 @@ const actions = {
             if(reminder_id && notification && date){
                 // Check for notification action
                 if(notification=='set'){
+                    console.log("notification set executed");
                     Reminder.updateNotification({id:reminder_id,date:date}).then(function(err,res){
                        if(!err){
                            console.log("notification updated ",res);
@@ -224,6 +225,7 @@ const actions = {
                     });
                 }
                 else if(notification=="delete"){
+                    console.log("notification delete executed");
                     Reminder.delete(reminder_id).then(function(err,res){
                         if(!err){
                             console.log(" reminder deleted ",res);
