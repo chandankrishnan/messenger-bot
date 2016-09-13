@@ -204,7 +204,7 @@ const actions = {
         //from saved context in userSession
         const reminder_id=userSession[sessionId].context.reminder_id;
         const notification=userSession[sessionId].context.notification;
-
+console.log("Notification =" ,notification);
         return new Promise(function (resolve, reject) {
             if(reminder_id && notification && date){
                 // Check for notification action
@@ -239,7 +239,7 @@ const actions = {
                     })
                 }
             }else{
-                console.log("Catch outside notification");
+                console.log("Catch outside notification ",context ,notification);
                 context.notification_result="Sorry,Unable to set notification !";
                 resolve(context);
             }
