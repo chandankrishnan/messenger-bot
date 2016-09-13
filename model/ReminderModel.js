@@ -112,7 +112,23 @@ Reminder.prototype.create=function(data){
    });
 };
 
+Reminder.prototype.updateNotification=function(data){
+    return new Promise(function(resolve,reject){
+        var a=ReminderModel.findOneAndUpdate({_id:data.id},{$set:{date:data.date}},function(err,body){
+            if(body) resolve(body);
+            if(err){
+                console.log(err);
+                reject(err);
+            }
+        });
+    });
+};
 
+Reminder.prototype.delete=function(id){
+    return new Promise(function(resolve,reject){
+        resolve(true);
+    });
+}
 exports.reminderModel =Reminder;
 // exports.reminderModel = ReminderModel;
 

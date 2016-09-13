@@ -99,9 +99,13 @@ const actions = {
         const {text, quickreplies} = response;
         const recipientId = userSession[sessionId].fbid;
         const notification=firstEntityValue(entities, 'notification');
+        const date=firstEntityValue(entities, 'date');
         if(notification){
             userSession[sessionId].context.notification=notification;
             userSession[sessionId].context.reminder_id=firstEntityValue(entities, 'number');
+        }
+        if(date){
+            console.log("Date detected ",date);
         }
         console.log('request :', request);
         if (quickreplies) console.log('quick reply detected ', response);
@@ -194,16 +198,51 @@ const actions = {
         });
     },
     modifyNotification({sessionId, context, text, entities}) {
-        console.log('setNotification Fired', context);
-        console.log("entities " + JSON.stringify(entities));
         const date = firstEntityValue(entities, 'date');
+
+        //We retrieve reminder ID and notification action
+        //from saved context in userSession
+        const reminder_id=userSession[sessionId].context.reminder_id;
+        const notification=userSession[sessionId].context.notification;
+
         return new Promise(function (resolve, reject) {
-            if(userSession[sessionId].context.reminder_id && userSession[sessionId].context.notification){
-                console.log("found ");
+            if(reminder_id && notification && date){
+                // Check for notification action
+                if(notification=='set'){
+                    Reminder.updateNotification({id:reminder_id,date:date}).then(function(err,res){
+                       if(!err){
+                           console.log("notification updated ",res);
+                           context.notification_result="Notification updated";
+                           context.done=true;
+                           resolve(context);
+                       }else{
+                           console.log("error in updating reminder ",err);
+                           context.done=true;
+                           reject(context);
+                       }
+                    });
+                }
+                else if(notification=="delete"){
+                    Reminder.delete(reminder_id).then(function(err,res){
+                        if(!err){
+                            console.log(" reminder deleted ",res);
+                            context.notification_result="Reminder delted";
+                            context.done=true;
+                            resolve(context);
+                        }
+                        else{
+                            console.log(" erro reminder deleted ",err);
+                            context.notification_result="Sorry, unable to delete reminder";
+                            context.done=true;
+                            reject(context);
+                        }
+                    })
+                }
+            }else{
+                console.log("Catch outside notification");
+                context.notification_result="Sorry,Unable to set notification !";
                 resolve(context);
             }
-            context.notification_result = "Notication set !";
-            resolve(context);
         });
     }
 };
