@@ -100,8 +100,8 @@ const actions = {
         const recipientId = userSession[sessionId].fbid;
         const notification=firstEntityValue(entities, 'notification');
         if(notification){
-            context.notification=notification;
-            context.reminder_id=firstEntityValue(entities, 'number');
+            userSession[sessionId].context.notification=notification;
+            userSession[sessionId].context.reminder_id=firstEntityValue(entities, 'number');
         }
         console.log('request :', request);
         if (quickreplies) console.log('quick reply detected ', response);
@@ -196,11 +196,12 @@ const actions = {
     modifyNotification({sessionId, context, text, entities}) {
         console.log('setNotification Fired', context);
         console.log("entities " + JSON.stringify(entities));
-        const action = firstEntityValue(entities, 'notification');
-        const user_id = firstEntityValue(entities, 'number');
+        const date = firstEntityValue(entities, 'date');
         return new Promise(function (resolve, reject) {
-            console.log(action);
-            console.log(user_id);
+            if(userSession[sessionId].context.reminder_id && userSession[sessionId].context.notification){
+                console.log("found ");
+                resolve(context);
+            }
             context.notification_result = "Notication set !";
             resolve(context);
         });
